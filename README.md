@@ -117,6 +117,10 @@ Open <http://localhost:3000>, log in met je eigen e-mailadres en maak een test-n
 - [ ] In een privévenster `/beheer` openen: je wordt naar inloggen gestuurd.
 - [ ] Privacy- en voorwaardenteksten nagekeken en `[blokhaken]` ingevuld, ook `contactEmail` in `src/lib/config.ts`.
 
+## Database wakker houden
+
+Gratis Supabase-projecten worden na een week zonder activiteit gepauzeerd. `vercel.json` laat Vercel daarom elke ochtend om 06:00 (UTC) `/api/wakker` aanroepen, dat één kleine leesvraag aan de database stelt. Controleren: Vercel → project → Settings → Cron Jobs.
+
 ## Later uitbreiden
 
 - **Video:** bewust niet ingebouwd. Verkopers sturen filmpjes via WhatsApp, waar de koper toch al in gesprek is. Blijkt er toch vraag naar, begin dan met een optioneel YouTube-linkveld voordat je eigen videoverwerking toevoegt.
