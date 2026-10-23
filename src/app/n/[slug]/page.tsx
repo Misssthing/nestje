@@ -101,6 +101,10 @@ export default async function NestjesPagina({ params }: Props) {
         <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
       </section>
 
+      {nest.afgerond && (
+        <p className="afgerond-melding">Alle kittens van dit nestje hebben een thuis gevonden.</p>
+      )}
+
       {telling.length > 0 && (
         <div className="sum">
           {telling.map(([s, n]) => (

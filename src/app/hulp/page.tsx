@@ -58,6 +58,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Meerdere nestjes beheren',
+    a: (
+      <p>Na het inloggen zie je al je nestjes onder elkaar. Met “Nieuw nestje” maak je er een bij, elk met een eigen link. Zijn alle kittens verhuisd, kies dan onderaan je nestje voor “Nestje afronden”. De pagina blijft bestaan en laat zien dat alle kittens een thuis hebben.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
       <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>

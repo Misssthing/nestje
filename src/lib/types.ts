@@ -22,6 +22,7 @@ export interface Nest {
   vader_gewicht: number | null;
   moeder_foto: string | null;
   vader_foto: string | null;
+  afgerond: boolean;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };

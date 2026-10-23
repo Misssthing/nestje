@@ -100,7 +100,17 @@ export default function Beheer({
     if (paden.length) await supabase.storage.from(CONFIG.fotoBucket).remove(paden);
     const { error } = await supabase.from('nests').delete().eq('id', nest.id);
     if (error) return toast('Verwijderen lukte niet');
+    router.push('/beheer');
     router.refresh();
+  }
+
+  async function wisselAfgerond() {
+    const afgerond = !nest.afgerond;
+    if (afgerond && !confirm('Nestje afronden? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.')) return;
+    const { error } = await supabase.from('nests').update({ afgerond }).eq('id', nest.id);
+    if (error) return toast('Opslaan lukte niet');
+    setNest((n) => ({ ...n, afgerond }));
+    toast(afgerond ? 'Nestje afgerond' : 'Nestje weer geopend');
   }
 
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
@@ -108,7 +118,7 @@ export default function Beheer({
   return (
     <main className="wrap">
       <div className="bar">
-        <span className="brand">Nestje</span>
+        <a className="brand" href="/beheer">← Je nestjes</a>
         <div style={{ display: 'flex', gap: 8 }}>
           <a className="btn ghost klein" href="/hulp">Hulp</a>
           <form action="/auth/uitloggen" method="post">
@@ -191,6 +201,18 @@ export default function Beheer({
       </div>
 
       <NestForm nest={nest} supabase={supabase} onOpgeslagen={setNest} openStandaard={!nest.whatsapp_nummer} />
+
+      <section className="panel" aria-label="Nestje afronden">
+        <h2>{nest.afgerond ? 'Dit nestje is afgerond' : 'Alle kittens verhuisd?'}</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
+          {nest.afgerond
+            ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
+            : 'Rond je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden.'}
+        </p>
+        <button className="btn ghost" onClick={wisselAfgerond}>
+          {nest.afgerond ? 'Nestje weer openen' : 'Nestje afronden'}
+        </button>
+      </section>
 
       <details className="panel">
         <summary>Account</summary>

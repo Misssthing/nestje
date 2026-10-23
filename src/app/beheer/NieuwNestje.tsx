@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { CONFIG } from '@/lib/config';
 import { createClient } from '@/lib/supabase/browser';
 
-export default function NieuwNestje() {
+export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
   const router = useRouter();
   const [moeder, setMoeder] = useState('');
   const [geboren, setGeboren] = useState('');
@@ -29,11 +29,11 @@ export default function NieuwNestje() {
         verhuisleeftijd_weken: CONFIG.standaardVerhuisleeftijd,
       })
       .select('id')
-      .single();
+      .single<{ id: string }>();
 
     if (error || !nest) {
       setBezig(false);
-      setFout(error?.code === '23505' ? 'Je hebt al een nestje. Ververs de pagina.' : 'Aanmaken lukte niet. Probeer het opnieuw.');
+      setFout('Aanmaken lukte niet. Probeer het opnieuw.');
       return;
     }
 
@@ -46,13 +46,13 @@ export default function NieuwNestje() {
         })),
       );
     }
-    router.refresh();
+    router.push(`/beheer/${nest.id}`);
   }
 
   return (
     <main className="wrap">
       <div className="bar">
-        <span className="brand">Nestje</span>
+        {eerste ? <span className="brand">Nestje</span> : <a className="brand" href="/beheer">← Je nestjes</a>}
         <div style={{ display: 'flex', gap: 8 }}>
           <a className="btn ghost klein" href="/hulp">Hulp</a>
           <form action="/auth/uitloggen" method="post">
@@ -61,7 +61,7 @@ export default function NieuwNestje() {
         </div>
       </div>
       <section className="hero">
-        <h1>Je nestje aanmaken</h1>
+        <h1>{eerste ? 'Je nestje aanmaken' : 'Nieuw nestje'}</h1>
         <p>Drie gegevens en je pagina staat. Foto's, namen en de rest vul je daarna aan.</p>
       </section>
       <form className="panel" onSubmit={maak}>
