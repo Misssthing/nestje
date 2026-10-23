@@ -43,6 +43,8 @@ export interface Kitten {
   status: Status;
   volgorde: number;
   omschrijving: string | null;
+  /** Alleen voor de verkoper, nooit in de openbare views */
+  notitie: string | null;
 }
 
 export type KittenMetFotos = Kitten & { kitten_photos: Foto[] };

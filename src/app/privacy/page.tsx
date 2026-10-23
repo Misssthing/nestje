@@ -26,6 +26,7 @@ export default function Privacy() {
         <li>Je e-mailadres, om je te laten inloggen met een inloglink.</li>
         <li>De gegevens van je nestje die je zelf invult: naam en beschrijving van de moeder en (optioneel) de vader, woonplaats, geboortedatum, prijs, namen, kenmerken en karakteromschrijvingen van de kittens, en foto's van het nestje en de kittens.</li>
         <li>Je WhatsApp-nummer, zodat kopers contact met je kunnen opnemen.</li>
+        <li>Notities die je bij een kitten maakt, bijvoorbeeld voor wie het gereserveerd is. Die zijn alleen voor jou zichtbaar. Noteer over kopers niet meer dan je nodig hebt; je bent zelf verantwoordelijk voor wat je over anderen vastlegt.</li>
         <li>Technische gegevens die nodig zijn om de dienst te laten werken en te beveiligen, zoals IP-adres en tijdstip van inloggen (logbestanden van onze hostingpartijen).</li>
       </ul>
       <p><strong>Van bezoekers van een nestjespagina:</strong> wij verzamelen geen persoonsgegevens. Onze hostingpartijen houden korte tijd technische logbestanden bij (zoals IP-adres) voor beveiliging. Tik je op "Vraag naar …", dan open je WhatsApp en val je onder de voorwaarden en het privacybeleid van WhatsApp.</p>

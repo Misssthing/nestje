@@ -25,6 +25,8 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
   const [naam, setNaam] = useState(kitten.naam);
   const [vacht, setVacht] = useState(kitten.vacht ?? '');
   const [omschrijving, setOmschrijving] = useState(kitten.omschrijving ?? '');
+  const [notitie, setNotitie] = useState(kitten.notitie ?? '');
+  const toonNotitie = kitten.status !== 'vrij' || Boolean(kitten.notitie);
   useEffect(() => setNaam(kitten.naam), [kitten.naam]);
 
   function bewaarNaam() {
@@ -41,6 +43,11 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
   function bewaarOmschrijving() {
     const o = omschrijving.trim();
     if (o !== (kitten.omschrijving ?? '')) onWijzig({ omschrijving: o || null }, 'Omschrijving opgeslagen');
+  }
+
+  function bewaarNotitie() {
+    const n = notitie.trim();
+    if (n !== (kitten.notitie ?? '')) onWijzig({ notitie: n || null }, 'Notitie opgeslagen');
   }
 
   return (
@@ -71,6 +78,20 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
           </button>
         ))}
       </div>
+
+      {toonNotitie && (
+        <label className="veld notitie" style={{ margin: 0 }}>
+          <span>Notitie, alleen jij ziet dit</span>
+          <textarea
+            value={notitie}
+            maxLength={500}
+            rows={2}
+            placeholder="Bijv. gereserveerd voor Sanne, aanbetaling ontvangen, ophalen 12 december"
+            onChange={(e) => setNotitie(e.target.value)}
+            onBlur={bewaarNotitie}
+          />
+        </label>
+      )}
 
       <FotoBeheer
         supabase={supabase}

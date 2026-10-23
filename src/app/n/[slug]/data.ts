@@ -2,7 +2,7 @@ import { cache } from 'react';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { Foto, Kitten, NestFoto, OpenbaarNest } from '@/lib/types';
 
-export type OpenbaarKitten = Omit<Kitten, 'nest_id'> & { fotos: string[] };
+export type OpenbaarKitten = Omit<Kitten, 'nest_id' | 'notitie'> & { fotos: string[] };
 
 /** Leest één nestje via de openbare views (geen owner_id, e-mail of telefoonnummer). */
 export const haalNestje = cache(async (slug: string) => {
@@ -28,7 +28,7 @@ export const haalNestje = cache(async (slug: string) => {
     .select('id, naam, geslacht, vacht, status, volgorde, omschrijving')
     .eq('nest_id', nest.id)
     .order('volgorde')
-    .returns<Omit<Kitten, 'nest_id'>[]>();
+    .returns<Omit<Kitten, 'nest_id' | 'notitie'>[]>();
 
   const ids = (kittens ?? []).map((k) => k.id);
   const { data: fotos } = ids.length
