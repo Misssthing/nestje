@@ -1,0 +1,9 @@
+<h2>Inloggen bij Nestje</h2>
+<p>Tik op de knop om in te loggen. De link werkt één uur.</p>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/beheer"
+      style="display:inline-block;background:#1F2A24;color:#EEF1EC;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:600">
+  Inloggen bij Nestje
+</a></p>
+<p>Lukt de link niet op je telefoon? Vul dan deze code in op het inlogscherm:</p>
+<p style="font-size:28px;font-weight:800;letter-spacing:4px">{{ .Token }}</p>
+<p style="color:#5E6B63;font-size:13px">Heb je niet geprobeerd in te loggen? Dan kun je deze mail negeren.</p>
