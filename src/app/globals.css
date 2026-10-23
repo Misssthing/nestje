@@ -18,7 +18,8 @@
   }
 }
 html { scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
-*, *::before, *::after { box-sizing: inherit; }
+/* Expliciet border-box (niet inherit): inhoud van <details> erft anders content-box van de browser */
+*, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; background: var(--bg); color: var(--ink);
   font-family: var(--font-bricolage), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
