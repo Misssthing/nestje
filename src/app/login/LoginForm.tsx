@@ -18,7 +18,7 @@ export default function LoginForm() {
     setFout('');
     const { error } = await createClient().auth.signInWithOtp({
       email: email.trim(),
-      options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/beheer` },
+      options: { shouldCreateUser: true, emailRedirectTo: `${window.location.origin}/auth/confirm?next=/beheer` },
     });
     setBezig(false);
     if (error) {
@@ -54,7 +54,7 @@ export default function LoginForm() {
     return (
       <form onSubmit={controleerCode} className="panel">
         <p style={{ marginTop: 0 }}>
-          Mail verstuurd naar <strong>{email}</strong>. Tik op de link in de mail, of vul hier de code uit de mail in.
+          Mail verstuurd naar <strong>{email}</strong>. Open de link in de mail in dezelfde browser, of vul hier de code uit de mail in als die erin staat.
         </p>
         <label className="veld">
           <span>Code uit de mail</span>
