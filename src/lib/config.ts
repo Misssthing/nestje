@@ -5,6 +5,13 @@ export const CONFIG = {
   starterslijstUrl: 'https://www.kattenverzorging.com/wat-heb-je-nodig-voor-een-kitten/',
   moederSiteUrl: 'https://www.kattenverzorging.com/',
   contactEmail: 'nestje@kattenverzorging.com', // hulpvragen, privacy en voorwaarden
+  bedrijf: {
+    naam: 'MissThing',
+    plaats: 'Capelle aan den IJssel',
+    kvk: '68878214',
+    btw: 'NL001636039B31',
+  },
+  juridischBijgewerkt: '23 oktober 2026',
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,

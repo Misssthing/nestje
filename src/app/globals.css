@@ -76,7 +76,7 @@ img { max-width: 100%; display: block; }
 .mother .ouderfeit { margin-top: 12px; color: var(--ink); font-weight: 600; }
 .ouders { display: grid; gap: 18px; margin-top: 8px; }
 @media (min-width: 560px) { .ouders.twee { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-.ouder img { width: 100%; aspect-ratio: 4/3; object-fit: cover; object-position: 50% 35%; border-radius: 16px; margin-bottom: 10px; background: var(--surface); }
+.ouder img { width: 100%; height: auto; max-height: 440px; object-fit: contain; border-radius: 16px; margin-bottom: 10px; background: color-mix(in srgb, var(--ginger) 12%, var(--surface)); }
 .ouder h3 { margin-top: 0 !important; }
 .ouderfoto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .ouderfoto .vak { display: flex; flex-direction: column; gap: 6px; }
@@ -86,7 +86,9 @@ img { max-width: 100%; display: block; }
 .gz button { border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 36px; }
 .gz button[aria-pressed="true"] { background: var(--free-bg); color: var(--free); border-color: transparent; }
 .cta { margin-top: auto; padding-top: 8px; }
-.nestfoto { position: relative; aspect-ratio: 3/2; border-radius: 20px; overflow: hidden; margin: -8px 0 24px; background: var(--surface); }
+.nestfoto { position: relative; aspect-ratio: 4/3; max-height: 70vh; width: 100%; border-radius: 20px; overflow: hidden; margin: -8px 0 24px; background: color-mix(in srgb, var(--ginger) 12%, var(--surface)); }
+/* Nestfoto's volledig tonen (niet bijsnijden): groepsfoto's hebben wisselende verhoudingen */
+.nestfoto .strip img { object-fit: contain; object-position: 50% 50%; }
 
 /* Knoppen */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 12px; padding: 11px 14px; font-weight: 600; cursor: pointer; text-decoration: none; width: 100%; min-height: 44px; }
