@@ -87,7 +87,7 @@ export default async function NestjesPagina({ params }: Props) {
 
       {nestFotos.length > 0 && (
         <div className="nestfoto">
-          <Fotostrip fotos={nestFotos.map(fotoUrl)} naam={`het nestje van ${nest.moeder_naam}`} />
+          <Fotostrip fotos={nestFotos.map(fotoUrl)} naam={`het nestje van ${nest.moeder_naam}`} vul />
         </div>
       )}
 

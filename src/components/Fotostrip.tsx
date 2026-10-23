@@ -12,7 +12,8 @@ const Poot = () => (
   </svg>
 );
 
-export default function Fotostrip({ fotos, naam }: { fotos: string[]; naam: string }) {
+/** vul: toon de hele foto, met een vervaagde versie van dezelfde foto als achtergrond (voor nestfoto's) */
+export default function Fotostrip({ fotos, naam, vul = false }: { fotos: string[]; naam: string; vul?: boolean }) {
   const [actief, setActief] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -34,16 +35,21 @@ export default function Fotostrip({ fotos, naam }: { fotos: string[]; naam: stri
           setActief(Math.round(el.scrollLeft / el.clientWidth));
         }}
       >
-        {fotos.map((src, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={src}
-            src={src}
-            alt={i === 0 ? `Foto van ${naam}` : `Foto ${i + 1} van ${naam}`}
-            loading={i === 0 ? 'eager' : 'lazy'}
-            decoding="async"
-          />
-        ))}
+        {fotos.map((src, i) => {
+          const alt = i === 0 ? `Foto van ${naam}` : `Foto ${i + 1} van ${naam}`;
+          const laden = i === 0 ? 'eager' : 'lazy';
+          return vul ? (
+            <div key={src} className="slide">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="achter" src={src} alt="" aria-hidden="true" loading={laden} decoding="async" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="voor" src={src} alt={alt} loading={laden} decoding="async" />
+            </div>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={src} src={src} alt={alt} loading={laden} decoding="async" />
+          );
+        })}
       </div>
       {fotos.length > 1 && (
         <div className="stippen" aria-hidden="true">
