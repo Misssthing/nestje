@@ -11,12 +11,12 @@ Draait op **nestje.kattenverzorging.com**. Stack: Next.js 15 (App Router) + Supa
 | `/` | Korte startpagina met knop naar inloggen |
 | `/login` | Inloggen met magic link of de code uit de mail (geen wachtwoorden) |
 | `/beheer` | Nestje aanmaken en beheren: nestfoto's, kittens met foto's en karakteromschrijving, status met één tik, gegevens (vader optioneel), link kopiëren |
-| `/n/[slug]` | Openbare nestjespagina met nestfoto's, aftelling, kittenkaarten, "Vraag naar …", de ouders en starterslijst-blok |
+| `/n/[slug]` | Openbare nestjespagina met nestfoto's, aftelling, kittenkaarten, "Vraag naar …", de ouders en een blok met link naar kattenverzorging.com |
 | `/n/[slug]/opengraph-image` | Automatische deelafbeelding (1200×630) voor WhatsApp en Facebook |
 | `/n/[slug]/vraag/[kittenId]` | Stuurt door naar WhatsApp; het nummer staat nooit in de HTML |
 | `/privacy`, `/voorwaarden` | Concepteksten, nog zelf nakijken |
 
-Vaste instellingen (starterslijst-URL, max. foto's, fotoformaat, standaard verhuisleeftijd) staan in `src/lib/config.ts`.
+Vaste instellingen (link naar kattenverzorging.com, max. foto's, fotoformaat, standaard verhuisleeftijd) staan in `src/lib/config.ts`.
 
 ## Beveiliging in het kort
 

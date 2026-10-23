@@ -158,9 +158,9 @@ export default async function NestjesPagina({ params }: Props) {
 
       <section className="klaar">
         <h2>Klaar voor je kitten?</h2>
-        <p>Van kattenbak tot krabpaal: de starterslijst laat zien wat je in huis wilt hebben voordat je kitten komt.</p>
+        <p>Van kattenbak tot krabpaal: lees wat je in huis wilt hebben voordat je kitten komt.</p>
         <a className="btn accent" href={CONFIG.starterslijstUrl}>
-          Bekijk de starterslijst
+          Wat heb je nodig voor een kitten?
         </a>
       </section>
 

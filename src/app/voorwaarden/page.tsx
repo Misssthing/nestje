@@ -68,7 +68,7 @@ export default function Voorwaarden() {
 
       <h2>9. Links naar kattenverzorging.com</h2>
       <p>
-        Nestjespagina's bevatten een link naar de starterslijst op kattenverzorging.com. Die pagina kan affiliate-links bevatten
+        Nestjespagina's bevatten een link naar de pagina over wat je nodig hebt voor een kitten op kattenverzorging.com. Die pagina kan affiliate-links bevatten
         waarmee kattenverzorging.com een vergoeding ontvangt als je via die link iets koopt. [Controleren en afstemmen op de
         disclosure van kattenverzorging.com.]
       </p>
