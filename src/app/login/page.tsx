@@ -1,28 +1,55 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import LoginForm from './LoginForm';
+'use client';
 
-export const metadata: Metadata = { title: 'Inloggen', robots: { index: false } };
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/browser';
 
-export default async function LoginPagina({ searchParams }: { searchParams: Promise<{ fout?: string }> }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) redirect('/beheer');
-  const { fout } = await searchParams;
+/**
+ * Landingspagina van de inloglink. Supabase zet de sessie in het #-deel van het adres;
+ * deze pagina slaat die op als cookie en stuurt door naar het beheer.
+ * Werkt in elke browser, ook als die niet dezelfde is als waarin de mail is aangevraagd.
+ */
+export default function InloggenAfronden() {
+  const [fout, setFout] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+
+    // Token direct uit de adresbalk en geschiedenis halen
+    window.history.replaceState(null, '', window.location.pathname);
+
+    if (!access_token || !refresh_token) {
+      setFout(true);
+      return;
+    }
+
+    createClient()
+      .auth.setSession({ access_token, refresh_token })
+      .then(({ error }) => {
+        if (error) setFout(true);
+        else window.location.replace('/beheer');
+      });
+  }, []);
 
   return (
     <main className="wrap tekst">
       <div className="bar">
-        <Link href="/" className="brand">Nestje</Link>
+        <span className="brand">Nestje</span>
       </div>
-      <h1>Inloggen</h1>
-      <p>Geen wachtwoord nodig. Je krijgt een mail met een inloglink en een code.</p>
-      {fout && <p className="fout">De inloglink is verlopen of al gebruikt. Vraag hieronder een nieuwe aan.</p>}
-      <LoginForm />
+      {fout ? (
+        <>
+          <h1>Inloggen lukte niet</h1>
+          <p>De inloglink is verlopen of al gebruikt. Vraag een nieuwe aan.</p>
+          <p>
+            <a className="btn primary" style={{ width: 'auto' }} href="/login">
+              Naar inloggen
+            </a>
+          </p>
+        </>
+      ) : (
+        <h1>Bezig met inloggen…</h1>
+      )}
     </main>
   );
 }
