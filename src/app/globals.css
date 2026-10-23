@@ -74,6 +74,14 @@ img { max-width: 100%; display: block; }
 .health { display: flex; gap: 5px; flex-wrap: wrap; }
 .health span { font-size: 12.5px; padding: 2px 8px; border-radius: 6px; background: var(--free-bg); color: var(--free); font-weight: 600; }
 .mother .ouderfeit { margin-top: 12px; color: var(--ink); font-weight: 600; }
+.ouders { display: grid; gap: 18px; margin-top: 8px; }
+@media (min-width: 560px) { .ouders.twee { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.ouder img { width: 100%; aspect-ratio: 4/3; object-fit: cover; object-position: 50% 35%; border-radius: 16px; margin-bottom: 10px; background: var(--surface); }
+.ouder h3 { margin-top: 0 !important; }
+.ouderfoto { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.ouderfoto .vak { display: flex; flex-direction: column; gap: 6px; }
+.ouderfoto .vak > span { font-size: 13px; color: var(--muted); }
+.ouderfoto .thumb { aspect-ratio: 4/3; }
 .gz { display: flex; flex-wrap: wrap; gap: 6px; }
 .gz button { border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 36px; }
 .gz button[aria-pressed="true"] { background: var(--free-bg); color: var(--free); border-color: transparent; }

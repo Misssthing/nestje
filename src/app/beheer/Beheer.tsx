@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Aftelling from '@/components/Aftelling';
 import FotoBeheer from '@/components/FotoBeheer';
 import KopieerLink from '@/components/KopieerLink';
+import OuderFoto from '@/components/OuderFoto';
 import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import { aantalKittens, STATUS_LABEL } from '@/lib/nest';
@@ -92,6 +93,7 @@ export default function Beheer({
   async function verwijderNestje() {
     if (!confirm('Je hele nestje verwijderen? De pagina en alle foto\'s zijn daarna weg.')) return;
     const paden = [
+      ...[nest.moeder_foto, nest.vader_foto].filter((p): p is string => Boolean(p)),
       ...nestFotos.map((f) => f.storage_path),
       ...kittens.flatMap((k) => k.kitten_photos.map((f) => f.storage_path)),
     ];
@@ -152,6 +154,17 @@ export default function Beheer({
           naam={`het nestje van ${nest.moeder_naam}`}
           onFotos={setNestFotos}
         />
+      </section>
+
+      <section className="panel" aria-label="Foto's van de ouders">
+        <h2>Foto&apos;s van de ouders</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
+          Kopers vragen er vaak naar, vooral naar de vader. Komen in het blok “De ouders” op je pagina.
+        </p>
+        <div className="ouderfoto">
+          <OuderFoto supabase={supabase} nest={nest} kolom="moeder_foto" label={`Moeder (${nest.moeder_naam})`} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />
+          <OuderFoto supabase={supabase} nest={nest} kolom="vader_foto" label={nest.vader_naam ? `Vader (${nest.vader_naam})` : 'Vader'} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />
+        </div>
       </section>
 
       <h2 className="kop2">Kittens</h2>

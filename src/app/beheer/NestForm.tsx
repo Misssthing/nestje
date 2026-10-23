@@ -27,6 +27,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     moeder_ras: nest.moeder_ras ?? '',
     vader_ras: nest.vader_ras ?? '',
     ouders_test_info: nest.ouders_test_info ?? '',
+    moeder_gewicht: nest.moeder_gewicht != null ? String(nest.moeder_gewicht).replace('.', ',') : '',
+    vader_gewicht: nest.vader_gewicht != null ? String(nest.vader_gewicht).replace('.', ',') : '',
     over_vader: nest.over_vader ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
@@ -46,6 +48,12 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const prijs = v.prijs.trim() ? Number(v.prijs.replace(',', '.')) : null;
     if (prijs != null && (Number.isNaN(prijs) || prijs < 0)) return setFout('Vul een geldige prijs in.');
 
+    const kg = (t: string) => (t.trim() ? Number(t.replace(',', '.')) : null);
+    const mg = kg(v.moeder_gewicht);
+    const vg = kg(v.vader_gewicht);
+    if ([mg, vg].some((g) => g != null && (Number.isNaN(g) || g < 0.5 || g > 20)))
+      return setFout('Vul het gewicht in kilo’s in, bijvoorbeeld 5,2.');
+
     const patch = {
       moeder_naam: v.moeder_naam.trim(),
       woonplaats: v.woonplaats.trim() || null,
@@ -58,6 +66,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       moeder_ras: v.moeder_ras.trim() || null,
       vader_ras: v.vader_ras.trim() || null,
       stamboom,
+      moeder_gewicht: mg,
+      vader_gewicht: vg,
       ouders_getest: getest,
       ouders_test_info: getest ? v.ouders_test_info.trim() || null : null,
       over_vader: v.over_vader.trim() || null,
@@ -85,6 +95,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} maxLength={60} placeholder="Bijv. Europese korthaar" />
           </label>
         </div>
+        <label className="veld">
+          <span>Gewicht moeder in kg (optioneel)</span>
+          <input inputMode="decimal" value={v.moeder_gewicht} onChange={zet('moeder_gewicht')} placeholder="Bijv. 5,2" />
+        </label>
         <datalist id="rassen">
           {RASSEN.map((r) => <option key={r} value={r} />)}
         </datalist>
@@ -130,8 +144,12 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
         </div>
         <label className="veld">
+          <span>Gewicht vader in kg (optioneel)</span>
+          <input inputMode="decimal" value={v.vader_gewicht} onChange={zet('vader_gewicht')} placeholder="Bijv. 7,5" />
+        </label>
+        <label className="veld">
           <span>Over de vader (optioneel)</span>
-          <textarea value={v.over_vader} onChange={zet('over_vader')} maxLength={1000} placeholder="Ras, karakter, uiterlijk…" />
+          <textarea value={v.over_vader} onChange={zet('over_vader')} maxLength={1000} placeholder="Karakter, uiterlijk, hoe groot hij is…" />
           <p className="hint">Is de vader onbekend? Laat de vadervelden leeg, dan staat er niets over hem op je pagina.</p>
         </label>
         <JaNee label="Stamboom" waarde={stamboom} onChange={setStamboom} />

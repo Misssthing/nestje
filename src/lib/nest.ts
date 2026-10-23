@@ -72,3 +72,15 @@ export const GEZONDHEID: [GezondheidVeld, string][] = [
   ['ontvlooid', 'Ontvlooid'],
   ['dierenarts', 'Gezondheidscheck dierenarts'],
 ];
+
+/** 5.2 → "5,2 kg" */
+export const kiloNL = (kg: number) =>
+  `${new Intl.NumberFormat('nl-NL', { maximumFractionDigits: 1 }).format(Number(kg))} kg`;
+
+/** "Milou (Maine Coon, 5,2 kg)" */
+export function ouderLabel(naam: string | null | undefined, ras?: string | null, gewicht?: number | null) {
+  const extra = [ras?.trim(), gewicht ? kiloNL(gewicht) : ''].filter(Boolean).join(', ');
+  const n = naam?.trim() || '';
+  if (n && extra) return `${n} (${extra})`;
+  return n || extra;
+}

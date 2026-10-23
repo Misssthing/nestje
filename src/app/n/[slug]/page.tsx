@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl } from '@/lib/config';
-import { aantalKittens, aftelling, datumNL, GEZONDHEID, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -53,7 +53,9 @@ export default async function NestjesPagina({ params }: Props) {
 
   const { nest, kittens, nestFotos } = data;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
-  const heeftVader = Boolean(nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim());
+  const heeftVader = Boolean(
+    nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim() || nest.vader_gewicht || nest.vader_foto,
+  );
   const ras = rasTekst(nest.moeder_ras, nest.vader_ras);
   const stamboom = nest.stamboom === true ? ' Met stamboom.' : nest.stamboom === false ? ' Zonder stamboom.' : '';
   const testInfo = nest.ouders_test_info?.trim();
@@ -64,7 +66,8 @@ export default async function NestjesPagina({ params }: Props) {
         ? 'Ouders niet getest op erfelijke aandoeningen.'
         : '';
   const heeftGezondheid = kittens.some((k) => GEZONDHEID.some(([v]) => k[v]));
-  const metRas = (naam: string, r?: string | null) => (r?.trim() ? `${naam} (${r.trim()})` : naam);
+  const moederLabel = ouderLabel(nest.moeder_naam, nest.moeder_ras, nest.moeder_gewicht);
+  const vaderLabel = ouderLabel(nest.vader_naam, nest.vader_ras, nest.vader_gewicht);
   const overMoeder =
     nest.over_moeder?.trim() ||
     `${nest.moeder_naam} is de moeder van dit nestje. Je bent welkom om de kittens en ${nest.moeder_naam} te komen bekijken voordat je beslist.`;
@@ -158,20 +161,27 @@ export default async function NestjesPagina({ params }: Props) {
       {heeftGezondheid && <p className="hint" style={{ marginTop: 10 }}>Gezondheidsgegevens zijn ingevuld door de verkoper.</p>}
 
       <section className="mother">
-        {heeftVader ? (
-          <>
-            <h2>De ouders</h2>
-            <h3>Moeder: {metRas(nest.moeder_naam, nest.moeder_ras)}</h3>
+        <h2>{heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}</h2>
+        <div className={`ouders${heeftVader ? ' twee' : ''}`}>
+          <div className="ouder">
+            {nest.moeder_foto && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={fotoUrl(nest.moeder_foto)} alt={`Foto van moeder ${nest.moeder_naam}`} loading="lazy" />
+            )}
+            {(heeftVader || moederLabel !== nest.moeder_naam) && <h3>Moeder: {moederLabel}</h3>}
             <p>{overMoeder}</p>
-            <h3>Vader{nest.vader_naam?.trim() ? `: ${metRas(nest.vader_naam.trim(), nest.vader_ras)}` : nest.vader_ras?.trim() ? `: ${nest.vader_ras.trim()}` : ''}</h3>
-            {nest.over_vader?.trim() && <p>{nest.over_vader.trim()}</p>}
-          </>
-        ) : (
-          <>
-            <h2>Over {nest.moeder_naam}</h2>
-            <p>{overMoeder}</p>
-          </>
-        )}
+          </div>
+          {heeftVader && (
+            <div className="ouder">
+              {nest.vader_foto && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={fotoUrl(nest.vader_foto)} alt={`Foto van de vader${nest.vader_naam ? ` ${nest.vader_naam}` : ''}`} loading="lazy" />
+              )}
+              <h3>Vader{vaderLabel ? `: ${vaderLabel}` : ''}</h3>
+              {nest.over_vader?.trim() && <p>{nest.over_vader.trim()}</p>}
+            </div>
+          )}
+        </div>
         {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
       </section>
 

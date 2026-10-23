@@ -18,6 +18,10 @@ export interface Nest {
   stamboom: boolean | null;
   ouders_getest: boolean | null;
   ouders_test_info: string | null;
+  moeder_gewicht: number | null;
+  vader_gewicht: number | null;
+  moeder_foto: string | null;
+  vader_foto: string | null;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };
