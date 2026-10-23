@@ -13,6 +13,8 @@ export interface Nest {
   over_moeder: string | null;
   vader_naam: string | null;
   over_vader: string | null;
+  moeder_ras: string | null;
+  vader_ras: string | null;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };

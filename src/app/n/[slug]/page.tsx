@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl } from '@/lib/config';
-import { aantalKittens, aftelling, datumNL, prijsNL, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, datumNL, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -53,7 +53,9 @@ export default async function NestjesPagina({ params }: Props) {
 
   const { nest, kittens, nestFotos } = data;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
-  const heeftVader = Boolean(nest.vader_naam?.trim() || nest.over_vader?.trim());
+  const heeftVader = Boolean(nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim());
+  const ras = rasTekst(nest.moeder_ras, nest.vader_ras);
+  const metRas = (naam: string, r?: string | null) => (r?.trim() ? `${naam} (${r.trim()})` : naam);
   const overMoeder =
     nest.over_moeder?.trim() ||
     `${nest.moeder_naam} is de moeder van dit nestje. Je bent welkom om de kittens en ${nest.moeder_naam} te komen bekijken voordat je beslist.`;
@@ -82,7 +84,7 @@ export default async function NestjesPagina({ params }: Props) {
         <p>
           {aantalKittens(kittens.length)}, geboren op {datumNL(a.geboren)}
           {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {a.leeftijdWeken}{' '}
-          {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.
+          {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}
         </p>
         <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
       </section>
@@ -141,9 +143,9 @@ export default async function NestjesPagina({ params }: Props) {
         {heeftVader ? (
           <>
             <h2>De ouders</h2>
-            <h3>Moeder: {nest.moeder_naam}</h3>
+            <h3>Moeder: {metRas(nest.moeder_naam, nest.moeder_ras)}</h3>
             <p>{overMoeder}</p>
-            <h3>Vader{nest.vader_naam?.trim() ? `: ${nest.vader_naam.trim()}` : ''}</h3>
+            <h3>Vader{nest.vader_naam?.trim() ? `: ${metRas(nest.vader_naam.trim(), nest.vader_ras)}` : nest.vader_ras?.trim() ? `: ${nest.vader_ras.trim()}` : ''}</h3>
             {nest.over_vader?.trim() && <p>{nest.over_vader.trim()}</p>}
           </>
         ) : (

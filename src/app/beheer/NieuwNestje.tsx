@@ -68,7 +68,7 @@ export default function NieuwNestje() {
         </label>
         <div className="row stapel">
           <label className="veld">
-            <span>Geboren op</span>
+            <span>Kittens geboren op</span>
             <input type="date" value={geboren} max={vandaag} onChange={(e) => setGeboren(e.target.value)} required />
           </label>
           <label className="veld">

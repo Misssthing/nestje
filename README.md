@@ -40,6 +40,7 @@ Vaste instellingen (starterslijst-URL, max. foto's, fotoformaat, standaard verhu
 2. **Database aanmaken:** open **SQL Editor** → **New query** en voer de bestanden uit `supabase/migrations/` één voor één uit, op volgorde van bestandsnaam (plakken, **Run**, volgende):
    1. `20261023000000_nestje.sql`: tabellen, RLS-policies, views, de WhatsApp-functie, de bucket `kitten-fotos` en de storage-policies.
    2. `20261024000000_ouders_omschrijving_nestfotos.sql`: vader (optioneel), karakteromschrijving per kitten en de tabel `nest_photos`.
+   3. `20261025000000_ras.sql`: ras van moeder en vader (optioneel).
    - Controle: **Table Editor** toont `nests`, `kittens`, `kitten_photos` en `nest_photos` met het RLS-schildje; **Storage** toont de bucket `kitten-fotos` (Public).
    - Krijg je bij de storage-policies een melding over rechten, maak ze dan via **Storage → Policies** aan met dezelfde voorwaarden.
 3. **Authenticatie instellen:** **Authentication → URL Configuration**

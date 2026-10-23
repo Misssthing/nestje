@@ -47,3 +47,17 @@ export function toonNummer(n: string | null) {
 export function aantalKittens(n: number) {
   return `${n} ${n === 1 ? 'kitten' : 'kittens'}`;
 }
+
+export const RASSEN = [
+  'Huiskat', 'Europese korthaar', 'Kruising', 'Brits korthaar', 'Maine Coon', 'Ragdoll',
+  'Noorse boskat', 'Siberische kat', 'Siamees', 'Bengaal', 'Perzisch', 'Sphynx',
+];
+
+/** "Ras: Maine Coon" of "Moeder Maine Coon, vader Ragdoll". Leeg als niets is ingevuld. */
+export function rasTekst(moeder?: string | null, vader?: string | null) {
+  const m = moeder?.trim();
+  const v = vader?.trim();
+  if (m && v && m.toLowerCase() !== v.toLowerCase()) return `Moeder ${m}, vader ${v}`;
+  if (m || v) return `Ras: ${m || v}`;
+  return '';
+}

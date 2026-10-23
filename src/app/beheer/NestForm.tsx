@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useState } from 'react';
 import { useToast } from '@/components/Toast';
-import { normaliseerNummer, toonNummer } from '@/lib/nest';
+import { normaliseerNummer, RASSEN, toonNummer } from '@/lib/nest';
 import type { Nest } from '@/lib/types';
 
 type Props = {
@@ -24,6 +24,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     whatsapp: toonNummer(nest.whatsapp_nummer),
     over_moeder: nest.over_moeder ?? '',
     vader_naam: nest.vader_naam ?? '',
+    moeder_ras: nest.moeder_ras ?? '',
+    vader_ras: nest.vader_ras ?? '',
     over_vader: nest.over_vader ?? '',
   });
   const [fout, setFout] = useState('');
@@ -50,6 +52,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       whatsapp_nummer: nummer,
       over_moeder: v.over_moeder.trim() || null,
       vader_naam: v.vader_naam.trim() || null,
+      moeder_ras: v.moeder_ras.trim() || null,
+      vader_ras: v.vader_ras.trim() || null,
       over_vader: v.over_vader.trim() || null,
     };
     setBezig(true);
@@ -71,13 +75,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input value={v.moeder_naam} onChange={zet('moeder_naam')} maxLength={60} required />
           </label>
           <label className="veld">
-            <span>Woonplaats</span>
-            <input value={v.woonplaats} onChange={zet('woonplaats')} maxLength={80} />
+            <span>Ras moeder (optioneel)</span>
+            <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} maxLength={60} placeholder="Bijv. Europese korthaar" />
           </label>
         </div>
+        <datalist id="rassen">
+          {RASSEN.map((r) => <option key={r} value={r} />)}
+        </datalist>
+        <label className="veld">
+          <span>Woonplaats</span>
+          <input value={v.woonplaats} onChange={zet('woonplaats')} maxLength={80} />
+        </label>
         <div className="row stapel">
           <label className="veld">
-            <span>Geboren op</span>
+            <span>Kittens geboren op</span>
             <input type="date" value={v.geboortedatum} onChange={zet('geboortedatum')} required />
           </label>
           <label className="veld">
@@ -102,14 +113,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           <span>Over de moeder</span>
           <textarea value={v.over_moeder} onChange={zet('over_moeder')} maxLength={2000} placeholder="Karakter, gezondheid, hoe de kittens opgroeien…" />
         </label>
-        <label className="veld">
-          <span>Naam vader (optioneel)</span>
-          <input value={v.vader_naam} onChange={zet('vader_naam')} maxLength={60} />
-        </label>
+        <div className="row stapel">
+          <label className="veld">
+            <span>Naam vader (optioneel)</span>
+            <input value={v.vader_naam} onChange={zet('vader_naam')} maxLength={60} />
+          </label>
+          <label className="veld">
+            <span>Ras vader (optioneel)</span>
+            <input list="rassen" value={v.vader_ras} onChange={zet('vader_ras')} maxLength={60} />
+          </label>
+        </div>
         <label className="veld">
           <span>Over de vader (optioneel)</span>
           <textarea value={v.over_vader} onChange={zet('over_vader')} maxLength={1000} placeholder="Ras, karakter, uiterlijk…" />
-          <p className="hint">Is de vader onbekend? Laat beide velden leeg, dan staat er niets over op je pagina.</p>
+          <p className="hint">Is de vader onbekend? Laat de vadervelden leeg, dan staat er niets over hem op je pagina.</p>
         </label>
         {fout && <p className="fout">{fout}</p>}
         <button className="btn primary" disabled={bezig}>{bezig ? 'Bezig…' : 'Gegevens opslaan'}</button>
