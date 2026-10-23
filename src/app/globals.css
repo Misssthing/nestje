@@ -112,7 +112,9 @@ img { max-width: 100%; display: block; }
 .veld.notitie textarea { min-height: 64px; background: var(--res-bg); border-color: transparent; }
 .veld.notitie > span { color: var(--res); font-weight: 600; }
 .fout { font-size: 14px; color: var(--danger); margin: 6px 0 0; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.row > *, .veld { min-width: 0; }
+.veld input, .veld select, .veld textarea { max-width: 100%; }
 @media (max-width: 420px) { .row.stapel { grid-template-columns: 1fr; } }
 
 .seg { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
