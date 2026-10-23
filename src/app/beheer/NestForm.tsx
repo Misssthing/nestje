@@ -26,8 +26,11 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     vader_naam: nest.vader_naam ?? '',
     moeder_ras: nest.moeder_ras ?? '',
     vader_ras: nest.vader_ras ?? '',
+    ouders_test_info: nest.ouders_test_info ?? '',
     over_vader: nest.over_vader ?? '',
   });
+  const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
+  const [getest, setGetest] = useState<boolean | null>(nest.ouders_getest);
   const [fout, setFout] = useState('');
   const [bezig, setBezig] = useState(false);
   const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -54,6 +57,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       vader_naam: v.vader_naam.trim() || null,
       moeder_ras: v.moeder_ras.trim() || null,
       vader_ras: v.vader_ras.trim() || null,
+      stamboom,
+      ouders_getest: getest,
+      ouders_test_info: getest ? v.ouders_test_info.trim() || null : null,
       over_vader: v.over_vader.trim() || null,
     };
     setBezig(true);
@@ -128,9 +134,33 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           <textarea value={v.over_vader} onChange={zet('over_vader')} maxLength={1000} placeholder="Ras, karakter, uiterlijk…" />
           <p className="hint">Is de vader onbekend? Laat de vadervelden leeg, dan staat er niets over hem op je pagina.</p>
         </label>
+        <JaNee label="Stamboom" waarde={stamboom} onChange={setStamboom} />
+        <JaNee label="Ouders getest op erfelijke aandoeningen" waarde={getest} onChange={setGetest} />
+        {getest && (
+          <label className="veld">
+            <span>Waarop getest (optioneel)</span>
+            <input value={v.ouders_test_info} onChange={zet('ouders_test_info')} maxLength={120} placeholder="Bijv. HCM, PKD" />
+          </label>
+        )}
         {fout && <p className="fout">{fout}</p>}
         <button className="btn primary" disabled={bezig}>{bezig ? 'Bezig…' : 'Gegevens opslaan'}</button>
       </form>
     </details>
+  );
+}
+
+function JaNee({ label, waarde, onChange }: { label: string; waarde: boolean | null; onChange: (w: boolean | null) => void }) {
+  const opties: [boolean | null, string][] = [[true, 'Ja'], [false, 'Nee'], [null, 'Niet vermelden']];
+  return (
+    <div className="veld">
+      <span>{label}</span>
+      <div className="seg" role="group" aria-label={label}>
+        {opties.map(([w, t]) => (
+          <button type="button" key={t} aria-pressed={waarde === w} onClick={() => onChange(w)}>
+            {t}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

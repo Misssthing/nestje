@@ -42,6 +42,7 @@ Vaste instellingen (link naar kattenverzorging.com, max. foto's, fotoformaat, st
    2. `20261024000000_ouders_omschrijving_nestfotos.sql`: vader (optioneel), karakteromschrijving per kitten en de tabel `nest_photos`.
    3. `20261025000000_ras.sql`: ras van moeder en vader (optioneel).
    4. `20261026000000_notitie.sql`: privénotitie per kitten, alleen zichtbaar voor de verkoper.
+   5. `20261027000000_gezondheid.sql`: stamboom, geteste ouders en gezondheid per kitten.
    - Controle: **Table Editor** toont `nests`, `kittens`, `kitten_photos` en `nest_photos` met het RLS-schildje; **Storage** toont de bucket `kitten-fotos` (Public).
    - Krijg je bij de storage-policies een melding over rechten, maak ze dan via **Storage → Policies** aan met dezelfde voorwaarden.
 3. **Authenticatie instellen:** **Authentication → URL Configuration**

@@ -15,6 +15,9 @@ export interface Nest {
   over_vader: string | null;
   moeder_ras: string | null;
   vader_ras: string | null;
+  stamboom: boolean | null;
+  ouders_getest: boolean | null;
+  ouders_test_info: string | null;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };
@@ -45,6 +48,12 @@ export interface Kitten {
   omschrijving: string | null;
   /** Alleen voor de verkoper, nooit in de openbare views */
   notitie: string | null;
+  gechipt: boolean;
+  enting1: boolean;
+  enting2: boolean;
+  ontwormd: boolean;
+  ontvlooid: boolean;
+  dierenarts: boolean;
 }
 
 export type KittenMetFotos = Kitten & { kitten_photos: Foto[] };

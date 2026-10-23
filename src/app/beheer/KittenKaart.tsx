@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import FotoBeheer from '@/components/FotoBeheer';
 import { CONFIG } from '@/lib/config';
-import { STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { GEZONDHEID, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import type { Foto, Kitten, KittenMetFotos } from '@/lib/types';
 
 const VACHTEN = ['zwart', 'zwart/wit', 'rood', 'rood/wit', 'cyperse', 'cyperse/wit', 'schildpad', 'lapjes', 'blauw', 'blauw/wit', 'crème', 'wit'];
@@ -129,6 +129,21 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
             {VACHTEN.map((v) => <option key={v} value={v} />)}
           </datalist>
         </label>
+      </div>
+
+      <div className="veld" style={{ margin: 0 }}>
+        <span>Gezondheid</span>
+        <div className="gz" role="group" aria-label={`Gezondheid van ${kitten.naam}`}>
+          {GEZONDHEID.map(([v, label]) => (
+            <button
+              key={v}
+              aria-pressed={kitten[v]}
+              onClick={() => onWijzig({ [v]: !kitten[v] } as Partial<Kitten>, `${label}: ${kitten[v] ? 'uit' : 'aan'}`)}
+            >
+              {kitten[v] ? '✓ ' : ''}{label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <label className="veld" style={{ margin: 0 }}>

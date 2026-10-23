@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl } from '@/lib/config';
-import { aantalKittens, aftelling, datumNL, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, datumNL, GEZONDHEID, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -55,6 +55,15 @@ export default async function NestjesPagina({ params }: Props) {
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const heeftVader = Boolean(nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim());
   const ras = rasTekst(nest.moeder_ras, nest.vader_ras);
+  const stamboom = nest.stamboom === true ? ' Met stamboom.' : nest.stamboom === false ? ' Zonder stamboom.' : '';
+  const testInfo = nest.ouders_test_info?.trim();
+  const ouderTest =
+    nest.ouders_getest === true
+      ? `Ouders getest op erfelijke aandoeningen${testInfo ? `: ${testInfo}` : ''}.`
+      : nest.ouders_getest === false
+        ? 'Ouders niet getest op erfelijke aandoeningen.'
+        : '';
+  const heeftGezondheid = kittens.some((k) => GEZONDHEID.some(([v]) => k[v]));
   const metRas = (naam: string, r?: string | null) => (r?.trim() ? `${naam} (${r.trim()})` : naam);
   const overMoeder =
     nest.over_moeder?.trim() ||
@@ -84,7 +93,7 @@ export default async function NestjesPagina({ params }: Props) {
         <p>
           {aantalKittens(kittens.length)}, geboren op {datumNL(a.geboren)}
           {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {a.leeftijdWeken}{' '}
-          {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}
+          {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}{stamboom}
         </p>
         <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
       </section>
@@ -113,6 +122,13 @@ export default async function NestjesPagina({ params }: Props) {
                 {k.vacht ? `, ${k.vacht}` : ''}
                 {nest.prijs ? ` · ${prijsNL(Number(nest.prijs))}` : ''}
               </p>
+              {GEZONDHEID.some(([v]) => k[v]) && (
+                <div className="health">
+                  {GEZONDHEID.filter(([v]) => k[v]).map(([v, label]) => (
+                    <span key={v}>✓ {label}</span>
+                  ))}
+                </div>
+              )}
               {k.omschrijving && <p className="komschrijving">{k.omschrijving}</p>}
               <div className="cta">
                 {k.status === 'vrij' && nest.heeft_whatsapp ? (
@@ -139,6 +155,8 @@ export default async function NestjesPagina({ params }: Props) {
         ))}
       </div>
 
+      {heeftGezondheid && <p className="hint" style={{ marginTop: 10 }}>Gezondheidsgegevens zijn ingevuld door de verkoper.</p>}
+
       <section className="mother">
         {heeftVader ? (
           <>
@@ -154,6 +172,7 @@ export default async function NestjesPagina({ params }: Props) {
             <p>{overMoeder}</p>
           </>
         )}
+        {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
       </section>
 
       <section className="klaar">

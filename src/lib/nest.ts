@@ -61,3 +61,14 @@ export function rasTekst(moeder?: string | null, vader?: string | null) {
   if (m || v) return `Ras: ${m || v}`;
   return '';
 }
+
+export type GezondheidVeld = 'gechipt' | 'enting1' | 'enting2' | 'ontwormd' | 'ontvlooid' | 'dierenarts';
+
+export const GEZONDHEID: [GezondheidVeld, string][] = [
+  ['gechipt', 'Gechipt'],
+  ['enting1', '1e enting'],
+  ['enting2', '2e enting'],
+  ['ontwormd', 'Ontwormd'],
+  ['ontvlooid', 'Ontvlooid'],
+  ['dierenarts', 'Gezondheidscheck dierenarts'],
+];

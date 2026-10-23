@@ -25,7 +25,7 @@ export const haalNestje = cache(async (slug: string) => {
 
   const { data: kittens } = await supabase
     .from('openbare_kittens')
-    .select('id, naam, geslacht, vacht, status, volgorde, omschrijving')
+    .select('id, naam, geslacht, vacht, status, volgorde, omschrijving, gechipt, enting1, enting2, ontwormd, ontvlooid, dierenarts')
     .eq('nest_id', nest.id)
     .order('volgorde')
     .returns<Omit<Kitten, 'nest_id' | 'notitie'>[]>();
