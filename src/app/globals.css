@@ -116,6 +116,10 @@ img { max-width: 100%; display: block; }
 .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .row > *, .veld { min-width: 0; }
 .veld input, .veld select, .veld textarea { max-width: 100%; }
+/* Safari geeft datumvelden een eigen minimale breedte; uitschakelen */
+input[type="date"] { -webkit-appearance: none; appearance: none; display: block; min-width: 0; width: 100%; line-height: 1.3; }
+input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type="date"]::-webkit-datetime-edit { padding: 0; }
 @media (max-width: 420px) { .row.stapel { grid-template-columns: 1fr; } }
 
 .seg { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3px; gap: 3px; }
@@ -169,3 +173,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 .voorbeeld { margin-top: 40px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .voorbeeld .big { font-size: clamp(72px, 20vw, 120px); font-weight: 800; color: var(--ginger); line-height: .9; letter-spacing: -.04em; }
 .voorbeeld .txt { font-size: 19px; max-width: 18ch; line-height: 1.25; }
+
+/* Hulppagina */
+.hulp-antwoord p { color: var(--muted); margin: 0; max-width: 64ch; }
+.hulp-antwoord p + p { margin-top: 10px; }

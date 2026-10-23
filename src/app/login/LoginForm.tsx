@@ -79,6 +79,9 @@ export default function LoginForm() {
             required
           />
         </label>
+        <p className="hint" style={{ marginTop: -2, marginBottom: 10 }}>
+          Geen mail? Kijk ook in Ongewenst, Spam of het tabblad Overige, en zoek op “Nestje”. Het kan een paar minuten duren.
+        </p>
         {fout && <p className="fout">{fout}</p>}
         <div className="actions">
           <button className="btn primary" disabled={bezig}>
@@ -109,6 +112,9 @@ export default function LoginForm() {
       <button className="btn primary" disabled={bezig}>
         {bezig ? 'Bezig…' : 'Stuur inloglink'}
       </button>
+      <p className="hint" style={{ marginTop: 12 }}>
+        Kom je er niet uit? <a href="/hulp">Bekijk de hulp</a>
+      </p>
     </form>
   );
 }

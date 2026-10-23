@@ -8,6 +8,7 @@ export default function Voet() {
         Gemaakt met <Link href="/">Nestje</Link> van{' '}
         <a href={CONFIG.moederSiteUrl}>kattenverzorging.com</a>
       </span>
+      <Link href="/hulp">Hulp</Link>
       <Link href="/privacy">Privacy</Link>
       <Link href="/voorwaarden">Voorwaarden</Link>
     </footer>

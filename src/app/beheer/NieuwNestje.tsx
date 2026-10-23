@@ -53,9 +53,12 @@ export default function NieuwNestje() {
     <main className="wrap">
       <div className="bar">
         <span className="brand">Nestje</span>
-        <form action="/auth/uitloggen" method="post">
-          <button className="btn ghost klein">Uitloggen</button>
-        </form>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a className="btn ghost klein" href="/hulp">Hulp</a>
+          <form action="/auth/uitloggen" method="post">
+            <button className="btn ghost klein">Uitloggen</button>
+          </form>
+        </div>
       </div>
       <section className="hero">
         <h1>Je nestje aanmaken</h1>

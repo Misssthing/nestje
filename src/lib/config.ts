@@ -4,7 +4,7 @@ export const CONFIG = {
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, ''),
   starterslijstUrl: 'https://www.kattenverzorging.com/wat-heb-je-nodig-voor-een-kitten/',
   moederSiteUrl: 'https://www.kattenverzorging.com/',
-  contactEmail: 'privacy@kattenverzorging.com', // nakijken
+  contactEmail: 'nestje@kattenverzorging.com', // hulpvragen, privacy en voorwaarden
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,
