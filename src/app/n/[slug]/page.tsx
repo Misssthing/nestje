@@ -5,7 +5,7 @@ import Aftelling from '@/components/Aftelling';
 import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
-import { CONFIG, fotoUrl } from '@/lib/config';
+import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
@@ -192,7 +192,7 @@ export default async function NestjesPagina({ params }: Props) {
       <section className="klaar">
         <h2>Klaar voor je kitten?</h2>
         <p>Van kattenbak tot krabpaal: lees wat je in huis wilt hebben voordat je kitten komt.</p>
-        <a className="btn accent" href={CONFIG.starterslijstUrl}>
+        <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)}>
           Wat heb je nodig voor een kitten?
         </a>
       </section>

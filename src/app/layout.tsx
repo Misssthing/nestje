@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Bricolage_Grotesque } from 'next/font/google';
 import { ToastProvider } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
+import Meting from '@/components/Meting';
 import './globals.css';
 
 const bricolage = Bricolage_Grotesque({
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="nl" className={bricolage.variable}>
       <body>
         <ToastProvider>{children}</ToastProvider>
+        <Meting />
       </body>
     </html>
   );

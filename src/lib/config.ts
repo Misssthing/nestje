@@ -11,7 +11,7 @@ export const CONFIG = {
     kvk: '68878214',
     btw: 'NL001636039B31',
   },
-  juridischBijgewerkt: '23 oktober 2026',
+  juridischBijgewerkt: '24 oktober 2026',
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,
@@ -23,6 +23,16 @@ export const CONFIG = {
 
 export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 export const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+/** Plakt UTM-tags aan links naar kattenverzorging.com, zodat ze herkenbaar zijn in je statistieken. */
+export function metUtm(url: string, campagne: string, inhoud?: string) {
+  const u = new URL(url);
+  u.searchParams.set('utm_source', 'nestje');
+  u.searchParams.set('utm_medium', 'referral');
+  u.searchParams.set('utm_campaign', campagne);
+  if (inhoud) u.searchParams.set('utm_content', inhoud);
+  return u.toString();
+}
 
 export function fotoUrl(pad: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.fotoBucket}/${pad}`;

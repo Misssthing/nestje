@@ -33,9 +33,11 @@ export default function Privacy() {
         <li>Technische gegevens die nodig zijn om de dienst te laten werken en te beveiligen, zoals IP-adres en tijdstip van inloggen, in de logbestanden van onze dienstverleners.</li>
       </ul>
       <p>
-        <strong>Van bezoekers van een nestjespagina:</strong> wij verzamelen geen persoonsgegevens. Onze dienstverleners houden korte
-        tijd technische logbestanden bij, zoals het IP-adres, voor de beveiliging. Tik je op “Vraag naar …”, dan open je WhatsApp
-        en vallen je gegevens onder de voorwaarden en het privacybeleid van WhatsApp.
+        <strong>Van bezoekers van een nestjespagina:</strong> wij verzamelen geen persoonsgegevens. We tellen anoniem hoeveel
+        bezoekers een pagina heeft en hoe vaak er op “Vraag naar …” wordt getikt, zonder cookies en zonder dat je als bezoeker
+        herkenbaar wordt opgeslagen. Onze dienstverleners houden korte tijd technische logbestanden bij, zoals het IP-adres, voor de
+        beveiliging. Tik je op “Vraag naar …”, dan open je WhatsApp en vallen je gegevens onder de voorwaarden en het privacybeleid
+        van WhatsApp.
       </p>
 
       <h2>Wat openbaar is</h2>
@@ -63,7 +65,8 @@ export default function Privacy() {
           EU-VS Data Privacy Framework en/of standaardcontractbepalingen.
         </li>
         <li>
-          <strong>Vercel</strong>, voor de hosting van de website. Vercel kan gegevens verwerken in de Verenigde Staten; doorgifte
+          <strong>Vercel</strong>, voor de hosting van de website en de anonieme bezoekersstatistieken (Vercel Web Analytics,
+          zonder cookies). Vercel kan gegevens verwerken in de Verenigde Staten; doorgifte
           gebeurt op basis van het EU-VS Data Privacy Framework en/of standaardcontractbepalingen.
         </li>
         <li><strong>Brevo</strong>, een Frans bedrijf, voor het versturen van de inlogmails vanuit de Europese Unie.</li>
@@ -73,7 +76,8 @@ export default function Privacy() {
       <h2>Cookies</h2>
       <p>
         Nestje gebruikt alleen functionele cookies die nodig zijn om je ingelogd te houden. Er zijn geen tracking- of
-        advertentiecookies.
+        advertentiecookies. De bezoekersstatistieken werken zonder cookies. Links naar kattenverzorging.com bevatten een
+        kenmerk in het webadres (UTM-tag), zodat kattenverzorging.com kan zien dat je via Nestje kwam.
       </p>
 
       <h2>Hoe lang we gegevens bewaren</h2>

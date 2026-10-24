@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { CONFIG } from '@/lib/config';
+import { CONFIG, metUtm } from '@/lib/config';
 
 export default function Voet() {
   return (
     <footer className="voet">
       <span>
         Gemaakt met <Link href="/">Nestje</Link> van{' '}
-        <a href={CONFIG.moederSiteUrl}>kattenverzorging.com</a>
+        <a href={metUtm(CONFIG.moederSiteUrl, 'voet')}>kattenverzorging.com</a>
       </span>
       <Link href="/hulp">Hulp</Link>
       <Link href="/privacy">Privacy</Link>
