@@ -132,7 +132,7 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
       </div>
 
       <div className="veld" style={{ margin: 0 }}>
-        <span>Gezondheid</span>
+        <span>Gezondheid <span className="hint">(optioneel)</span></span>
         <div className="gz" role="group" aria-label={`Gezondheid van ${kitten.naam}`}>
           {GEZONDHEID.map(([v, label]) => (
             <button
@@ -144,6 +144,7 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
             </button>
           ))}
         </div>
+        <p className="hint">Vink alleen aan wat geregeld is. Wat je niet aanvinkt, komt niet op de pagina.</p>
       </div>
 
       <label className="veld" style={{ margin: 0 }}>
