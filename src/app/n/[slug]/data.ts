@@ -51,9 +51,17 @@ export const haalNestje = cache(async (slug: string) => {
     .eq('slug', slug)
     .maybeSingle<{ profiel_slug: string; profiel_naam: string }>();
 
+  // Staat dit nestje in het openbare overzicht? Dan tonen we een link terug.
+  const { data: inOverzicht } = await supabase
+    .from('openbare_overzicht')
+    .select('slug')
+    .eq('slug', slug)
+    .maybeSingle<{ slug: string }>();
+
   return {
     nest,
     profiel,
+    inOverzicht: Boolean(inOverzicht),
     nestFotos: (nestFotos ?? []).map((f) => f.storage_path),
     kittens: (kittens ?? []).map<OpenbaarKitten>((k) => ({ ...k, fotos: perKitten.get(k.id) ?? [] })),
   };

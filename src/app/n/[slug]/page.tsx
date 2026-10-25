@@ -51,7 +51,7 @@ export default async function NestjesPagina({ params }: Props) {
   const data = await haalNestje(slug);
   if (!data) notFound();
 
-  const { nest, kittens, nestFotos, profiel } = data;
+  const { nest, kittens, nestFotos, profiel, inOverzicht } = data;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const heeftVader = Boolean(
     nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim() || nest.vader_gewicht || nest.vader_foto,
@@ -79,9 +79,15 @@ export default async function NestjesPagina({ params }: Props) {
   return (
     <main className="wrap">
       <div className="bar">
-        <Link href="/" className="brand">
-          Nestje
-        </Link>
+        {inOverzicht ? (
+          <Link href="/kittens" className="brand">
+            ← Alle kittens
+          </Link>
+        ) : (
+          <Link href="/" className="brand">
+            Nestje
+          </Link>
+        )}
         <KopieerLink url={paginaUrl} className="btn ghost klein" />
       </div>
 

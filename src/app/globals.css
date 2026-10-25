@@ -227,5 +227,6 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Overzicht */
 .filters { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-top: 18px; }
 .filters .veld { margin: 0; }
-.filters .btn { width: auto; }
+.filters .btn { width: auto; height: 48px; min-height: 48px; }
+.filters select { height: 48px; min-height: 48px; }
 @media (max-width: 520px) { .filters { grid-template-columns: 1fr 1fr; } .filters .btn { grid-column: 1 / -1; } }
