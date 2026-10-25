@@ -2,7 +2,7 @@
 :root {
   --bg: #EEF1EC; --surface: #FFFFFF; --ink: #1F2A24; --muted: #5E6B63; --line: #D5DCD3;
   --ginger: #E39B3B; --ginger-ink: #1F2A24;
-  --free: #3F7A55; --free-bg: #DDEEDF; --res: #6E5FA3; --res-bg: #E6E1F4;
+  --free: #3F7A55; --free-bg: #DDEEDF; --res: #6E5FA3; --res-bg: #E6E1F4; --opt: #8A5410; --opt-bg: #FBE9CF;
   --sold: #7D847F; --sold-bg: #E4E7E3; --danger: #A8402F; --focus: #2F6FD6;
   color-scheme: light;
   box-sizing: border-box;
@@ -12,7 +12,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #151B17; --surface: #1F2722; --ink: #E9EEE9; --muted: #A3AFA7; --line: #33403A;
-    --ginger: #EDAA52; --free: #7FC497; --free-bg: #22392A; --res: #B3A6E6; --res-bg: #2E2945;
+    --ginger: #EDAA52; --free: #7FC497; --free-bg: #22392A; --res: #B3A6E6; --res-bg: #2E2945; --opt: #F0B866; --opt-bg: #3A2C17;
     --sold: #9AA19C; --sold-bg: #2A302C; --danger: #F08C78; --focus: #7FAEF5;
     color-scheme: dark;
   }
@@ -50,6 +50,7 @@ img { max-width: 100%; display: block; }
 .sum { display: flex; gap: 8px; flex-wrap: wrap; margin: 30px 0 14px; }
 .chip { font-size: 14px; padding: 4px 11px; border-radius: 999px; font-weight: 600; }
 .chip.vrij { background: var(--free-bg); color: var(--free); }
+.chip.optie { background: var(--opt-bg); color: var(--opt); }
 .chip.gereserveerd { background: var(--res-bg); color: var(--res); }
 .chip.verhuisd { background: var(--sold-bg); color: var(--sold); }
 
@@ -150,6 +151,7 @@ input[type="date"]::-webkit-datetime-edit { padding: 0; }
 .seg button { flex: 1; border: 0; background: none; padding: 8px 6px; border-radius: 9px; font-size: 15px; font-weight: 600; cursor: pointer; color: var(--muted); min-height: 40px; }
 .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
 .seg.status button[aria-pressed="true"][data-s="vrij"] { background: var(--free-bg); color: var(--free); box-shadow: none; }
+.seg.status button[aria-pressed="true"][data-s="optie"] { background: var(--opt-bg); color: var(--opt); box-shadow: none; }
 .seg.status button[aria-pressed="true"][data-s="gereserveerd"] { background: var(--res-bg); color: var(--res); box-shadow: none; }
 .seg.status button[aria-pressed="true"][data-s="verhuisd"] { background: var(--sold-bg); color: var(--sold); box-shadow: none; }
 
@@ -213,3 +215,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 .pnest strong { display: block; font-size: 20px; font-weight: 800; line-height: 1.15; }
 .pnest span { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
 .pnest .chip { display: inline-block; margin-top: 8px; color: inherit; }
+
+/* Vier statussen naast elkaar op een smal scherm */
+.seg.status button { flex: 1 1 auto; padding: 8px 4px; font-size: 14px; }
+.health .health-kop { background: none; color: var(--muted); padding-left: 0; }

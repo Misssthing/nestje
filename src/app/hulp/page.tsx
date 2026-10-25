@@ -37,9 +37,9 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
-    v: 'Een kitten op gereserveerd zetten',
+    v: 'Een kitten op optie of gereserveerd zetten',
     a: (
-      <p>Tik bij het kitten op “Gereserveerd” of “Verhuisd”. Kopers zien dat direct op je pagina, en de knop “Vraag naar …” verdwijnt. Er verschijnt dan ook een notitieveld dat alleen jij ziet, bijvoorbeeld voor de naam van de koper.</p>
+      <p>Tik bij het kitten op “Optie”, “Gereserveerd” of “Verhuisd”. Kopers zien dat direct op je pagina. Bij “Optie” staat er “Onder optie” en kunnen anderen nog naar het kitten vragen, bijvoorbeeld als reserve. Bij “Gereserveerd” en “Verhuisd” verdwijnt de knop “Vraag naar …”. Er verschijnt dan ook een notitieveld dat alleen jij ziet, bijvoorbeeld voor de naam van de koper.</p>
     ),
   },
   {

@@ -9,15 +9,22 @@ import type { Profiel } from '@/lib/types';
 
 const MAX_INTRO = 500;
 
-function maakSlug(t: string) {
-  return t
-    .toLowerCase()
+/** Maakt een webadres-deel van vrije tekst. Een geplakt website-adres wordt opgeschoond:
+ *  "https://www.xarana.nl/index.html" wordt "xarana". */
+function maakSlug(t: string, tijdensTypen = false) {
+  let tekst = tijdensTypen ? t.toLowerCase().trimStart() : t.trim().toLowerCase();
+  if (/^https?:\/\/|^www\.|\.[a-z]{2,}(\/|$)/.test(tekst)) {
+    tekst = tekst.replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0].replace(/\.[a-z]{2,}$/, '');
+  }
+  const slug = tekst
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/&/g, '-en-')
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/^-+/, '')
     .slice(0, 40);
+  // Tijdens het typen mag een streepje aan het eind blijven staan, anders kun je geen woorden scheiden.
+  return tijdensTypen ? slug : slug.replace(/-+$/, '');
 }
 
 export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) {
@@ -36,13 +43,15 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
     e.preventDefault();
     setFout('');
     if (!naam.trim()) return setFout('Vul een naam in, bijvoorbeeld je eigen naam of die van je cattery of opvang.');
-    if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(slug))
+    const schoon = maakSlug(slug);
+    setSlug(schoon);
+    if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(schoon))
       return setFout('Het webadres moet minstens 3 tekens zijn, met alleen kleine letters, cijfers en streepjes.');
 
     setBezig(true);
     const { data, error } = await supabase
       .from('profielen')
-      .upsert({ slug, naam: naam.trim(), intro: intro.trim() || null, zichtbaar }, { onConflict: 'owner_id' })
+      .upsert({ slug: schoon, naam: naam.trim(), intro: intro.trim() || null, zichtbaar }, { onConflict: 'owner_id' })
       .select('owner_id, slug, naam, intro, zichtbaar')
       .single<Profiel>();
     setBezig(false);
@@ -86,7 +95,7 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           />
         </label>
         <label className="veld">
-          <span>Webadres</span>
+          <span>Je link op Nestje</span>
           <input
             value={slug}
             maxLength={40}
@@ -94,10 +103,12 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
             autoCapitalize="none"
             onChange={(e) => {
               setSlugAangepast(true);
-              setSlug(maakSlug(e.target.value));
+              setSlug(maakSlug(e.target.value, true));
             }}
           />
-          <p className="hint">nestje.kattenverzorging.com/van/{slug || 'jouw-naam'}</p>
+          <p className="hint">
+            Wordt: nestje.kattenverzorging.com/van/{slug || 'jouw-naam'}. Dit is niet het adres van je eigen website.
+          </p>
         </label>
         <label className="veld">
           <span>Over jou <span className="hint">(optioneel)</span></span>

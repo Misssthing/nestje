@@ -33,6 +33,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
   const [getest, setGetest] = useState<boolean | null>(nest.ouders_getest);
+  const [bijVerhuizing, setBijVerhuizing] = useState<boolean>(nest.gezondheid_bij_verhuizing ?? false);
   const [fout, setFout] = useState('');
   const [bezig, setBezig] = useState(false);
   const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -71,6 +72,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       ouders_getest: getest,
       ouders_test_info: getest ? v.ouders_test_info.trim() || null : null,
       over_vader: v.over_vader.trim() || null,
+      gezondheid_bij_verhuizing: bijVerhuizing,
     };
     setBezig(true);
     const { error } = await supabase.from('nests').update(patch).eq('id', nest.id);
@@ -152,6 +154,14 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           <textarea value={v.over_vader} onChange={zet('over_vader')} maxLength={1000} placeholder="Karakter, uiterlijk, hoe groot hij is…" />
           <p className="hint">Is de vader onbekend? Laat de vadervelden leeg, dan staat er niets over hem op je pagina.</p>
         </label>
+        <div className="veld">
+          <span>Gezondheidsvinkjes bij de kittens</span>
+          <div className="seg" role="group" aria-label="Wat betekenen de gezondheidsvinkjes?">
+            <button type="button" aria-pressed={!bijVerhuizing} onClick={() => setBijVerhuizing(false)}>Al gedaan</button>
+            <button type="button" aria-pressed={bijVerhuizing} onClick={() => setBijVerhuizing(true)}>Bij verhuizing</button>
+          </div>
+          <p className="hint">Kies “Bij verhuizing” als je aanvinkt wat geregeld is wanneer de kittens de deur uitgaan, zoals chip en entingen.</p>
+        </div>
         <JaNee label="Stamboom" waarde={stamboom} onChange={setStamboom} />
         <JaNee label="Ouders getest op erfelijke aandoeningen" waarde={getest} onChange={setGetest} />
         {getest && (

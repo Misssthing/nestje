@@ -25,11 +25,20 @@ export const prijsNL = (p: number) =>
 
 export const STATUS_LABEL: Record<Status, string> = {
   vrij: 'Vrij',
+  optie: 'Optie',
   gereserveerd: 'Gereserveerd',
   verhuisd: 'Verhuisd',
 };
 
-export const STATUSSEN: Status[] = ['vrij', 'gereserveerd', 'verhuisd'];
+export const STATUSSEN: Status[] = ['vrij', 'optie', 'gereserveerd', 'verhuisd'];
+
+/** Labels zoals kopers ze zien op de openbare pagina */
+export const STATUS_PUBLIEK: Record<Status, string> = {
+  vrij: 'Vrij',
+  optie: 'Onder optie',
+  gereserveerd: 'Gereserveerd',
+  verhuisd: 'Verhuisd',
+};
 
 /** 06-12345678, +31 6 1234 5678, 0031... → 31612345678. Ongeldig → null. */
 export function normaliseerNummer(invoer: string): string | null {

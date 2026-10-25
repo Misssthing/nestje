@@ -1,4 +1,4 @@
-export type Status = 'vrij' | 'gereserveerd' | 'verhuisd';
+export type Status = 'vrij' | 'optie' | 'gereserveerd' | 'verhuisd';
 export type Geslacht = 'kater' | 'poes';
 
 export interface Nest {
@@ -23,6 +23,7 @@ export interface Nest {
   moeder_foto: string | null;
   vader_foto: string | null;
   afgerond: boolean;
+  gezondheid_bij_verhuizing: boolean;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };

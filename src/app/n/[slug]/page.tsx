@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -114,7 +114,7 @@ export default async function NestjesPagina({ params }: Props) {
         <div className="sum">
           {telling.map(([s, n]) => (
             <span key={s} className={`chip ${s}`}>
-              {n} {STATUS_LABEL[s].toLowerCase()}
+              {n} {STATUS_PUBLIEK[s].toLowerCase()}
             </span>
           ))}
         </div>
@@ -125,7 +125,7 @@ export default async function NestjesPagina({ params }: Props) {
           <article key={k.id} className={`kit${k.status === 'verhuisd' ? ' is-verhuisd' : ''}`}>
             <div className="portrait">
               <Fotostrip fotos={k.fotos.map(fotoUrl)} naam={k.naam} />
-              <span className={`chip ${k.status}`}>{STATUS_LABEL[k.status]}</span>
+              <span className={`chip ${k.status}`}>{STATUS_PUBLIEK[k.status]}</span>
             </div>
             <div className="kbody">
               <h2 className="kname">{k.naam}</h2>
@@ -136,6 +136,7 @@ export default async function NestjesPagina({ params }: Props) {
               </p>
               {GEZONDHEID.some(([v]) => k[v]) && (
                 <div className="health">
+                  {nest.gezondheid_bij_verhuizing && <span className="health-kop">Bij verhuizing:</span>}
                   {GEZONDHEID.filter(([v]) => k[v]).map(([v, label]) => (
                     <span key={v}>✓ {label}</span>
                   ))}
@@ -143,7 +144,7 @@ export default async function NestjesPagina({ params }: Props) {
               )}
               {k.omschrijving && <p className="komschrijving">{k.omschrijving}</p>}
               <div className="cta">
-                {k.status === 'vrij' && nest.heeft_whatsapp ? (
+                {(k.status === 'vrij' || k.status === 'optie') && nest.heeft_whatsapp ? (
                   <a
                     className="btn primary"
                     href={`/n/${nest.slug}/vraag/${k.id}`}
@@ -152,13 +153,9 @@ export default async function NestjesPagina({ params }: Props) {
                   >
                     Vraag naar {k.naam}
                   </a>
-                ) : k.status === 'vrij' ? (
-                  <span className="btn ghost" aria-disabled="true">
-                    Vrij
-                  </span>
                 ) : (
                   <span className="btn ghost" aria-disabled="true">
-                    {k.status === 'gereserveerd' ? 'Gereserveerd' : 'Al verhuisd'}
+                    {k.status === 'verhuisd' ? 'Al verhuisd' : STATUS_PUBLIEK[k.status]}
                   </span>
                 )}
               </div>
@@ -167,7 +164,9 @@ export default async function NestjesPagina({ params }: Props) {
         ))}
       </div>
 
-      {heeftGezondheid && <p className="hint" style={{ marginTop: 10 }}>Gezondheidsgegevens zijn ingevuld door de verkoper.</p>}
+      {heeftGezondheid && <p className="hint" style={{ marginTop: 10 }}>{nest.gezondheid_bij_verhuizing
+            ? 'De vinkjes laten zien wat geregeld is als de kittens verhuizen. Ingevuld door de verkoper.'
+            : 'Gezondheidsgegevens zijn ingevuld door de verkoper.'}</p>}
 
       <section className="mother">
         <h2>{heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}</h2>
