@@ -2,7 +2,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { normaliseerNummer, RASSEN, toonNummer } from '@/lib/nest';
+import { normaliseerNummer, PROVINCIES, RASSEN, toonNummer } from '@/lib/nest';
 import type { Nest } from '@/lib/types';
 
 type Props = {
@@ -32,14 +32,16 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
   const [getest, setGetest] = useState<boolean | null>(nest.ouders_getest);
   const [bijVerhuizing, setBijVerhuizing] = useState<boolean>(nest.gezondheid_bij_verhuizing ?? false);
+  const [inOverzicht, setInOverzicht] = useState<boolean>(nest.in_overzicht ?? false);
+  const [provincie, setProvincie] = useState<string>(nest.provincie ?? '');
   const [fout, setFout] = useState('');
   const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
   const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setV((s) => ({ ...s, [k]: e.target.value }));
 
   // Altijd de nieuwste invoer bij de hand, ook in timers en bij het verlaten van de pagina.
-  const laatste = useRef({ v, stamboom, getest, bijVerhuizing });
-  laatste.current = { v, stamboom, getest, bijVerhuizing };
+  const laatste = useRef({ v, stamboom, getest, bijVerhuizing, inOverzicht, provincie });
+  laatste.current = { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openstaand = useRef(false);
   const bezig = useRef(false);
@@ -56,13 +58,14 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (!openstaand.current) return;
     if (bezig.current) return; // na de lopende opslag volgt vanzelf een nieuwe ronde
 
-    const { v, stamboom, getest, bijVerhuizing } = laatste.current;
+    const { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie } = laatste.current;
     const stop = (melding: string) => {
       setFout(melding);
       setStatus('fout');
     };
     if (!v.moeder_naam.trim()) return stop('Vul de naam van de moeder in.');
     if (!v.geboortedatum) return stop('Vul de geboortedatum van de kittens in.');
+    if (inOverzicht && !provincie) return stop('Kies je provincie om in het overzicht te verschijnen.');
     const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
     if (v.whatsapp.trim() && !nummer) return stop('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
     const weken = Number(v.verhuisleeftijd_weken);
@@ -93,6 +96,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       ouders_test_info: getest ? v.ouders_test_info.trim() || null : null,
       over_vader: v.over_vader.trim() || null,
       gezondheid_bij_verhuizing: bijVerhuizing,
+      in_overzicht: inOverzicht,
+      provincie: provincie || null,
     };
 
     openstaand.current = false;
@@ -126,7 +131,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(opslaan, 900);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v, stamboom, getest, bijVerhuizing]);
+  }, [v, stamboom, getest, bijVerhuizing, inOverzicht, provincie]);
 
   // Wie de pagina verlaat of de app wegklikt, verliest niets.
   useEffect(() => {
@@ -178,10 +183,19 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         <datalist id="rassen">
           {RASSEN.map((r) => <option key={r} value={r} />)}
         </datalist>
-        <label className="veld">
-          <span>Woonplaats</span>
-          <input value={v.woonplaats} onChange={zet('woonplaats')} maxLength={80} />
-        </label>
+        <div className="row stapel">
+          <label className="veld">
+            <span>Woonplaats</span>
+            <input value={v.woonplaats} onChange={zet('woonplaats')} maxLength={80} />
+          </label>
+          <label className="veld">
+            <span>Provincie</span>
+            <select value={provincie} onChange={(e) => setProvincie(e.target.value)}>
+              <option value="">Kies…</option>
+              {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </label>
+        </div>
         <div className="row stapel">
           <label className="veld">
             <span>Kittens geboren op</span>
@@ -244,6 +258,17 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input value={v.ouders_test_info} onChange={zet('ouders_test_info')} maxLength={120} placeholder="Bijv. HCM, PKD" />
           </label>
         )}
+        <div className="veld">
+          <span>Tonen in het overzicht van Nestje (optioneel)</span>
+          <div className="seg" role="group" aria-label="Tonen in het overzicht">
+            <button type="button" aria-pressed={!inOverzicht} onClick={() => setInOverzicht(false)}>Uit</button>
+            <button type="button" aria-pressed={inOverzicht} onClick={() => setInOverzicht(true)}>Aan</button>
+          </div>
+          <p className="hint">
+            Je nestje verschijnt dan op nestje.kattenverzorging.com/kittens, met je woonplaats, zolang er kittens vrij of onder
+            optie zijn. Dat overzicht is ook via Google te vinden. Je nummer staat er niet op.
+          </p>
+        </div>
         <p className={`opslagstatus${status === 'fout' ? ' fout' : ''}`} role="status" aria-live="polite">
           {status === 'fout'
             ? fout

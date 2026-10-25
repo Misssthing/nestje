@@ -223,3 +223,9 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Automatisch opslaan bij Gegevens */
 .opslagstatus { position: sticky; bottom: 10px; margin: 8px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--free-bg); color: var(--free); font-size: 14px; font-weight: 600; }
 .opslagstatus.fout { background: var(--res-bg); color: var(--danger); }
+
+/* Overzicht */
+.filters { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; margin-top: 18px; }
+.filters .veld { margin: 0; }
+.filters .btn { width: auto; }
+@media (max-width: 520px) { .filters { grid-template-columns: 1fr 1fr; } .filters .btn { grid-column: 1 / -1; } }

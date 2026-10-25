@@ -33,6 +33,12 @@ export default function Privacy() {
         <li>Technische gegevens die nodig zijn om de dienst te laten werken en te beveiligen, zoals IP-adres en tijdstip van inloggen, in de logbestanden van onze dienstverleners.</li>
       </ul>
       <p>
+        <strong>Het overzicht van nestjes:</strong> alleen als je bij een nestje kiest voor “Tonen in het overzicht”, verschijnt
+        het op nestje.kattenverzorging.com/kittens, met de naam van de moeder, je woonplaats, provincie, ras, prijs en een foto.
+        Die pagina is ook via zoekmachines te vinden. Je telefoonnummer en e-mailadres staan er nooit op. Je zet het op elk
+        moment weer uit. Meldt een bezoeker een nestje, dan bewaren we die melding om haar te kunnen beoordelen.
+      </p>
+      <p>
         <strong>Van bezoekers van een nestjespagina:</strong> wij verzamelen geen persoonsgegevens. We tellen anoniem hoeveel
         bezoekers een pagina heeft en hoe vaak er op “Vraag naar …” wordt getikt, zonder cookies en zonder dat je als bezoeker
         herkenbaar wordt opgeslagen. Onze dienstverleners houden korte tijd technische logbestanden bij, zoals het IP-adres, voor de

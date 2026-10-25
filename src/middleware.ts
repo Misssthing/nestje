@@ -7,5 +7,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Openbare nestjespagina's (/n/...) en statische bestanden hebben geen sessie nodig.
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg|n/|van/|v/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|icon.svg|n/|van/|v/|kittens|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };

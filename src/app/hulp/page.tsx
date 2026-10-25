@@ -70,6 +70,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Mijn nestje in het overzicht zetten',
+    a: (
+      <p>Open je nestje, ga naar “Gegevens”, kies je provincie en zet “Tonen in het overzicht van Nestje” op Aan. Je nestje staat dan op nestje.kattenverzorging.com/kittens zolang er kittens vrij of onder optie zijn. Het overzicht is ook via Google te vinden. Je nummer staat er niet op, en je kunt het op elk moment weer uitzetten.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
       <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>

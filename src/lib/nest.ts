@@ -57,6 +57,11 @@ export function aantalKittens(n: number) {
   return `${n} ${n === 1 ? 'kitten' : 'kittens'}`;
 }
 
+export const PROVINCIES = [
+  'Drenthe', 'Flevoland', 'Friesland', 'Gelderland', 'Groningen', 'Limburg',
+  'Noord-Brabant', 'Noord-Holland', 'Overijssel', 'Utrecht', 'Zeeland', 'Zuid-Holland', 'België',
+] as const;
+
 export const RASSEN = [
   'Huiskat', 'Europese korthaar', 'Kruising', 'Brits korthaar', 'Maine Coon', 'Ragdoll',
   'Noorse boskat', 'Siberische kat', 'Siamees', 'Bengaal', 'Perzisch', 'Sphynx',

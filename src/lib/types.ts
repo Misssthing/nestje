@@ -24,6 +24,8 @@ export interface Nest {
   vader_foto: string | null;
   afgerond: boolean;
   gezondheid_bij_verhuizing: boolean;
+  in_overzicht: boolean;
+  provincie: string | null;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };
@@ -85,5 +87,23 @@ export interface ProfielNest {
   afgerond: boolean;
   kittens: number;
   vrij: number;
+  foto: string | null;
+}
+
+/** Nestje zoals het in het openbare overzicht staat */
+export interface OverzichtNest {
+  slug: string;
+  moeder_naam: string;
+  woonplaats: string | null;
+  provincie: string | null;
+  moeder_ras: string | null;
+  vader_ras: string | null;
+  stamboom: boolean | null;
+  geboortedatum: string;
+  verhuisleeftijd_weken: number;
+  prijs: number | null;
+  kittens: number;
+  vrij: number;
+  optie: number;
   foto: string | null;
 }

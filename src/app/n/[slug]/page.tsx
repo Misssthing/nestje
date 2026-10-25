@@ -201,6 +201,10 @@ export default async function NestjesPagina({ params }: Props) {
         </a>
       </section>
 
+      <p className="hint" style={{ marginTop: 24, textAlign: 'center' }}>
+        <Link href={`/n/${nest.slug}/melden`}>Klopt er iets niet? Meld dit nestje</Link>
+      </p>
+
       <Voet />
     </main>
   );
