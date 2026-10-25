@@ -219,3 +219,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Vier statussen naast elkaar op een smal scherm */
 .seg.status button { flex: 1 1 auto; padding: 8px 4px; font-size: 14px; }
 .health .health-kop { background: none; color: var(--muted); padding-left: 0; }
+
+/* Automatisch opslaan bij Gegevens */
+.opslagstatus { position: sticky; bottom: 10px; margin: 8px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--free-bg); color: var(--free); font-size: 14px; font-weight: 600; }
+.opslagstatus.fout { background: var(--res-bg); color: var(--danger); }

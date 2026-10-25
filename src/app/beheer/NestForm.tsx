@@ -1,8 +1,7 @@
 'use client';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { useState } from 'react';
-import { useToast } from '@/components/Toast';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { normaliseerNummer, RASSEN, toonNummer } from '@/lib/nest';
 import type { Nest } from '@/lib/types';
 
@@ -14,7 +13,6 @@ type Props = {
 };
 
 export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }: Props) {
-  const toast = useToast();
   const [v, setV] = useState({
     moeder_naam: nest.moeder_naam,
     woonplaats: nest.woonplaats ?? '',
@@ -35,25 +33,47 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   const [getest, setGetest] = useState<boolean | null>(nest.ouders_getest);
   const [bijVerhuizing, setBijVerhuizing] = useState<boolean>(nest.gezondheid_bij_verhuizing ?? false);
   const [fout, setFout] = useState('');
-  const [bezig, setBezig] = useState(false);
+  const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
   const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setV((s) => ({ ...s, [k]: e.target.value }));
 
-  async function bewaar(e: React.FormEvent) {
-    e.preventDefault();
-    setFout('');
-    const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
-    if (v.whatsapp.trim() && !nummer) return setFout('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
-    const weken = Number(v.verhuisleeftijd_weken);
-    if (!Number.isInteger(weken) || weken < 8 || weken > 26) return setFout('Verhuisleeftijd moet tussen 8 en 26 weken liggen.');
-    const prijs = v.prijs.trim() ? Number(v.prijs.replace(',', '.')) : null;
-    if (prijs != null && (Number.isNaN(prijs) || prijs < 0)) return setFout('Vul een geldige prijs in.');
+  // Altijd de nieuwste invoer bij de hand, ook in timers en bij het verlaten van de pagina.
+  const laatste = useRef({ v, stamboom, getest, bijVerhuizing });
+  laatste.current = { v, stamboom, getest, bijVerhuizing };
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openstaand = useRef(false);
+  const bezig = useRef(false);
+  const eersteKeer = useRef(true);
+  // Via refs, zodat een opgeslagen nestje niet opnieuw een opslag in gang zet.
+  const nestRef = useRef(nest);
+  nestRef.current = nest;
+  const onOpgeslagenRef = useRef(onOpgeslagen);
+  onOpgeslagenRef.current = onOpgeslagen;
 
+  const opslaan = useCallback(async () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+    if (!openstaand.current) return;
+    if (bezig.current) return; // na de lopende opslag volgt vanzelf een nieuwe ronde
+
+    const { v, stamboom, getest, bijVerhuizing } = laatste.current;
+    const stop = (melding: string) => {
+      setFout(melding);
+      setStatus('fout');
+    };
+    if (!v.moeder_naam.trim()) return stop('Vul de naam van de moeder in.');
+    if (!v.geboortedatum) return stop('Vul de geboortedatum van de kittens in.');
+    const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
+    if (v.whatsapp.trim() && !nummer) return stop('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
+    const weken = Number(v.verhuisleeftijd_weken);
+    if (!Number.isInteger(weken) || weken < 8 || weken > 26) return stop('Verhuisleeftijd moet tussen 8 en 26 weken liggen.');
+    const prijs = v.prijs.trim() ? Number(v.prijs.replace(',', '.')) : null;
+    if (prijs != null && (Number.isNaN(prijs) || prijs < 0)) return stop('Vul een geldige prijs in.');
     const kg = (t: string) => (t.trim() ? Number(t.replace(',', '.')) : null);
     const mg = kg(v.moeder_gewicht);
     const vg = kg(v.vader_gewicht);
     if ([mg, vg].some((g) => g != null && (Number.isNaN(g) || g < 0.5 || g > 20)))
-      return setFout('Vul het gewicht in kilo’s in, bijvoorbeeld 5,2.');
+      return stop('Vul het gewicht in kilo’s in, bijvoorbeeld 5,2.');
 
     const patch = {
       moeder_naam: v.moeder_naam.trim(),
@@ -74,19 +94,73 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       over_vader: v.over_vader.trim() || null,
       gezondheid_bij_verhuizing: bijVerhuizing,
     };
-    setBezig(true);
-    const { error } = await supabase.from('nests').update(patch).eq('id', nest.id);
-    setBezig(false);
-    if (error) return setFout('Opslaan lukte niet. Controleer de velden.');
-    onOpgeslagen({ ...nest, ...patch });
-    setV((s) => ({ ...s, whatsapp: toonNummer(nummer) }));
-    toast('Gegevens opgeslagen');
+
+    openstaand.current = false;
+    bezig.current = true;
+    setStatus('bezig');
+    const { error } = await supabase.from('nests').update(patch).eq('id', nestRef.current.id);
+    bezig.current = false;
+    if (error) {
+      openstaand.current = true;
+      return stop('Opslaan lukte niet. Controleer je internetverbinding en probeer het opnieuw.');
+    }
+    setFout('');
+    onOpgeslagenRef.current({ ...nestRef.current, ...patch });
+    if (openstaand.current) {
+      // Tijdens het opslaan is er alweer iets gewijzigd
+      setStatus('wijzigingen');
+      timer.current = setTimeout(opslaan, 400);
+    } else {
+      setStatus('opgeslagen');
+    }
+  }, [supabase]);
+
+  // Elke wijziging wordt kort na het typen vanzelf opgeslagen.
+  useEffect(() => {
+    if (eersteKeer.current) {
+      eersteKeer.current = false;
+      return;
+    }
+    openstaand.current = true;
+    setStatus('wijzigingen');
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(opslaan, 900);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v, stamboom, getest, bijVerhuizing]);
+
+  // Wie de pagina verlaat of de app wegklikt, verliest niets.
+  useEffect(() => {
+    const bijVerlaten = () => {
+      if (openstaand.current) void opslaan();
+    };
+    const bijVerbergen = () => {
+      if (document.visibilityState === 'hidden') bijVerlaten();
+    };
+    window.addEventListener('pagehide', bijVerlaten);
+    document.addEventListener('visibilitychange', bijVerbergen);
+    return () => {
+      window.removeEventListener('pagehide', bijVerlaten);
+      document.removeEventListener('visibilitychange', bijVerbergen);
+      bijVerlaten();
+    };
+  }, [opslaan]);
+
+  function netjesNummer() {
+    const nummer = normaliseerNummer(v.whatsapp);
+    if (nummer) setV((s) => ({ ...s, whatsapp: toonNummer(nummer) }));
   }
 
   return (
     <details className="panel" open={openStandaard}>
       <summary>Gegevens</summary>
-      <form onSubmit={bewaar}>
+      <p className="hint" style={{ marginTop: 0, marginBottom: 12 }}>Wijzigingen worden vanzelf opgeslagen.</p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void opslaan();
+        }}
+        onBlur={() => void opslaan()}
+      >
         <div className="row stapel">
           <label className="veld">
             <span>Naam moeder</span>
@@ -121,7 +195,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         <div className="row stapel">
           <label className="veld">
             <span>WhatsApp-nummer</span>
-            <input type="tel" inputMode="tel" autoComplete="tel" placeholder="06 12345678" value={v.whatsapp} onChange={zet('whatsapp')} />
+            <input type="tel" inputMode="tel" autoComplete="tel" placeholder="06 12345678" value={v.whatsapp} onChange={zet('whatsapp')} onBlur={netjesNummer} />
           </label>
           <label className="veld">
             <span>Prijs per kitten (€)</span>
@@ -170,8 +244,15 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input value={v.ouders_test_info} onChange={zet('ouders_test_info')} maxLength={120} placeholder="Bijv. HCM, PKD" />
           </label>
         )}
-        {fout && <p className="fout">{fout}</p>}
-        <button className="btn primary" disabled={bezig}>{bezig ? 'Bezig…' : 'Gegevens opslaan'}</button>
+        <p className={`opslagstatus${status === 'fout' ? ' fout' : ''}`} role="status" aria-live="polite">
+          {status === 'fout'
+            ? fout
+            : status === 'bezig'
+              ? 'Opslaan…'
+              : status === 'wijzigingen'
+                ? 'Wijzigingen worden opgeslagen…'
+                : '✓ Alles is opgeslagen'}
+        </p>
       </form>
     </details>
   );
