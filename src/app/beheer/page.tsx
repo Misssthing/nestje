@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { aantalKittens, aftelling, datumNL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
-import type { Nest } from '@/lib/types';
+import type { Nest, Profiel } from '@/lib/types';
 import NieuwNestje from './NieuwNestje';
+import ProfielPaneel from './ProfielPaneel';
 
 export const metadata: Metadata = { title: 'Je nestjes', robots: { index: false } };
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,10 @@ export default async function Overzicht() {
     .order('aangemaakt_op', { ascending: false })
     .returns<NestRij[]>();
   const nesten = data ?? [];
+  const { data: profiel } = await supabase
+    .from('profielen')
+    .select('owner_id, slug, naam, intro, zichtbaar')
+    .maybeSingle<Profiel>();
 
   if (!nesten.length) return <NieuwNestje eerste />;
 
@@ -67,6 +72,10 @@ export default async function Overzicht() {
 
       <div className="actions">
         <Link className="btn primary" href="/beheer/nieuw">Nieuw nestje</Link>
+      </div>
+
+      <div style={{ marginTop: 22 }}>
+        <ProfielPaneel profiel={profiel ?? null} />
       </div>
     </main>
   );

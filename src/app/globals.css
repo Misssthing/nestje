@@ -201,3 +201,15 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Hulppagina */
 .hulp-antwoord p { color: var(--muted); margin: 0; max-width: 64ch; }
 .hulp-antwoord p + p { margin-top: 10px; }
+
+/* Profielpagina */
+.van-profiel { font-size: 15px; color: var(--muted); margin: 0 0 4px; }
+.van-profiel a { color: var(--ink); font-weight: 600; }
+.profiel-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--free-bg); border-radius: 14px; padding: 10px 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.profiel-link a { color: var(--free); font-weight: 700; overflow-wrap: anywhere; }
+.profiel-intro { white-space: pre-line; }
+.pnest { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px; text-decoration: none; color: var(--ink); }
+.pnest-foto { width: 96px; height: 96px; border-radius: 14px; object-fit: cover; background: var(--bg); display: block; }
+.pnest strong { display: block; font-size: 20px; font-weight: 800; line-height: 1.15; }
+.pnest span { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
+.pnest .chip { display: inline-block; margin-top: 8px; color: inherit; }

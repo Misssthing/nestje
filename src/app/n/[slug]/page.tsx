@@ -51,7 +51,7 @@ export default async function NestjesPagina({ params }: Props) {
   const data = await haalNestje(slug);
   if (!data) notFound();
 
-  const { nest, kittens, nestFotos } = data;
+  const { nest, kittens, nestFotos, profiel } = data;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const heeftVader = Boolean(
     nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim() || nest.vader_gewicht || nest.vader_foto,
@@ -92,6 +92,11 @@ export default async function NestjesPagina({ params }: Props) {
       )}
 
       <section className="hero">
+        {profiel && (
+          <p className="van-profiel">
+            Een nestje van <Link href={`/v/${profiel.profiel_slug}`}>{profiel.profiel_naam}</Link>
+          </p>
+        )}
         <h1>Het nestje van {nest.moeder_naam}</h1>
         <p>
           {aantalKittens(kittens.length)}, geboren op {datumNL(a.geboren)}

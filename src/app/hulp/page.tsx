@@ -64,6 +64,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Eén link voor al mijn nestjes',
+    a: (
+      <p>Heb je vaker een nestje? Zet dan in je overzicht de profielpagina aan. Je krijgt één vaste link met al je lopende nestjes, die je bijvoorbeeld in je Facebook-bio of op je website zet. Afgeronde nestjes verdwijnen er vanzelf van af. De profielpagina is helemaal optioneel en staat standaard uit.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
       <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>

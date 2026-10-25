@@ -45,8 +45,15 @@ export const haalNestje = cache(async (slug: string) => {
     perKitten.set(f.kitten_id, [...(perKitten.get(f.kitten_id) ?? []), f.storage_path]);
   }
 
+  const { data: profiel } = await supabase
+    .from('openbare_profiel_nesten')
+    .select('profiel_slug, profiel_naam')
+    .eq('slug', slug)
+    .maybeSingle<{ profiel_slug: string; profiel_naam: string }>();
+
   return {
     nest,
+    profiel,
     nestFotos: (nestFotos ?? []).map((f) => f.storage_path),
     kittens: (kittens ?? []).map<OpenbaarKitten>((k) => ({ ...k, fotos: perKitten.get(k.id) ?? [] })),
   };

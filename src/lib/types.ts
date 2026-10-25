@@ -62,3 +62,27 @@ export interface Kitten {
 }
 
 export type KittenMetFotos = Kitten & { kitten_photos: Foto[] };
+
+/** Optionele profielpagina van een verkoper of opvang */
+export interface Profiel {
+  owner_id: string;
+  slug: string;
+  naam: string;
+  intro: string | null;
+  zichtbaar: boolean;
+}
+
+/** Nestje zoals het op een openbare profielpagina verschijnt */
+export interface ProfielNest {
+  profiel_slug: string;
+  profiel_naam: string;
+  slug: string;
+  moeder_naam: string;
+  woonplaats: string | null;
+  geboortedatum: string;
+  verhuisleeftijd_weken: number;
+  afgerond: boolean;
+  kittens: number;
+  vrij: number;
+  foto: string | null;
+}
