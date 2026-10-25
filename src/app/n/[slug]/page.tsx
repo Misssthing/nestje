@@ -94,7 +94,7 @@ export default async function NestjesPagina({ params }: Props) {
       <section className="hero">
         {profiel && (
           <p className="van-profiel">
-            Een nestje van <Link href={`/v/${profiel.profiel_slug}`}>{profiel.profiel_naam}</Link>
+            Een nestje van <Link href={`/van/${profiel.profiel_slug}`}>{profiel.profiel_naam}</Link>
           </p>
         )}
         <h1>Het nestje van {nest.moeder_naam}</h1>

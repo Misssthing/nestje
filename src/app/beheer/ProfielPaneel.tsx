@@ -55,7 +55,7 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
     toast(data.zichtbaar ? 'Profielpagina staat aan' : 'Profiel opgeslagen');
   }
 
-  const url = opgeslagen ? `${CONFIG.siteUrl}/v/${opgeslagen.slug}` : '';
+  const url = opgeslagen ? `${CONFIG.siteUrl}/van/${opgeslagen.slug}` : '';
 
   return (
     <details className="panel" open={Boolean(opgeslagen?.zichtbaar)}>
@@ -97,7 +97,7 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
               setSlug(maakSlug(e.target.value));
             }}
           />
-          <p className="hint">nestje.kattenverzorging.com/v/{slug || 'jouw-naam'}</p>
+          <p className="hint">nestje.kattenverzorging.com/van/{slug || 'jouw-naam'}</p>
         </label>
         <label className="veld">
           <span>Over jou <span className="hint">(optioneel)</span></span>
