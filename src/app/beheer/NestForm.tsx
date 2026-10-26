@@ -2,7 +2,7 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { normaliseerNummer, PROVINCIES, RASSEN, toonNummer } from '@/lib/nest';
+import { MAX_DAGEN_VOORUIT, normaliseerNummer, PROVINCIES, RASSEN, toonNummer } from '@/lib/nest';
 import type { Nest } from '@/lib/types';
 
 type Props = {
@@ -34,14 +34,15 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   const [bijVerhuizing, setBijVerhuizing] = useState<boolean>(nest.gezondheid_bij_verhuizing ?? false);
   const [inOverzicht, setInOverzicht] = useState<boolean>(nest.in_overzicht ?? false);
   const [provincie, setProvincie] = useState<string>(nest.provincie ?? '');
+  const [geschat, setGeschat] = useState<boolean>(nest.geboortedatum_geschat ?? false);
   const [fout, setFout] = useState('');
   const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
   const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setV((s) => ({ ...s, [k]: e.target.value }));
 
   // Altijd de nieuwste invoer bij de hand, ook in timers en bij het verlaten van de pagina.
-  const laatste = useRef({ v, stamboom, getest, bijVerhuizing, inOverzicht, provincie });
-  laatste.current = { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie };
+  const laatste = useRef({ v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat });
+  laatste.current = { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openstaand = useRef(false);
   const bezig = useRef(false);
@@ -58,13 +59,15 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (!openstaand.current) return;
     if (bezig.current) return; // na de lopende opslag volgt vanzelf een nieuwe ronde
 
-    const { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie } = laatste.current;
+    const { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat } = laatste.current;
     const stop = (melding: string) => {
       setFout(melding);
       setStatus('fout');
     };
     if (!v.moeder_naam.trim()) return stop('Vul de naam van de moeder in.');
     if (!v.geboortedatum) return stop('Vul de geboortedatum van de kittens in.');
+    const uiterlijk = new Date(Date.now() + MAX_DAGEN_VOORUIT * 864e5).toISOString().slice(0, 10);
+    if (v.geboortedatum > uiterlijk) return stop(`De uitgerekende datum mag maximaal ${MAX_DAGEN_VOORUIT} dagen vooruit liggen.`);
     if (inOverzicht && !provincie) return stop('Kies je provincie om in het overzicht te verschijnen.');
     const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
     if (v.whatsapp.trim() && !nummer) return stop('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
@@ -98,6 +101,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       gezondheid_bij_verhuizing: bijVerhuizing,
       in_overzicht: inOverzicht,
       provincie: provincie || null,
+      geboortedatum_geschat: geschat,
     };
 
     openstaand.current = false;
@@ -131,7 +135,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(opslaan, 900);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v, stamboom, getest, bijVerhuizing, inOverzicht, provincie]);
+  }, [v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat]);
 
   // Wie de pagina verlaat of de app wegklikt, verliest niets.
   useEffect(() => {
@@ -198,7 +202,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         </div>
         <div className="row stapel">
           <label className="veld">
-            <span>Kittens geboren op</span>
+            <span>Geboren op, of uitgerekende datum</span>
             <input type="date" value={v.geboortedatum} onChange={zet('geboortedatum')} required />
           </label>
           <label className="veld">
@@ -206,6 +210,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input type="number" inputMode="numeric" min={8} max={26} value={v.verhuisleeftijd_weken} onChange={zet('verhuisleeftijd_weken')} />
           </label>
         </div>
+        <label className="vink" style={{ marginTop: -6, marginBottom: 14 }}>
+          <input type="checkbox" checked={geschat} onChange={(e) => setGeschat(e.target.checked)} />
+          <span>De geboortedatum is een schatting</span>
+        </label>
         <div className="row stapel">
           <label className="veld">
             <span>WhatsApp-nummer</span>

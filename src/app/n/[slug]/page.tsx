@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -22,12 +22,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const titel = `Het nestje van ${nest.moeder_naam}`;
-  const beschrijving =
-    `${aantalKittens(kittens.length)}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}, ` +
-    `${vrij} nog vrij. ` +
-    (a.wekenTeGaan > 0
-      ? `Over ${a.wekenTeGaan} ${a.wekenTeGaan === 1 ? 'week' : 'weken'} mogen ze verhuizen.`
-      : 'Ze mogen nu verhuizen.');
+  const beschrijving = a.verwacht
+    ? `De kittens worden verwacht rond ${datumNL(a.geboren)}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. ` +
+      `Nog ${dagen(a.dagenTotGeboorte)} te gaan.`
+    : `${aantalKittens(kittens.length)}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}, ` +
+      `${vrij} nog vrij. ` +
+      (a.wekenTeGaan > 0
+        ? `Over ${a.wekenTeGaan} ${a.wekenTeGaan === 1 ? 'week' : 'weken'} mogen ze verhuizen.`
+        : 'Ze mogen nu verhuizen.');
 
   return {
     title: titel,
@@ -104,12 +106,28 @@ export default async function NestjesPagina({ params }: Props) {
           </p>
         )}
         <h1>Het nestje van {nest.moeder_naam}</h1>
-        <p>
-          {aantalKittens(kittens.length)}, geboren op {datumNL(a.geboren)}
-          {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {a.leeftijdWeken}{' '}
-          {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}{stamboom}
-        </p>
-        <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
+        {a.verwacht ? (
+          <p>
+            De kittens van {nest.moeder_naam} worden verwacht rond {datumNL(a.geboren)}
+            {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}.{ras ? ` ${ras}.` : ''}{stamboom}
+          </p>
+        ) : (
+          <p>
+            {aantalKittens(kittens.length)}, geboren {nest.geboortedatum_geschat ? 'rond' : 'op'} {datumNL(a.geboren)}
+            {nest.geboortedatum_geschat ? ' (geschat)' : ''}
+            {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {nest.geboortedatum_geschat ? 'ongeveer ' : ''}{a.leeftijdWeken}{' '}
+            {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}{stamboom}
+          </p>
+        )}
+        <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
+        {a.verwacht && nest.heeft_whatsapp && (
+          <div className="interesse">
+            <a className="btn primary" href={`/n/${nest.slug}/interesse`} target="_blank" rel="noopener nofollow">
+              Interesse in dit nestje
+            </a>
+            <p className="hint">Laat de verkoper alvast weten dat je belangstelling hebt. Je opent dan WhatsApp.</p>
+          </div>
+        )}
       </section>
 
       {nest.afgerond && (

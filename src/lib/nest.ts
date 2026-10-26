@@ -10,8 +10,25 @@ export function aftelling(geboortedatum: string, weken: number, nu = new Date())
   const wekenTeGaan = Math.max(0, Math.ceil((verhuis.getTime() - nu.getTime()) / WEEK));
   const totaal = verhuis.getTime() - geboren.getTime();
   const voortgang = Math.min(100, Math.max(0, ((nu.getTime() - geboren.getTime()) / totaal) * 100));
-  return { geboren, verhuis, leeftijdWeken, wekenTeGaan, voortgang };
+  // Ligt de geboortedatum in de toekomst, dan is het een verwacht nestje (uitgerekende datum).
+  const vandaag = vandaagISO(nu);
+  const dagenTotGeboorte = Math.max(
+    0,
+    Math.round((Date.parse(`${geboortedatum}T00:00:00Z`) - Date.parse(`${vandaag}T00:00:00Z`)) / (24 * 60 * 60 * 1000)),
+  );
+  const verwacht = dagenTotGeboorte > 0;
+  return { geboren, verhuis, leeftijdWeken, wekenTeGaan, voortgang, verwacht, dagenTotGeboorte };
 }
+
+/** Vandaag als JJJJ-MM-DD in Nederlandse tijd */
+export function vandaagISO(nu = new Date()) {
+  return nu.toLocaleDateString('sv-SE', { timeZone: 'Europe/Amsterdam' });
+}
+
+/** Hoe ver vooruit een uitgerekende datum mag liggen */
+export const MAX_DAGEN_VOORUIT = 100;
+
+export const dagen = (n: number) => `${n} ${n === 1 ? 'dag' : 'dagen'}`;
 
 export const datumNL = (d: Date) =>
   d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', timeZone: 'Europe/Amsterdam' });

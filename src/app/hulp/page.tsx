@@ -76,6 +76,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'De kittens zijn er nog niet',
+    a: (
+      <p>Maak je nestje gewoon al aan en vul bij de geboortedatum de uitgerekende datum in. Je pagina telt dan af tot de geboorte, en kopers kunnen via “Interesse in dit nestje” alvast laten weten dat ze belangstelling hebben. Zijn de kittens geboren, pas dan de datum aan naar de echte geboortedatum en voeg de kittens toe. De link blijft hetzelfde.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
       <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>

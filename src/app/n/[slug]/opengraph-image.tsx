@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { fotoUrl } from '@/lib/config';
-import { aantalKittens, aftelling } from '@/lib/nest';
+import { aantalKittens, aftelling, datumNL } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const alt = 'Het nestje';
@@ -26,16 +26,20 @@ export default async function OgAfbeelding({ params }: { params: Promise<{ slug:
 
   const titel = data ? `Het nestje van ${data.nest.moeder_naam}` : 'Nestje';
   const a = data ? aftelling(data.nest.geboortedatum, data.nest.verhuisleeftijd_weken) : null;
-  const groot = a && a.wekenTeGaan > 0 ? String(a.wekenTeGaan) : '';
+  const groot = !a ? '' : a.verwacht ? String(a.dagenTotGeboorte) : a.wekenTeGaan > 0 ? String(a.wekenTeGaan) : '';
   const onder = !a
     ? ''
-    : a.wekenTeGaan > 0
-      ? `${a.wekenTeGaan === 1 ? 'week' : 'weken'} tot ze mogen verhuizen`
-      : 'Ze mogen verhuizen';
+    : a.verwacht
+      ? `${a.dagenTotGeboorte === 1 ? 'dag' : 'dagen'} tot de kittens komen`
+      : a.wekenTeGaan > 0
+        ? `${a.wekenTeGaan === 1 ? 'week' : 'weken'} tot ze mogen verhuizen`
+        : 'Ze mogen verhuizen';
   const vrij = data ? data.kittens.filter((k) => k.status === 'vrij').length : 0;
-  const regel = data
-    ? `${aantalKittens(data.kittens.length)}${data.nest.woonplaats ? ` in ${data.nest.woonplaats}` : ''} · ${vrij} vrij`
-    : '';
+  const regel = !data
+    ? ''
+    : a?.verwacht
+      ? `Verwacht rond ${datumNL(a.geboren)}${data.nest.woonplaats ? ` · ${data.nest.woonplaats}` : ''}`
+      : `${aantalKittens(data.kittens.length)}${data.nest.woonplaats ? ` in ${data.nest.woonplaats}` : ''} · ${vrij} vrij`;
 
   // Omslagfoto: eerste nestfoto, anders eerste foto van een vrij kitten, anders van het eerste kitten met foto
   const fotoKitten =

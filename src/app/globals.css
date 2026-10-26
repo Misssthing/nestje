@@ -230,3 +230,11 @@ details.panel[open] summary { margin-bottom: 12px; }
 .filters .btn { width: auto; height: 48px; min-height: 48px; }
 .filters select { height: 48px; min-height: 48px; }
 @media (max-width: 520px) { .filters { grid-template-columns: 1fr 1fr; } .filters .btn { grid-column: 1 / -1; } }
+
+/* Verwacht nestje */
+.interesse { margin-top: 18px; }
+.interesse .btn { width: 100%; }
+.interesse .hint { text-align: center; margin-top: 8px; }
+
+.vink { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; color: var(--muted); cursor: pointer; }
+.vink input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; padding: 0; margin: 0; accent-color: var(--free); }

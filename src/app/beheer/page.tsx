@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { aantalKittens, aftelling, datumNL } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import type { Nest, Profiel } from '@/lib/types';
 import NieuwNestje from './NieuwNestje';
@@ -58,12 +58,19 @@ export default async function Overzicht() {
               <div>
                 <strong>Het nestje van {n.moeder_naam}</strong>
                 <span>
-                  {aantalKittens(n.kittens.length)}, geboren {datumNL(a.geboren)}
-                  {n.afgerond ? '' : `, ${vrij} vrij`}
+                  {a.verwacht
+                    ? `Verwacht rond ${datumNL(a.geboren)}`
+                    : `${aantalKittens(n.kittens.length)}, geboren ${datumNL(a.geboren)}${n.afgerond ? '' : `, ${vrij} vrij`}`}
                 </span>
               </div>
               <span className={`chip ${n.afgerond ? 'verhuisd' : 'vrij'}`}>
-                {n.afgerond ? 'Afgerond' : a.wekenTeGaan > 0 ? `Nog ${a.wekenTeGaan} wk` : 'Mag verhuizen'}
+                {n.afgerond
+                  ? 'Afgerond'
+                  : a.verwacht
+                    ? `Over ${dagen(a.dagenTotGeboorte)}`
+                    : a.wekenTeGaan > 0
+                      ? `Nog ${a.wekenTeGaan} wk`
+                      : 'Mag verhuizen'}
               </span>
             </Link>
           );

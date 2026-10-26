@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, prijsNL, PROVINCIES, RASSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, prijsNL, PROVINCIES, RASSEN } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
 
@@ -94,7 +94,7 @@ export default async function Overzicht({ searchParams }: Props) {
                 <div>
                   <strong>Het nestje van {n.moeder_naam}</strong>
                   <span>
-                    {aantalKittens(n.kittens)}
+                    {a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens)}
                     {r ? `, ${r}` : ''}
                     {n.stamboom ? ', met stamboom' : ''}
                   </span>
@@ -102,10 +102,14 @@ export default async function Overzicht({ searchParams }: Props) {
                     {[n.woonplaats, n.provincie].filter(Boolean).join(', ')}
                     {n.prijs ? ` · ${prijsNL(Number(n.prijs))}` : ''}
                   </span>
-                  <span className="chip vrij">
-                    {n.vrij > 0 ? `${n.vrij} vrij` : `${n.optie} onder optie`}
-                    {a.wekenTeGaan > 0 ? ` · nog ${a.wekenTeGaan} wk` : ' · mag verhuizen'}
-                  </span>
+                  {a.verwacht ? (
+                    <span className="chip optie">Verwacht over {dagen(a.dagenTotGeboorte)}</span>
+                  ) : (
+                    <span className="chip vrij">
+                      {n.vrij > 0 ? `${n.vrij} vrij` : `${n.optie} onder optie`}
+                      {a.wekenTeGaan > 0 ? ` · nog ${a.wekenTeGaan} wk` : ' · mag verhuizen'}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

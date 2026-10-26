@@ -5,7 +5,7 @@ import { cache } from 'react';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl } from '@/lib/config';
-import { aantalKittens, aftelling } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { ProfielNest } from '@/lib/types';
 
@@ -82,13 +82,17 @@ export default async function ProfielPagina({ params }: Props) {
                 <div>
                   <strong>Het nestje van {n.moeder_naam}</strong>
                   <span>
-                    {aantalKittens(n.kittens)}
+                    {a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens)}
                     {n.woonplaats ? ` in ${n.woonplaats}` : ''}
                   </span>
-                  <span className={`chip ${n.vrij > 0 ? 'vrij' : 'gereserveerd'}`}>
-                    {n.vrij > 0 ? `${n.vrij} vrij` : 'Geen kittens vrij'}
-                    {a.wekenTeGaan > 0 ? ` · nog ${a.wekenTeGaan} wk` : ' · mag verhuizen'}
-                  </span>
+                  {a.verwacht ? (
+                    <span className="chip optie">Verwacht over {dagen(a.dagenTotGeboorte)}</span>
+                  ) : (
+                    <span className={`chip ${n.vrij > 0 ? 'vrij' : 'gereserveerd'}`}>
+                      {n.vrij > 0 ? `${n.vrij} vrij` : 'Geen kittens vrij'}
+                      {a.wekenTeGaan > 0 ? ` · nog ${a.wekenTeGaan} wk` : ' · mag verhuizen'}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

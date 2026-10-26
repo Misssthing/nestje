@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CONFIG } from '@/lib/config';
+import { MAX_DAGEN_VOORUIT } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/browser';
 
 export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
@@ -13,7 +14,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
   const [aantal, setAantal] = useState(4);
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState('');
-  const vandaag = new Date().toISOString().slice(0, 10);
+  const uiterlijk = new Date(Date.now() + MAX_DAGEN_VOORUIT * 864e5).toISOString().slice(0, 10);
 
   async function maak(e: React.FormEvent) {
     e.preventDefault();
@@ -71,8 +72,9 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
         </label>
         <div className="row stapel">
           <label className="veld">
-            <span>Kittens geboren op</span>
-            <input type="date" value={geboren} max={vandaag} onChange={(e) => setGeboren(e.target.value)} required />
+            <span>Geboren op, of uitgerekende datum</span>
+            <input type="date" value={geboren} max={uiterlijk} onChange={(e) => setGeboren(e.target.value)} required />
+            <p className="hint">Zijn de kittens er nog niet? Vul de uitgerekende datum in, dan telt je pagina af tot de geboorte.</p>
           </label>
           <label className="veld">
             <span>Aantal kittens</span>

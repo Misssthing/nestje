@@ -26,6 +26,7 @@ export interface Nest {
   gezondheid_bij_verhuizing: boolean;
   in_overzicht: boolean;
   provincie: string | null;
+  geboortedatum_geschat: boolean;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };

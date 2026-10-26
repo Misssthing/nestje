@@ -1,7 +1,34 @@
 import { aftelling, datumNL } from '@/lib/nest';
 
-export default function Aftelling({ geboortedatum, weken }: { geboortedatum: string; weken: number }) {
+export default function Aftelling({
+  geboortedatum,
+  weken,
+  geschat = false,
+}: {
+  geboortedatum: string;
+  weken: number;
+  geschat?: boolean;
+}) {
   const a = aftelling(geboortedatum, weken);
+
+  if (a.verwacht) {
+    return (
+      <>
+        <div className="countdown">
+          <div className="big">{a.dagenTotGeboorte}</div>
+          <div className="txt">{a.dagenTotGeboorte === 1 ? 'dag' : 'dagen'} tot de kittens komen</div>
+        </div>
+        <div className="track" aria-hidden="true">
+          <span style={{ width: '0%' }} />
+        </div>
+        <div className="trackmeta">
+          <span>Verwacht rond {datumNL(a.geboren)}</span>
+          <span>Verhuizen vanaf {datumNL(a.verhuis)}</span>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="countdown">
@@ -16,7 +43,7 @@ export default function Aftelling({ geboortedatum, weken }: { geboortedatum: str
         <span style={{ width: `${a.voortgang}%` }} />
       </div>
       <div className="trackmeta">
-        <span>Geboren {datumNL(a.geboren)}</span>
+        <span>{geschat ? `Geboren rond ${datumNL(a.geboren)}` : `Geboren ${datumNL(a.geboren)}`}</span>
         <span>Verhuizen vanaf {datumNL(a.verhuis)}</span>
       </div>
     </>
