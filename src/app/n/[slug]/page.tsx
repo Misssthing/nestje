@@ -244,6 +244,7 @@ export default async function NestjesPagina({ params }: Props) {
           <li>Betaal nooit vooruit aan iemand die je niet hebt ontmoet.</li>
         </ul>
         <p className="hint" style={{ marginBottom: 0 }}>
+          Meer tips: <a href={metUtm(CONFIG.kopenArtikelUrl, 'waar-let-je-op', nest.slug)}>een kitten kopen, hier let je op</a>.
           Lees ook de <Link href="/huisregels">huisregels van Nestje</Link>.
         </p>
       </section>

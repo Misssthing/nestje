@@ -8,11 +8,17 @@ import type { OverzichtNest } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-type Props = { searchParams: Promise<{ ras?: string; provincie?: string }> };
+type Props = { searchParams: Promise<{ ras?: string; provincie?: string; soort?: string }> };
+
+const SOORTEN: Record<string, string> = {
+  stamboom: 'Met stamboom',
+  huiskat: 'Huiskat en kruising',
+  vondeling: 'Vondelingen',
+};
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { ras, provincie } = await searchParams;
-  const gefilterd = Boolean(ras || provincie);
+  const { ras, provincie, soort } = await searchParams;
+  const gefilterd = Boolean(ras || provincie || soort);
   return {
     title: 'Kittens te koop',
     description:
@@ -32,13 +38,17 @@ function rasVan(n: OverzichtNest) {
 }
 
 export default async function Overzicht({ searchParams }: Props) {
-  const { ras: rasParam, provincie: provParam } = await searchParams;
+  const { ras: rasParam, provincie: provParam, soort: soortParam } = await searchParams;
+  const soort = soortParam && soortParam in SOORTEN ? soortParam : '';
   const ras = rasParam && rasParam.length <= 60 ? rasParam : '';
   const provincie = provParam && (PROVINCIES as readonly string[]).includes(provParam) ? provParam : '';
 
   const supabase = createPublicClient();
   let query = supabase.from('openbare_overzicht').select('*').order('aangemaakt_op', { ascending: false }).limit(200);
   if (provincie) query = query.eq('provincie', provincie);
+  if (soort === 'stamboom') query = query.eq('stamboom', true);
+  if (soort === 'huiskat') query = query.eq('soort', 'eigen').or('stamboom.is.null,stamboom.eq.false');
+  if (soort === 'vondeling') query = query.eq('soort', 'vondeling');
   if (ras) {
     const veilig = ras.replace(/[%,()*]/g, '');
     query = query.or(`moeder_ras.ilike.*${veilig}*,vader_ras.ilike.*${veilig}*`);
@@ -57,7 +67,8 @@ export default async function Overzicht({ searchParams }: Props) {
         <h1>Kittens te koop</h1>
         <p>
           Nestjes van hobbyverkopers en fokkers. Je ziet meteen welke kittens nog vrij zijn en wanneer ze mogen verhuizen.
-          Kom altijd eerst kijken, bij de kittens én hun moeder.
+          Kom altijd eerst kijken, bij de kittens én hun moeder.{' '}
+          <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Lees waar je op let bij het kopen van een kitten</a>.
         </p>
       </section>
 
@@ -74,6 +85,13 @@ export default async function Overzicht({ searchParams }: Props) {
           <select name="provincie" defaultValue={provincie}>
             <option value="">Heel Nederland en België</option>
             {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
+          </select>
+        </label>
+        <label className="veld">
+          <span>Soort</span>
+          <select name="soort" defaultValue={soort}>
+            <option value="">Alle nestjes</option>
+            {Object.entries(SOORTEN).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
         </label>
         <button className="btn primary">Toon</button>
@@ -118,7 +136,7 @@ export default async function Overzicht({ searchParams }: Props) {
         </div>
       ) : (
         <p className="hint" style={{ marginTop: 18 }}>
-          {ras || provincie
+          {ras || provincie || soort
             ? 'Geen nestjes gevonden met deze keuze. Probeer een ander ras of een andere provincie.'
             : 'Er staan nog geen nestjes in het overzicht. Kijk binnenkort nog eens.'}
         </p>

@@ -46,6 +46,11 @@ export default function Huisregels() {
           organisatie, je catterynaam en de stamboomnummers van moeder én vader in. Zonder stamboom is je kitten een huiskat of
           kruising, hoe mooi hij ook is.
         </p>
+        <p>
+          In je beschrijving mag je eerlijk vertellen hoe je kittens eruitzien, bijvoorbeeld: “De moeder heeft het uiterlijk van
+          een Maine Coon, maar heeft geen stamboom.” Woorden als “raszuiver”, “rasecht” of “volbloed” gebruik je alleen met een
+          stamboom. Zo weten kopers precies waar ze aan toe zijn.
+        </p>
 
         <h2>5. Niet te vaak</h2>
         <p>
