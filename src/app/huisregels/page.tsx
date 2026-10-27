@@ -36,7 +36,8 @@ export default function Huisregels() {
 
         <h2>3. De moeder in beeld</h2>
         <p>
-          Op je nestjespagina staat een foto van de moeder. Zonder die foto verschijnt je nestje niet in het overzicht. Bij een
+          Op je nestjespagina staat een foto van de moeder, en dat is ook echt de moeder van dit nestje. Het liefst een foto van
+          haar samen met haar kittens. Zonder foto van de moeder verschijnt je nestje niet in het overzicht. Bij een
           vondelingennestje, waarvan de moeder onbekend is, maken we een uitzondering. Die nestjes krijgen het label “Vondelingen”.
         </p>
 

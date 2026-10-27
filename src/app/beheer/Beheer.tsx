@@ -169,7 +169,8 @@ export default function Beheer({
       <section className="panel" aria-label="Foto's van de ouders">
         <h2>Foto&apos;s van de ouders</h2>
         <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
-          Kopers vragen er vaak naar, vooral naar de vader. Komen in het blok “De ouders” op je pagina.
+          Komen in het blok “De ouders” op je pagina. Bij de moeder het liefst een foto van haar samen met haar kittens: zo zien
+          kopers dat ze er echt bij is.{nest.soort === 'vondeling' ? ' Bij vondelingen is een foto van de moeder niet nodig.' : ''}
         </p>
         <div className="ouderfoto">
           <OuderFoto supabase={supabase} nest={nest} kolom="moeder_foto" label={`Moeder (${nest.moeder_naam})`} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />

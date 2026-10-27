@@ -135,6 +135,22 @@ export const TEST_UITLEG: Record<string, string> = {
   Bloedgroep: 'belangrijk om problemen bij pasgeboren kittens te voorkomen',
 };
 
+/**
+ * Eenvoudige controle op een stamboomnummer. Echt nakijken kan alleen met de papieren,
+ * maar zo werken “123”, “xxx” of “11111” niet.
+ */
+export function stamboomnrProbleem(nr: string): string | null {
+  const t = nr.trim();
+  const cijfers = t.replace(/\D/g, '');
+  if (t.length < 5 || cijfers.length < 4) return 'is te kort. Neem het nummer over zoals het op de stamboom staat.';
+  if (/^(\d)\1+$/.test(cijfers)) return 'lijkt niet echt. Neem het nummer over zoals het op de stamboom staat.';
+  const oplopend = '0123456789012345678901234567890';
+  const aflopend = '9876543210987654321098765432109';
+  if (cijfers.length >= 4 && (oplopend.includes(cijfers) || aflopend.includes(cijfers)))
+    return 'lijkt niet echt. Neem het nummer over zoals het op de stamboom staat.';
+  return null;
+}
+
 /** Eén test van een ouder */
 export type OuderTest = { test: string; uitslag: string; datum: string };
 

@@ -37,7 +37,9 @@ export interface Nest {
   vader_testen: { test: string; uitslag: string; datum: string }[];
 }
 
-export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };
+export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 'vader_stamboomnr' | 'moeder_chip'> & {
+  heeft_whatsapp: boolean;
+};
 
 /** Gemeenschappelijke vorm van kitten- en nestfoto's */
 export interface FotoRij {

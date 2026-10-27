@@ -4,7 +4,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_DAGEN_VOORUIT, nestjeMelding, normaliseerNummer, ORGANISATIES, PROVINCIES, RASSEN, toonNummer,
-  VERBODEN_RAS, vraagtStamboom, type OuderTest,
+  stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom, type OuderTest,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
 import type { Nest } from '@/lib/types';
@@ -105,6 +105,16 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           ? 'Bij vondelingen is de afstamming onbekend. Kies bij het ras “Huiskat” of “Kruising”.'
           : 'Een rasnaam gebruik je alleen met stamboom. Kies “Huiskat” of “Kruising”, of zet Stamboom op Ja.',
       );
+    if (stamboom === true) {
+      const m = v.moeder_stamboomnr.trim();
+      const va = v.vader_stamboomnr.trim();
+      const pm = m && stamboomnrProbleem(m);
+      if (pm) return stop(`Het stamboomnummer van de moeder ${pm}`);
+      const pv = va && stamboomnrProbleem(va);
+      if (pv) return stop(`Het stamboomnummer van de vader ${pv}`);
+      if (m && va && m.replace(/\s/g, '').toLowerCase() === va.replace(/\s/g, '').toLowerCase())
+        return stop('De stamboomnummers van moeder en vader zijn hetzelfde. Elke kat heeft een eigen nummer.');
+    }
     const schoon = (t: OuderTest[]) =>
       t.filter((x) => x.test.trim()).map((x) => ({ test: x.test.trim(), uitslag: x.uitslag, datum: x.datum }));
     const mT = schoon(mTesten);
@@ -346,7 +356,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         {soort === 'eigen' && stamboom === true && (
           <div className="stamboomblok">
             <p className="hint" style={{ marginTop: 0 }}>
-              Bij een stamboom horen de gegevens van beide ouders. Zolang die niet compleet zijn, verschijnt je nestje niet in het overzicht.
+              Bij een stamboom horen de gegevens van beide ouders. Kopers zien de organisatie en je catterynaam; de stamboomnummers zijn alleen voor Nestje. Zolang de gegevens niet compleet zijn, verschijnt je nestje niet in het overzicht.
             </p>
             <div className="row stapel">
               <label className="veld">

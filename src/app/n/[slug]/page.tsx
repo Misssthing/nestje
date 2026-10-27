@@ -212,7 +212,6 @@ export default async function NestjesPagina({ params }: Props) {
             )}
             {(heeftVader || moederLabel !== nest.moeder_naam) && <h3>Moeder: {moederLabel}</h3>}
             <p>{overMoeder}</p>
-            {nest.moeder_stamboomnr && <p className="ouderfeit">Stamboomnummer: {nest.moeder_stamboomnr}</p>}
             <Testen testen={mTesten} />
           </div>
           {heeftVader && (
@@ -223,7 +222,6 @@ export default async function NestjesPagina({ params }: Props) {
               )}
               <h3>Vader{vaderLabel ? `: ${vaderLabel}` : ''}</h3>
               {nest.over_vader?.trim() && <p>{nest.over_vader.trim()}</p>}
-              {nest.vader_stamboomnr && <p className="ouderfeit">Stamboomnummer: {nest.vader_stamboomnr}</p>}
               <Testen testen={vTesten} />
             </div>
           )}
