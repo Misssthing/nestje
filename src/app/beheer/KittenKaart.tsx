@@ -77,7 +77,7 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
             onClick={() => {
               if (kitten.status === s) return;
               if (s === 'verhuisd' && !(kitten.gechipt && kitten.enting1)) {
-                toast(`Vink eerst Gechipt en 1e enting aan. Volgens de huisregels verhuizen kittens gechipt en ingeënt.`);
+                toast(`Vink eerst Gechipt en 1e enting aan. Kittens verhuizen gechipt en ingeënt; bij Gezondheid lees je waarom.`);
                 return;
               }
               onWijzig({ status: s }, `${kitten.naam}: ${STATUS_LABEL[s].toLowerCase()}`);
@@ -154,6 +154,15 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
           ))}
         </div>
         <p className="hint">Vink alleen aan wat geregeld is. Wat je niet aanvinkt, komt niet op de pagina.</p>
+        <details className="waarom">
+          <summary>Waarom gechipt en ingeënt voordat het kitten verhuist?</summary>
+          <p>
+            Met een chip vindt een kitten dat wegloopt of zoekraakt veel makkelijker zijn weg terug naar huis. De chip is de enige
+            manier waarop een dierenarts of asiel kan zien van wie een kat is. De eerste enting beschermt tegen kattenziekte en
+            niesziekte, die voor jonge kittens heel gevaarlijk kunnen zijn. Zo begint het kitten gezond en veilig aan zijn nieuwe
+            leven. Een chip kost bij de dierenarts meestal een paar tientjes.
+          </p>
+        </details>
       </div>
 
       <label className="veld" style={{ margin: 0 }}>

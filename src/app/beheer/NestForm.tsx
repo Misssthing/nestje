@@ -87,7 +87,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
     if (v.whatsapp.trim() && !nummer) return stop('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
     const weken = Number(v.verhuisleeftijd_weken);
-    if (!Number.isInteger(weken) || weken < 12 || weken > 26) return stop('Kittens verhuizen volgens de huisregels op zijn vroegst na 12 weken. Kies tussen 12 en 26 weken.');
+    if (!Number.isInteger(weken) || weken < 12 || weken > 26) return stop('Kittens verhuizen volgens de huisregels op zijn vroegst na 12 weken. Kies tussen 12 en 26 weken. Onder het veld lees je waarom.');
     const prijs = v.prijs.trim() ? Number(v.prijs.replace(',', '.')) : null;
     if (prijs != null && (Number.isNaN(prijs) || prijs < 0)) return stop('Vul een geldige prijs in.');
     const kg = (t: string) => (t.trim() ? Number(t.replace(',', '.')) : null);
@@ -281,6 +281,19 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <input type="number" inputMode="numeric" min={12} max={26} value={v.verhuisleeftijd_weken} onChange={zet('verhuisleeftijd_weken')} />
           </label>
         </div>
+        <details className="waarom">
+          <summary>Waarom minstens 12 weken?</summary>
+          <p>
+            De weken tussen 8 en 12 zijn voor een kitten heel belangrijk. Bij zijn moeder en nestgenootjes leert hij spelen zonder
+            te bijten, hoe hij met andere katten omgaat en hoe hij zichzelf verzorgt. Kittens die te vroeg weggaan, hebben vaker
+            last van angst, krabben of bijten. Ook krijgen ze rond 9 en 12 weken hun eerste twee entingen. Met 12 weken is het
+            kitten dus beter beschermd tegen ziektes als het naar een nieuw huis gaat.
+          </p>
+          <p>
+            Daarom hanteren ook verenigingen als WCF minimaal 12 weken, en FIFe zelfs 14. De wet staat 7 weken toe, maar op
+            Nestje kiezen we voor wat het beste is voor het kitten.
+          </p>
+        </details>
         <label className="vink" style={{ marginTop: -6, marginBottom: 14 }}>
           <input type="checkbox" checked={geschat} onChange={(e) => setGeschat(e.target.checked)} />
           <span>De geboortedatum is een schatting</span>

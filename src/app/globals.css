@@ -257,3 +257,10 @@ details.panel[open] summary { margin-bottom: 12px; }
 .letop ul { margin: 0 0 10px; padding-left: 20px; }
 .letop li + li { margin-top: 6px; }
 .labelchip { display: inline-block; margin-bottom: 8px; }
+
+/* Uitleg bij regels */
+.waarom { margin: -4px 0 14px; font-size: 14px; }
+.waarom summary { cursor: pointer; color: var(--free); font-weight: 600; list-style: none; }
+.waarom summary::-webkit-details-marker { display: none; }
+.waarom summary::before { content: 'ⓘ '; }
+.waarom p { color: var(--muted); margin: 8px 0 0; line-height: 1.5; }

@@ -22,13 +22,16 @@ export default function Huisregels() {
         <h2>1. Gezond op weg</h2>
         <p>
           Kittens zijn gechipt en hebben minstens hun eerste enting gehad voordat ze verhuizen. In Nestje kun je een kitten pas
-          op “Verhuisd” zetten als dat is aangevinkt.
+          op “Verhuisd” zetten als dat is aangevinkt. Waarom? Met een chip vindt een kitten dat zoekraakt zijn weg terug naar
+          huis, en de eerste enting beschermt tegen ziektes die voor jonge kittens heel gevaarlijk zijn.
         </p>
 
         <h2>2. Niet te jong</h2>
         <p>
           Kittens verhuizen op zijn vroegst als ze 12 weken oud zijn. Valt je nestje onder een vereniging met een strengere regel,
-          zoals 14 weken bij FIFe, dan volg je die.
+          zoals 14 weken bij FIFe, dan volg je die. Waarom? Tussen 8 en 12 weken leert een kitten bij zijn moeder en
+          nestgenootjes spelen zonder te bijten en omgaan met andere katten. Kittens die te vroeg weggaan, hebben vaker last van
+          angst of gedragsproblemen. Bovendien hebben ze met 12 weken hun eerste twee entingen gehad.
         </p>
 
         <h2>3. De moeder in beeld</h2>
