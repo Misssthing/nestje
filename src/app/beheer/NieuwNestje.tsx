@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CONFIG } from '@/lib/config';
-import { MAX_DAGEN_VOORUIT } from '@/lib/nest';
+import { MAX_DAGEN_VOORUIT, nestjeMelding } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/browser';
 
 export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
@@ -12,6 +12,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
   const [geboren, setGeboren] = useState('');
   const [woonplaats, setWoonplaats] = useState('');
   const [aantal, setAantal] = useState(4);
+  const [soort, setSoort] = useState<'eigen' | 'vondeling'>('eigen');
   const [bezig, setBezig] = useState(false);
   const [fout, setFout] = useState('');
   const uiterlijk = new Date(Date.now() + MAX_DAGEN_VOORUIT * 864e5).toISOString().slice(0, 10);
@@ -28,13 +29,14 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
         geboortedatum: geboren,
         woonplaats: woonplaats.trim() || null,
         verhuisleeftijd_weken: CONFIG.standaardVerhuisleeftijd,
+        soort,
       })
       .select('id')
       .single<{ id: string }>();
 
     if (error || !nest) {
       setBezig(false);
-      setFout('Aanmaken lukte niet. Probeer het opnieuw.');
+      setFout(nestjeMelding(error, 'Aanmaken lukte niet. Probeer het opnieuw.'));
       return;
     }
 
@@ -66,8 +68,15 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
         <p>Drie gegevens en je pagina staat. Foto's, namen en de rest vul je daarna aan.</p>
       </section>
       <form className="panel" onSubmit={maak}>
+        <div className="veld">
+          <span>Soort nestje</span>
+          <div className="seg" role="group" aria-label="Soort nestje">
+            <button type="button" aria-pressed={soort === 'eigen'} onClick={() => setSoort('eigen')}>Eigen poes</button>
+            <button type="button" aria-pressed={soort === 'vondeling'} onClick={() => setSoort('vondeling')}>Vondelingen</button>
+          </div>
+        </div>
         <label className="veld">
-          <span>Naam van de moeder</span>
+          <span>{soort === 'vondeling' ? 'Naam voor het nestje' : 'Naam van de moeder'}</span>
           <input value={moeder} onChange={(e) => setMoeder(e.target.value)} maxLength={60} required />
         </label>
         <div className="row stapel">
@@ -93,6 +102,13 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
           <input value={woonplaats} onChange={(e) => setWoonplaats(e.target.value)} maxLength={80} />
           <p className="hint">Alleen je plaatsnaam, geen adres. Komt op de openbare pagina.</p>
         </label>
+        {soort === 'vondeling' && (
+          <p className="hint">Bijvoorbeeld “de vondelingetjes”. Je pagina heet dan “Het nestje van de vondelingetjes”.</p>
+        )}
+        <p className="hint">
+          Door een nestje aan te maken, ga je akkoord met de <a href="/huisregels">huisregels</a>: onder meer chip en enting vóór
+          de verhuizing, en verhuizen op zijn vroegst na 12 weken.
+        </p>
         {fout && <p className="fout">{fout}</p>}
         <button className="btn primary" disabled={bezig}>
           {bezig ? 'Bezig…' : 'Nestje aanmaken'}

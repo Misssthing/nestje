@@ -93,6 +93,7 @@ export default async function Overzicht({ searchParams }: Props) {
                 )}
                 <div>
                   <strong>Het nestje van {n.moeder_naam}</strong>
+                  {n.soort === 'vondeling' && <span className="chip optie" style={{ marginTop: 6 }}>Vondelingen</span>}
                   <span>
                     {a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens)}
                     {r ? `, ${r}` : ''}

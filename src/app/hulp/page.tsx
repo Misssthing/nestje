@@ -82,6 +82,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Waarom kan ik iets niet opslaan of geen nieuw nestje maken?',
+    a: (
+      <p>Nestje heeft <Link href="/huisregels">huisregels</Link> om kittens verantwoord te laten verhuizen. Zo verhuizen kittens op zijn vroegst na 12 weken, gebruik je een rasnaam alleen met stamboom, en heb je maximaal 2 lopende nestjes tegelijk. Als iets niet kan, zie je onderaan het blok “Gegevens” een melding met de reden. Kom je er niet uit? Mail ons gerust.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
       <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>

@@ -27,6 +27,14 @@ export interface Nest {
   in_overzicht: boolean;
   provincie: string | null;
   geboortedatum_geschat: boolean;
+  soort: 'eigen' | 'vondeling';
+  stamboom_organisatie: string | null;
+  cattery: string | null;
+  moeder_stamboomnr: string | null;
+  vader_stamboomnr: string | null;
+  moeder_chip?: string | null;
+  moeder_testen: { test: string; uitslag: string; datum: string }[];
+  vader_testen: { test: string; uitslag: string; datum: string }[];
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer'> & { heeft_whatsapp: boolean };
@@ -107,4 +115,5 @@ export interface OverzichtNest {
   vrij: number;
   optie: number;
   foto: string | null;
+  soort?: 'eigen' | 'vondeling';
 }

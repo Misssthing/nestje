@@ -11,7 +11,7 @@ export const CONFIG = {
     kvk: '68878214',
     btw: 'NL001636039B31',
   },
-  juridischBijgewerkt: '25 oktober 2026',
+  juridischBijgewerkt: '27 oktober 2026',
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,

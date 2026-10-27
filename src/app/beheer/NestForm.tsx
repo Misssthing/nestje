@@ -2,7 +2,11 @@
 
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MAX_DAGEN_VOORUIT, normaliseerNummer, PROVINCIES, RASSEN, toonNummer } from '@/lib/nest';
+import {
+  MAX_DAGEN_VOORUIT, nestjeMelding, normaliseerNummer, ORGANISATIES, PROVINCIES, RASSEN, toonNummer,
+  VERBODEN_RAS, vraagtStamboom, type OuderTest,
+} from '@/lib/nest';
+import TestenLijst from './TestenLijst';
 import type { Nest } from '@/lib/types';
 
 type Props = {
@@ -28,21 +32,30 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     moeder_gewicht: nest.moeder_gewicht != null ? String(nest.moeder_gewicht).replace('.', ',') : '',
     vader_gewicht: nest.vader_gewicht != null ? String(nest.vader_gewicht).replace('.', ',') : '',
     over_vader: nest.over_vader ?? '',
+    stamboom_organisatie: nest.stamboom_organisatie ?? '',
+    cattery: nest.cattery ?? '',
+    moeder_stamboomnr: nest.moeder_stamboomnr ?? '',
+    vader_stamboomnr: nest.vader_stamboomnr ?? '',
+    moeder_chip: nest.moeder_chip ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
-  const [getest, setGetest] = useState<boolean | null>(nest.ouders_getest);
+  const [getest] = useState<boolean | null>(nest.ouders_getest);
   const [bijVerhuizing, setBijVerhuizing] = useState<boolean>(nest.gezondheid_bij_verhuizing ?? false);
   const [inOverzicht, setInOverzicht] = useState<boolean>(nest.in_overzicht ?? false);
   const [provincie, setProvincie] = useState<string>(nest.provincie ?? '');
   const [geschat, setGeschat] = useState<boolean>(nest.geboortedatum_geschat ?? false);
+  const [soort, setSoort] = useState<'eigen' | 'vondeling'>(nest.soort ?? 'eigen');
+  const [mTesten, setMTesten] = useState<OuderTest[]>(nest.moeder_testen ?? []);
+  const [vTesten, setVTesten] = useState<OuderTest[]>(nest.vader_testen ?? []);
+  const [aandacht, setAandacht] = useState<string[]>([]);
   const [fout, setFout] = useState('');
   const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
-  const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const zet = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setV((s) => ({ ...s, [k]: e.target.value }));
 
   // Altijd de nieuwste invoer bij de hand, ook in timers en bij het verlaten van de pagina.
-  const laatste = useRef({ v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat });
-  laatste.current = { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat };
+  const laatste = useRef({ v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat, soort, mTesten, vTesten });
+  laatste.current = { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat, soort, mTesten, vTesten };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openstaand = useRef(false);
   const bezig = useRef(false);
@@ -59,7 +72,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (!openstaand.current) return;
     if (bezig.current) return; // na de lopende opslag volgt vanzelf een nieuwe ronde
 
-    const { v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat } = laatste.current;
+    const { v, getest, bijVerhuizing, inOverzicht, provincie, geschat, soort, mTesten, vTesten } = laatste.current;
+    // Vondelingen hebben geen bekende afstamming, dus ook geen stamboom.
+    const stamboom = soort === 'vondeling' ? null : laatste.current.stamboom;
     const stop = (melding: string) => {
       setFout(melding);
       setStatus('fout');
@@ -72,7 +87,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const nummer = v.whatsapp.trim() ? normaliseerNummer(v.whatsapp) : null;
     if (v.whatsapp.trim() && !nummer) return stop('Dit WhatsApp-nummer klopt niet. Gebruik bijvoorbeeld 06 12345678.');
     const weken = Number(v.verhuisleeftijd_weken);
-    if (!Number.isInteger(weken) || weken < 8 || weken > 26) return stop('Verhuisleeftijd moet tussen 8 en 26 weken liggen.');
+    if (!Number.isInteger(weken) || weken < 12 || weken > 26) return stop('Kittens verhuizen volgens de huisregels op zijn vroegst na 12 weken. Kies tussen 12 en 26 weken.');
     const prijs = v.prijs.trim() ? Number(v.prijs.replace(',', '.')) : null;
     if (prijs != null && (Number.isNaN(prijs) || prijs < 0)) return stop('Vul een geldige prijs in.');
     const kg = (t: string) => (t.trim() ? Number(t.replace(',', '.')) : null);
@@ -80,6 +95,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const vg = kg(v.vader_gewicht);
     if ([mg, vg].some((g) => g != null && (Number.isNaN(g) || g < 0.5 || g > 20)))
       return stop('Vul het gewicht in kilo’s in, bijvoorbeeld 5,2.');
+
+    const rassen = `${v.moeder_ras} ${v.vader_ras}`;
+    if (VERBODEN_RAS.test(rassen))
+      return stop('Met dit ras mag in Nederland niet worden gefokt. Naaktkatten en katten met vouworen kunnen daarom niet op Nestje.');
+    if ((vraagtStamboom(v.moeder_ras) || vraagtStamboom(v.vader_ras)) && stamboom !== true)
+      return stop(
+        soort === 'vondeling'
+          ? 'Bij vondelingen is de afstamming onbekend. Kies bij het ras “Huiskat” of “Kruising”.'
+          : 'Een rasnaam gebruik je alleen met stamboom. Kies “Huiskat” of “Kruising”, of zet Stamboom op Ja.',
+      );
+    const schoon = (t: OuderTest[]) =>
+      t.filter((x) => x.test.trim()).map((x) => ({ test: x.test.trim(), uitslag: x.uitslag, datum: x.datum }));
+    const mT = schoon(mTesten);
+    const vT = schoon(vTesten);
 
     const patch = {
       moeder_naam: v.moeder_naam.trim(),
@@ -95,13 +124,21 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       stamboom,
       moeder_gewicht: mg,
       vader_gewicht: vg,
-      ouders_getest: getest,
+      ouders_getest: mT.length + vT.length > 0 ? true : getest,
       ouders_test_info: getest ? v.ouders_test_info.trim() || null : null,
       over_vader: v.over_vader.trim() || null,
       gezondheid_bij_verhuizing: bijVerhuizing,
       in_overzicht: inOverzicht,
       provincie: provincie || null,
       geboortedatum_geschat: geschat,
+      soort,
+      stamboom_organisatie: stamboom ? v.stamboom_organisatie || null : null,
+      cattery: stamboom ? v.cattery.trim() || null : null,
+      moeder_stamboomnr: stamboom ? v.moeder_stamboomnr.trim() || null : null,
+      vader_stamboomnr: stamboom ? v.vader_stamboomnr.trim() || null : null,
+      moeder_chip: v.moeder_chip.replace(/\s+/g, '') || null,
+      moeder_testen: mT,
+      vader_testen: vT,
     };
 
     openstaand.current = false;
@@ -111,9 +148,23 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     bezig.current = false;
     if (error) {
       openstaand.current = true;
-      return stop('Opslaan lukte niet. Controleer je internetverbinding en probeer het opnieuw.');
+      return stop(nestjeMelding(error, 'Opslaan lukte niet. Controleer je internetverbinding en probeer het opnieuw.'));
     }
     setFout('');
+    const punten: string[] = [];
+    if (stamboom === true) {
+      const mist = [
+        !patch.stamboom_organisatie && 'organisatie',
+        !patch.cattery && 'catterynaam',
+        !patch.moeder_stamboomnr && 'stamboomnummer moeder',
+        !patch.vader_naam && 'naam vader',
+        !patch.vader_stamboomnr && 'stamboomnummer vader',
+      ].filter(Boolean);
+      if (mist.length) punten.push(`Vul de stamboomgegevens aan (${mist.join(', ')}). Tot die tijd verschijnt je nestje niet in het overzicht.`);
+    }
+    if (inOverzicht && soort !== 'vondeling' && !nestRef.current.moeder_foto)
+      punten.push('Je nestje verschijnt pas in het overzicht als er een foto van de moeder op staat.');
+    setAandacht(punten);
     onOpgeslagenRef.current({ ...nestRef.current, ...patch });
     if (openstaand.current) {
       // Tijdens het opslaan is er alweer iets gewijzigd
@@ -135,7 +186,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(opslaan, 900);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat]);
+  }, [v, stamboom, getest, bijVerhuizing, inOverzicht, provincie, geschat, soort, mTesten, vTesten]);
 
   // Wie de pagina verlaat of de app wegklikt, verliest niets.
   useEffect(() => {
@@ -170,6 +221,16 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         }}
         onBlur={() => void opslaan()}
       >
+        <div className="veld">
+          <span>Soort nestje</span>
+          <div className="seg" role="group" aria-label="Soort nestje">
+            <button type="button" aria-pressed={soort === 'eigen'} onClick={() => setSoort('eigen')}>Eigen poes</button>
+            <button type="button" aria-pressed={soort === 'vondeling'} onClick={() => setSoort('vondeling')}>Vondelingen</button>
+          </div>
+          {soort === 'vondeling' && (
+            <p className="hint">Is de moeder onbekend? Vul bij de naam bijvoorbeeld “de vondelingetjes” in. Een foto van de moeder is dan niet nodig, en je pagina krijgt het label “Vondelingen”.</p>
+          )}
+        </div>
         <div className="row stapel">
           <label className="veld">
             <span>Naam moeder</span>
@@ -177,13 +238,23 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           <label className="veld">
             <span>Ras moeder (optioneel)</span>
-            <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} maxLength={60} placeholder="Bijv. Europese korthaar" />
+            <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} maxLength={60} placeholder="Bijv. Huiskat" />
           </label>
         </div>
         <label className="veld">
           <span>Gewicht moeder in kg (optioneel)</span>
           <input inputMode="decimal" value={v.moeder_gewicht} onChange={zet('moeder_gewicht')} placeholder="Bijv. 5,2" />
         </label>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
+          Een rasnaam zoals Maine Coon gebruik je alleen met een stamboom. Zonder stamboom kies je “Huiskat” of “Kruising”.
+        </p>
+        {soort === 'eigen' && (
+          <label className="veld">
+            <span>Chipnummer moeder (optioneel)</span>
+            <input inputMode="numeric" value={v.moeder_chip} onChange={zet('moeder_chip')} maxLength={20} placeholder="15 cijfers" />
+            <p className="hint">Wordt niet getoond. Zo houden we bij hoeveel nestjes een poes heeft.</p>
+          </label>
+        )}
         <datalist id="rassen">
           {RASSEN.map((r) => <option key={r} value={r} />)}
         </datalist>
@@ -207,7 +278,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           <label className="veld">
             <span>Mag verhuizen na (weken)</span>
-            <input type="number" inputMode="numeric" min={8} max={26} value={v.verhuisleeftijd_weken} onChange={zet('verhuisleeftijd_weken')} />
+            <input type="number" inputMode="numeric" min={12} max={26} value={v.verhuisleeftijd_weken} onChange={zet('verhuisleeftijd_weken')} />
           </label>
         </div>
         <label className="vink" style={{ marginTop: -6, marginBottom: 14 }}>
@@ -258,13 +329,48 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </div>
           <p className="hint">Kies “Bij verhuizing” als je aanvinkt wat geregeld is wanneer de kittens de deur uitgaan, zoals chip en entingen.</p>
         </div>
-        <JaNee label="Stamboom" waarde={stamboom} onChange={setStamboom} />
-        <JaNee label="Ouders getest op erfelijke aandoeningen" waarde={getest} onChange={setGetest} />
-        {getest && (
-          <label className="veld">
-            <span>Waarop getest (optioneel)</span>
-            <input value={v.ouders_test_info} onChange={zet('ouders_test_info')} maxLength={120} placeholder="Bijv. HCM, PKD" />
-          </label>
+        {soort === 'eigen' && <JaNee label="Stamboom" waarde={stamboom} onChange={setStamboom} />}
+        {soort === 'eigen' && stamboom === true && (
+          <div className="stamboomblok">
+            <p className="hint" style={{ marginTop: 0 }}>
+              Bij een stamboom horen de gegevens van beide ouders. Zolang die niet compleet zijn, verschijnt je nestje niet in het overzicht.
+            </p>
+            <div className="row stapel">
+              <label className="veld">
+                <span>Organisatie</span>
+                <select value={v.stamboom_organisatie} onChange={zet('stamboom_organisatie')}>
+                  <option value="">Kies…</option>
+                  {ORGANISATIES.map((o) => <option key={o} value={o}>{o}</option>)}
+                </select>
+              </label>
+              <label className="veld">
+                <span>Catterynaam</span>
+                <input value={v.cattery} onChange={zet('cattery')} maxLength={80} />
+              </label>
+            </div>
+            <div className="row stapel">
+              <label className="veld">
+                <span>Stamboomnummer moeder</span>
+                <input value={v.moeder_stamboomnr} onChange={zet('moeder_stamboomnr')} maxLength={40} />
+              </label>
+              <label className="veld">
+                <span>Stamboomnummer vader</span>
+                <input value={v.vader_stamboomnr} onChange={zet('vader_stamboomnr')} maxLength={40} />
+              </label>
+            </div>
+            {!v.vader_naam.trim() && <p className="hint">Vul hierboven ook de naam van de vader in. Bij een stamboom is de vader altijd bekend.</p>}
+          </div>
+        )}
+        {soort === 'eigen' && (
+          <>
+            <TestenLijst titel="Testen moeder (optioneel)" ras={v.moeder_ras} testen={mTesten} onChange={setMTesten} />
+            {(v.vader_naam.trim() || stamboom === true) && (
+              <TestenLijst titel="Testen vader (optioneel)" ras={v.vader_ras || v.moeder_ras} testen={vTesten} onChange={setVTesten} />
+            )}
+            {mTesten.length + vTesten.length === 0 && getest && v.ouders_test_info && (
+              <p className="hint">Eerder ingevuld: getest op {v.ouders_test_info}. Zet de testen hierboven per ouder, dan zien kopers ook de uitslag.</p>
+            )}
+          </>
         )}
         <div className="veld">
           <span>Tonen in het overzicht van Nestje (optioneel)</span>
@@ -286,6 +392,11 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 ? 'Wijzigingen worden opgeslagen…'
                 : '✓ Alles is opgeslagen'}
         </p>
+        {aandacht.length > 0 && status !== 'fout' && (
+          <ul className="aandacht">
+            {aandacht.map((a) => <li key={a}>{a}</li>)}
+          </ul>
+        )}
       </form>
     </details>
   );

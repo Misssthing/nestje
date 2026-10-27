@@ -30,6 +30,7 @@ export default function Voorwaarden() {
         <li>Je zet alleen foto’s en teksten online waarvoor je de rechten hebt.</li>
         <li>Je houdt je aan de wet- en regelgeving rond het houden, fokken en verkopen of herplaatsen van dieren, waaronder de regels over de minimale leeftijd waarop kittens bij hun moeder weg mogen en over identificatie en registratie.</li>
         <li>Je biedt geen dieren aan die ziek zijn, illegaal zijn verkregen of niet van jou zijn.</li>
+        <li>Je houdt je aan de <Link href="/huisregels">huisregels van Nestje</Link>. Die maken deel uit van deze voorwaarden.</li>
       </ul>
 
       <h2>4. Geen partij bij de verkoop</h2>
@@ -42,7 +43,7 @@ export default function Voorwaarden() {
 
       <h2>5. Wat niet mag</h2>
       <p>
-        Het is niet toegestaan Nestje te gebruiken voor andere dieren dan katten, voor misleidende of onrechtmatige inhoud, voor
+        Het is niet toegestaan Nestje te gebruiken voor andere dieren dan katten, voor misleidende of onrechtmatige inhoud, in strijd met de huisregels, voor
         spam, of op een manier die de dienst of andere gebruikers schaadt. Wij mogen inhoud verwijderen of een account blokkeren
         als we redelijkerwijs vermoeden dat deze voorwaarden worden overtreden.
       </p>

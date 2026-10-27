@@ -6,7 +6,7 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -61,8 +61,17 @@ export default async function NestjesPagina({ params }: Props) {
   const ras = rasTekst(nest.moeder_ras, nest.vader_ras);
   const stamboom = nest.stamboom === true ? ' Met stamboom.' : nest.stamboom === false ? ' Zonder stamboom.' : '';
   const testInfo = nest.ouders_test_info?.trim();
-  const ouderTest =
-    nest.ouders_getest === true
+  const vondeling = nest.soort === 'vondeling';
+  const mTesten: OuderTest[] = nest.moeder_testen ?? [];
+  const vTesten: OuderTest[] = nest.vader_testen ?? [];
+  const gestructureerd = mTesten.length + vTesten.length > 0;
+  const stamboomRegel =
+    nest.stamboom === true && (nest.stamboom_organisatie || nest.cattery)
+      ? `Stamboom${nest.stamboom_organisatie ? ` via ${nest.stamboom_organisatie.replace(/ \(.*\)$/, '')}` : ''}${nest.cattery ? `, cattery ${nest.cattery}` : ''}.`
+      : '';
+  const ouderTest = gestructureerd
+    ? ''
+    : nest.ouders_getest === true
       ? `Ouders getest op erfelijke aandoeningen${testInfo ? `: ${testInfo}` : ''}.`
       : nest.ouders_getest === false
         ? 'Ouders niet getest op erfelijke aandoeningen.'
@@ -105,6 +114,7 @@ export default async function NestjesPagina({ params }: Props) {
             Een nestje van <Link href={`/van/${profiel.profiel_slug}`}>{profiel.profiel_naam}</Link>
           </p>
         )}
+        {vondeling && <span className="chip optie labelchip">Vondelingen</span>}
         <h1>Het nestje van {nest.moeder_naam}</h1>
         {a.verwacht ? (
           <p>
@@ -202,6 +212,8 @@ export default async function NestjesPagina({ params }: Props) {
             )}
             {(heeftVader || moederLabel !== nest.moeder_naam) && <h3>Moeder: {moederLabel}</h3>}
             <p>{overMoeder}</p>
+            {nest.moeder_stamboomnr && <p className="ouderfeit">Stamboomnummer: {nest.moeder_stamboomnr}</p>}
+            <Testen testen={mTesten} />
           </div>
           {heeftVader && (
             <div className="ouder">
@@ -211,10 +223,29 @@ export default async function NestjesPagina({ params }: Props) {
               )}
               <h3>Vader{vaderLabel ? `: ${vaderLabel}` : ''}</h3>
               {nest.over_vader?.trim() && <p>{nest.over_vader.trim()}</p>}
+              {nest.vader_stamboomnr && <p className="ouderfeit">Stamboomnummer: {nest.vader_stamboomnr}</p>}
+              <Testen testen={vTesten} />
             </div>
           )}
         </div>
+        {stamboomRegel && <p className="ouderfeit">{stamboomRegel}</p>}
         {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
+        {gestructureerd && (
+          <p className="hint">Testuitslagen zijn ingevuld door de verkoper. Vraag gerust om de uitslagen te zien.</p>
+        )}
+      </section>
+
+      <section className="panel letop">
+        <h2>Waar let je op?</h2>
+        <ul>
+          <li>Kom altijd eerst kijken{vondeling ? '' : ', bij de kittens én hun moeder'}.</li>
+          <li>Een kitten verhuist op zijn vroegst na 12 weken, gechipt en ingeënt. Vraag naar het vaccinatieboekje.</li>
+          {nest.stamboom === true && <li>Vraag naar de stamboompapieren van beide ouders, en wanneer je de stamboom van je kitten krijgt.</li>}
+          <li>Betaal nooit vooruit aan iemand die je niet hebt ontmoet.</li>
+        </ul>
+        <p className="hint" style={{ marginBottom: 0 }}>
+          Lees ook de <Link href="/huisregels">huisregels van Nestje</Link>.
+        </p>
       </section>
 
       <section className="klaar">
@@ -231,5 +262,27 @@ export default async function NestjesPagina({ params }: Props) {
 
       <Voet />
     </main>
+  );
+}
+
+function Testen({ testen }: { testen: OuderTest[] }) {
+  if (!testen.length) return null;
+  return (
+    <ul className="oudertesten">
+      {testen.map((t) => {
+        const goed = GOEDE_UITSLAG.includes(t.uitslag);
+        const uitleg = TEST_UITLEG[t.test];
+        return (
+          <li key={`${t.test}-${t.datum}`} className={goed ? 'goed' : ''}>
+            <span className="t">
+              {goed ? '✓ ' : ''}
+              {t.test}: {t.uitslag.toLowerCase()}
+              {t.datum ? ` (${new Date(`${t.datum}T12:00:00`).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })})` : ''}
+            </span>
+            {uitleg && <span className="u">{uitleg}</span>}
+          </li>
+        );
+      })}
+    </ul>
   );
 }

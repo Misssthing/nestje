@@ -80,9 +80,70 @@ export const PROVINCIES = [
 ] as const;
 
 export const RASSEN = [
-  'Huiskat', 'Europese korthaar', 'Kruising', 'Brits korthaar', 'Maine Coon', 'Ragdoll',
-  'Noorse boskat', 'Siberische kat', 'Siamees', 'Bengaal', 'Perzisch', 'Sphynx',
+  'Huiskat', 'Kruising', 'Europese korthaar', 'Brits korthaar', 'Brits langhaar', 'Maine Coon', 'Ragdoll',
+  'Noorse boskat', 'Siberische kat', 'Bengaal', 'Perzisch', 'Exotic', 'Siamees', 'Oosterse korthaar',
+  'Abessijn', 'Somali', 'Heilige Birmaan', 'Russisch blauw', 'Devon rex', 'Burmees',
 ];
+
+/** Deze mag je zonder stamboom gebruiken; elke andere rasnaam alleen met stamboom. */
+export const RASSEN_ZONDER_STAMBOOM = ['huiskat', 'kruising', 'europese korthaar', 'eur', 'ekh'];
+
+export function vraagtStamboom(ras: string) {
+  const r = ras.trim().toLowerCase();
+  return r !== '' && !RASSEN_ZONDER_STAMBOOM.includes(r);
+}
+
+/** Fokverbod in Nederland: naaktkatten en katten met vouworen. */
+export const VERBODEN_RAS = /(sphynx|naakt|fold|levkoy|bambino|donskoy|peterbald|\bdwelf\b|\belf\b)/i;
+
+export const ORGANISATIES = ['FIFe (o.a. Felikat)', 'WCF', 'TICA', 'Anders'];
+
+/** Gebruikelijke testen per ras, als suggestie. De verkoper kiest zelf wat er gedaan is. */
+export const TESTEN_ALGEMEEN = ['FIV/FeLV', 'Hartecho (HCM)'];
+export const TESTEN_PER_RAS: Record<string, string[]> = {
+  'brits korthaar': ['PKD', 'pd-PRA', 'Bloedgroep'],
+  'brits langhaar': ['PKD', 'pd-PRA', 'Bloedgroep'],
+  'maine coon': ['HCM DNA', 'SMA', 'PK-deficiëntie', 'Bloedgroep'],
+  'noorse boskat': ['PK-deficiëntie', 'GSD IV', 'Bloedgroep'],
+  ragdoll: ['HCM DNA', 'PKD', 'pd-PRA', 'Bloedgroep'],
+  bengaal: ['rdAc-PRA', 'b-PRA', 'PK-deficiëntie', 'Bloedgroep'],
+  perzisch: ['PKD', 'pd-PRA', 'Bloedgroep'],
+  exotic: ['PKD', 'pd-PRA', 'Bloedgroep'],
+  'siberische kat': ['PK-deficiëntie', 'PKD', 'Bloedgroep'],
+  abessijn: ['PK-deficiëntie', 'rdAc-PRA', 'PKD'],
+  somali: ['PK-deficiëntie', 'rdAc-PRA', 'PKD'],
+};
+export function testSuggesties(ras: string) {
+  return [...TESTEN_ALGEMEEN, ...(TESTEN_PER_RAS[ras.trim().toLowerCase()] ?? [])];
+}
+
+export const UITSLAGEN = ['Negatief', 'Vrij', 'Normaal', 'Drager', 'Anders'] as const;
+export const GOEDE_UITSLAG = ['Negatief', 'Vrij', 'Normaal'];
+
+/** Uitleg in gewone taal, voor kopers. */
+export const TEST_UITLEG: Record<string, string> = {
+  'FIV/FeLV': 'besmettelijke virussen (kattenaids en leukose)',
+  'Hartecho (HCM)': 'hartaandoening, onderzocht met een echo door een cardioloog',
+  'HCM DNA': 'erfelijke hartaandoening, DNA-test',
+  PKD: 'erfelijke nieraandoening met cysten',
+  'pd-PRA': 'erfelijke oogaandoening die tot blindheid kan leiden',
+  'rdAc-PRA': 'erfelijke oogaandoening die tot blindheid kan leiden',
+  'b-PRA': 'erfelijke oogaandoening bij Bengalen',
+  SMA: 'erfelijke spieraandoening',
+  'PK-deficiëntie': 'erfelijke vorm van bloedarmoede',
+  'GSD IV': 'erfelijke stofwisselingsziekte',
+  Bloedgroep: 'belangrijk om problemen bij pasgeboren kittens te voorkomen',
+};
+
+/** Eén test van een ouder */
+export type OuderTest = { test: string; uitslag: string; datum: string };
+
+/** Haalt de nette melding uit een fout van de database ("NESTJE: …"). */
+export function nestjeMelding(fout: { message?: string } | null | undefined, standaard: string) {
+  const m = fout?.message ?? '';
+  const i = m.indexOf('NESTJE:');
+  return i >= 0 ? m.slice(i + 7).trim() : standaard;
+}
 
 /** "Ras: Maine Coon" of "Moeder Maine Coon, vader Ragdoll". Leeg als niets is ingevuld. */
 export function rasTekst(moeder?: string | null, vader?: string | null) {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useToast } from '@/components/Toast';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import FotoBeheer from '@/components/FotoBeheer';
@@ -22,6 +23,7 @@ type Props = {
 };
 
 export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste, onWijzig, onFotos, onVerwijder, onVerplaats }: Props) {
+  const toast = useToast();
   const [naam, setNaam] = useState(kitten.naam);
   const [vacht, setVacht] = useState(kitten.vacht ?? '');
   const [omschrijving, setOmschrijving] = useState(kitten.omschrijving ?? '');
@@ -72,7 +74,14 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
             key={s}
             data-s={s}
             aria-pressed={kitten.status === s}
-            onClick={() => kitten.status !== s && onWijzig({ status: s }, `${kitten.naam}: ${STATUS_LABEL[s].toLowerCase()}`)}
+            onClick={() => {
+              if (kitten.status === s) return;
+              if (s === 'verhuisd' && !(kitten.gechipt && kitten.enting1)) {
+                toast(`Vink eerst Gechipt en 1e enting aan. Volgens de huisregels verhuizen kittens gechipt en ingeënt.`);
+                return;
+              }
+              onWijzig({ status: s }, `${kitten.naam}: ${STATUS_LABEL[s].toLowerCase()}`);
+            }}
           >
             {STATUS_LABEL[s]}
           </button>
