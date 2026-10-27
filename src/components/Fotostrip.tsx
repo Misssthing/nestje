@@ -25,6 +25,13 @@ export default function Fotostrip({ fotos, naam, vul = false }: { fotos: string[
     );
   }
 
+  const naar = (i: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const doel = Math.max(0, Math.min(fotos.length - 1, i));
+    el.scrollTo({ left: doel * el.clientWidth, behavior: 'smooth' });
+  };
+
   return (
     <>
       <div
@@ -52,11 +59,38 @@ export default function Fotostrip({ fotos, naam, vul = false }: { fotos: string[
         })}
       </div>
       {fotos.length > 1 && (
-        <div className="stippen" aria-hidden="true">
-          {fotos.map((src, i) => (
-            <i key={src} className={i === actief ? 'aan' : ''} />
-          ))}
-        </div>
+        <>
+          <button
+            type="button"
+            className="pijl vorige"
+            aria-label="Vorige foto"
+            disabled={actief === 0}
+            onClick={() => naar(actief - 1)}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            className="pijl volgende"
+            aria-label="Volgende foto"
+            disabled={actief === fotos.length - 1}
+            onClick={() => naar(actief + 1)}
+          >
+            ›
+          </button>
+          <div className="stippen">
+            {fotos.map((src, i) => (
+              <button
+                type="button"
+                key={src}
+                className={i === actief ? 'aan' : ''}
+                aria-label={`Foto ${i + 1} van ${fotos.length}`}
+                aria-current={i === actief}
+                onClick={() => naar(i)}
+              />
+            ))}
+          </div>
+        </>
       )}
     </>
   );
