@@ -262,7 +262,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           <label className="veld">
             <span>Chipnummer moeder (optioneel)</span>
             <input inputMode="numeric" value={v.moeder_chip} onChange={zet('moeder_chip')} maxLength={20} placeholder="15 cijfers" />
-            <p className="hint">Wordt niet getoond. Zo houden we bij hoeveel nestjes een poes heeft.</p>
+            <p className="hint">Wordt nooit getoond. Zo houden we bij hoeveel nestjes een poes heeft.</p>
+            <details className="waarom">
+              <summary>Waarom vragen we dit, en is het veilig?</summary>
+              <p>
+                Volgens de huisregels heeft een poes maximaal 2 nestjes per jaar. Aan de naam van een poes herken je haar niet
+                altijd: een naam typ je zo net iets anders. Het chipnummer is uniek, en daarmee houdt Nestje betrouwbaar bij hoeveel
+                nestjes ze heeft.
+              </p>
+              <p>
+                Het nummer staat nergens op je pagina of in het overzicht, en we delen het met niemand. Alleen jij en de beheerder van
+                Nestje kunnen het zien. Met een chipnummer alleen kan niemand iets: je adresgegevens staan in een aparte database
+                bij de chipregistratie, en die is niet openbaar. Wil je het liever niet invullen, dan laat je het gewoon leeg.
+              </p>
+            </details>
           </label>
         )}
         <datalist id="rassen">
@@ -382,6 +395,17 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
               </label>
             </div>
             {!v.vader_naam.trim() && <p className="hint">Vul hierboven ook de naam van de vader in. Bij een stamboom is de vader altijd bekend.</p>}
+            <details className="waarom">
+              <summary>Waarom vragen we de stamboomnummers, en is dat veilig?</summary>
+              <p>
+                Met de stamboomnummers kunnen we nagaan dat een stamboom echt is, en zien we het als iemand het nummer van een andere
+                cattery gebruikt. Zo beschermen we fokkers zoals jij tegen broodfokkers die zich als raskattenfokker voordoen.
+              </p>
+              <p>
+                Kopers zien de nummers niet: op je pagina staan alleen de organisatie en je catterynaam. De nummers zijn alleen zichtbaar
+                voor jou en de beheerder van Nestje, en we delen ze met niemand.
+              </p>
+            </details>
           </div>
         )}
         {soort === 'eigen' && (

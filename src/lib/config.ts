@@ -12,7 +12,7 @@ export const CONFIG = {
     btw: 'NL001636039B31',
   },
   kopenArtikelUrl: 'https://www.kattenverzorging.com/kitten-kopen-waar-op-letten/',
-  juridischBijgewerkt: '27 oktober 2026',
+  juridischBijgewerkt: '28 oktober 2026',
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,

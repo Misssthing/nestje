@@ -29,6 +29,9 @@ export default function Privacy() {
         <li>Wat je zelf over je nestje invult: woonplaats, geboortedatum van de kittens, prijs, en over de ouders naam, ras, gewicht, foto, beschrijving, stamboom en of ze getest zijn.</li>
         <li>Wat je over de kittens invult: namen, geslacht, vacht, karakter, status, gezondheidsgegevens (zoals chip en entingen) en foto’s.</li>
         <li>Je WhatsApp-nummer, zodat kopers contact met je kunnen opnemen.</li>
+        <li>Als je die invult: de stamboomnummers van de ouders en het chipnummer van de moeder. Die zijn niet openbaar en alleen
+          zichtbaar voor jou en de beheerder van Nestje. We gebruiken ze uitsluitend om stambomen te kunnen controleren en om het aantal
+          nestjes per poes bij te houden, zoals de huisregels voorschrijven. We delen ze met niemand.</li>
         <li>Notities die je bij een kitten maakt, bijvoorbeeld voor wie het gereserveerd is. Die zijn alleen voor jou zichtbaar. Noteer over kopers niet meer dan je nodig hebt; je bent zelf verantwoordelijk voor wat je over anderen vastlegt.</li>
         <li>Technische gegevens die nodig zijn om de dienst te laten werken en te beveiligen, zoals IP-adres en tijdstip van inloggen, in de logbestanden van onze dienstverleners.</li>
       </ul>
