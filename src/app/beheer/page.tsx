@@ -38,6 +38,7 @@ export default async function Overzicht() {
       <div className="bar">
         <span className="brand">Nestje</span>
         <div style={{ display: 'flex', gap: 8 }}>
+          <Link className="btn ghost klein" href="/kittens">Alle kittens</Link>
           <a className="btn ghost klein" href="/hulp">Hulp</a>
           <form action="/auth/uitloggen" method="post">
             <button className="btn ghost klein">Uitloggen</button>
@@ -62,6 +63,11 @@ export default async function Overzicht() {
                     ? `Verwacht rond ${datumNL(a.geboren)}`
                     : `${aantalKittens(n.kittens.length)}, geboren ${datumNL(a.geboren)}${n.afgerond ? '' : `, ${vrij} vrij`}`}
                 </span>
+                {!n.afgerond && (
+                  <span className={`overzichtlabel${n.in_overzicht ? ' aan' : ''}`}>
+                    {n.in_overzicht ? '✓ In het overzicht' : 'Niet in het overzicht · aanzetten bij Gegevens'}
+                  </span>
+                )}
               </div>
               <span className={`chip ${n.afgerond ? 'verhuisd' : 'vrij'}`}>
                 {n.afgerond

@@ -274,3 +274,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 .waarom summary::-webkit-details-marker { display: none; }
 .waarom summary::before { content: 'ⓘ '; }
 .waarom p { color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+
+/* Beheeroverzicht: staat het nestje in het overzicht? */
+.nestkaart .overzichtlabel { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+.nestkaart .overzichtlabel.aan { color: var(--free); font-weight: 600; }
