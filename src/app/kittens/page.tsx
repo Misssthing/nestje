@@ -71,6 +71,18 @@ export default async function Overzicht({ searchParams }: Props) {
   }
   const rassenFilter = [...RASSEN, ...[...extra.values()].sort((a, b) => a.localeCompare(b, 'nl'))];
 
+  // Hoeveel nestjes er per ras in het overzicht staan (zelfde logica als het filter: moeder of vader).
+  const aantalPerRas = new Map<string, number>();
+  for (const r of rassenFilter) {
+    const zoek = r.toLowerCase();
+    const n = (rasRijen ?? []).filter((rij) =>
+      [rij.moeder_ras, rij.vader_ras].some((x) => x?.toLowerCase().includes(zoek)),
+    ).length;
+    aantalPerRas.set(r, n);
+  }
+  const metNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) > 0);
+  const zonderNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) === 0);
+
   return (
     <main className="wrap">
       <div className="bar">
@@ -92,7 +104,16 @@ export default async function Overzicht({ searchParams }: Props) {
           <span>Ras</span>
           <select name="ras" defaultValue={ras}>
             <option value="">Alle rassen</option>
-            {rassenFilter.map((r) => <option key={r} value={r}>{r}</option>)}
+            {metNestjes.length > 0 && (
+              <optgroup label="Nu beschikbaar">
+                {metNestjes.map((r) => (
+                  <option key={r} value={r}>{`${r} (${aantalPerRas.get(r)})`}</option>
+                ))}
+              </optgroup>
+            )}
+            <optgroup label="Andere rassen">
+              {zonderNestjes.map((r) => <option key={r} value={r}>{r}</option>)}
+            </optgroup>
           </select>
         </label>
         <label className="veld">
