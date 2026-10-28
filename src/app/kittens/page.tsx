@@ -56,6 +56,21 @@ export default async function Overzicht({ searchParams }: Props) {
   const { data } = await query.returns<OverzichtNest[]>();
   const nesten = data ?? [];
 
+  // Rassen voor het filter: de vaste lijst, aangevuld met wat verkopers zelf hebben ingetypt.
+  const { data: rasRijen } = await supabase
+    .from('openbare_overzicht')
+    .select('moeder_ras, vader_ras')
+    .returns<{ moeder_ras: string | null; vader_ras: string | null }[]>();
+  const bekend = new Set(RASSEN.map((r) => r.toLowerCase()));
+  const extra = new Map<string, string>();
+  for (const rij of rasRijen ?? []) {
+    for (const r of [rij.moeder_ras, rij.vader_ras]) {
+      const t = r?.trim();
+      if (t && !bekend.has(t.toLowerCase()) && !extra.has(t.toLowerCase())) extra.set(t.toLowerCase(), t);
+    }
+  }
+  const rassenFilter = [...RASSEN, ...[...extra.values()].sort((a, b) => a.localeCompare(b, 'nl'))];
+
   return (
     <main className="wrap">
       <div className="bar">
@@ -77,7 +92,7 @@ export default async function Overzicht({ searchParams }: Props) {
           <span>Ras</span>
           <select name="ras" defaultValue={ras}>
             <option value="">Alle rassen</option>
-            {RASSEN.map((r) => <option key={r} value={r}>{r}</option>)}
+            {rassenFilter.map((r) => <option key={r} value={r}>{r}</option>)}
           </select>
         </label>
         <label className="veld">

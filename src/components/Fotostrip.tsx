@@ -29,7 +29,14 @@ export default function Fotostrip({ fotos, naam, vul = false }: { fotos: string[
     const el = ref.current;
     if (!el) return;
     const doel = Math.max(0, Math.min(fotos.length - 1, i));
+    // Safari negeert soms programmatisch schuiven bij scroll-snap. Daarom snap even uit, schuiven, en weer aan.
+    el.style.scrollSnapType = 'none';
     el.scrollTo({ left: doel * el.clientWidth, behavior: 'smooth' });
+    setActief(doel);
+    window.setTimeout(() => {
+      el.scrollLeft = doel * el.clientWidth;
+      el.style.scrollSnapType = '';
+    }, 450);
   };
 
   return (

@@ -83,6 +83,9 @@ export const RASSEN = [
   'Huiskat', 'Kruising', 'Europese korthaar', 'Brits korthaar', 'Brits langhaar', 'Maine Coon', 'Ragdoll',
   'Noorse boskat', 'Siberische kat', 'Bengaal', 'Perzisch', 'Exotic', 'Siamees', 'Oosterse korthaar',
   'Abessijn', 'Somali', 'Heilige Birmaan', 'Russisch blauw', 'Devon rex', 'Burmees',
+  'Savannah', 'Cornish rex', 'Selkirk rex', 'Ocicat', 'Turkse angora', 'Turkse van', 'Neva Masquerade',
+  'Tonkinees', 'Balinees', 'Oosterse langhaar', 'Chartreux', 'Korat', 'Egyptische mau', 'Burmilla',
+  'Ragamuffin', 'Amerikaanse korthaar', 'Singapura', 'LaPerm',
 ];
 
 /** Deze mag je zonder stamboom gebruiken; elke andere rasnaam alleen met stamboom. */
