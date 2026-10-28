@@ -272,8 +272,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
               </p>
               <p>
                 Het nummer staat nergens op je pagina of in het overzicht, en we delen het met niemand. Alleen jij en de beheerder van
-                Nestje kunnen het zien. Met een chipnummer alleen kan niemand iets: je adresgegevens staan in een aparte database
-                bij de chipregistratie, en die is niet openbaar. Wil je het liever niet invullen, dan laat je het gewoon leeg.
+                Nestje kunnen het zien. Met alleen een chipnummer kan niemand je naam of adres opzoeken: die gegevens staan bij de
+                chipregistratie, en die geeft ze niet zomaar vrij. Wil je het liever niet invullen, dan laat je het gewoon leeg.
               </p>
             </details>
           </label>
@@ -398,8 +398,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
             <details className="waarom">
               <summary>Waarom vragen we de stamboomnummers, en is dat veilig?</summary>
               <p>
-                Met de stamboomnummers kunnen we nagaan dat een stamboom echt is, en zien we het als iemand het nummer van een andere
-                cattery gebruikt. Zo beschermen we fokkers zoals jij tegen broodfokkers die zich als raskattenfokker voordoen.
+                Met de stamboomnummers kunnen we controleren of een stamboom klopt, bijvoorbeeld als er twijfel is, of als hetzelfde
+                nummer bij meerdere verkopers opduikt. Zo beschermen we fokkers zoals jij tegen broodfokkers die zich als
+                raskattenfokker voordoen.
               </p>
               <p>
                 Kopers zien de nummers niet: op je pagina staan alleen de organisatie en je catterynaam. De nummers zijn alleen zichtbaar
