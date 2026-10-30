@@ -259,6 +259,11 @@ export default async function NestjesPagina({ params }: Props) {
         <Link href={`/n/${nest.slug}/melden`}>Klopt er iets niet? Meld dit nestje</Link>
       </p>
 
+      <a className="gemaakt-met" href={metUtm(CONFIG.promoUrl, 'gemaakt-met-nestje', nest.slug)}>
+        <span>Ook een nestpagina voor jouw kittens?</span>
+        <strong>Gemaakt met Nestje</strong>
+      </a>
+
       <Voet />
     </main>
   );

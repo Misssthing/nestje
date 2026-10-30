@@ -11,6 +11,7 @@ export const CONFIG = {
     kvk: '68878214',
     btw: 'NL001636039B31',
   },
+  promoUrl: 'https://www.kattenverzorging.com/nestje/',
   kopenArtikelUrl: 'https://www.kattenverzorging.com/kitten-kopen-waar-op-letten/',
   juridischBijgewerkt: '28 oktober 2026',
   fotoBucket: 'kitten-fotos',

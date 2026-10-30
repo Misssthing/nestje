@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import KopieerLink from '@/components/KopieerLink';
 import Voet from '@/components/Voet';
-import { CONFIG, fotoUrl } from '@/lib/config';
+import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { ProfielNest } from '@/lib/types';
@@ -101,6 +101,11 @@ export default async function ProfielPagina({ params }: Props) {
       ) : (
         <p className="hint" style={{ marginTop: 18 }}>Er zijn op dit moment geen nestjes. Kijk later nog eens.</p>
       )}
+
+      <a className="gemaakt-met" href={metUtm(CONFIG.promoUrl, 'gemaakt-met-nestje', `profiel-${profiel.slug}`)}>
+        <span>Ook een nestpagina voor jouw kittens?</span>
+        <strong>Gemaakt met Nestje</strong>
+      </a>
 
       <Voet />
     </main>

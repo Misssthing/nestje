@@ -278,3 +278,14 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Beheeroverzicht: staat het nestje in het overzicht? */
 .nestkaart .overzichtlabel { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
 .nestkaart .overzichtlabel.aan { color: var(--free); font-weight: 600; }
+
+/* Story-afbeelding per kitten */
+.storyrij { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.storylink { font-size: 14px; color: var(--free); font-weight: 600; }
+
+/* Gemaakt met Nestje: voor andere verkopers die ook een pagina willen */
+.gemaakt-met { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 28px auto 0; padding: 14px 22px; max-width: 360px;
+  border: 1px dashed var(--line); border-radius: 16px; text-align: center; text-decoration: none; color: var(--muted); font-size: 14px; }
+.gemaakt-met strong { color: var(--ink); font-size: 16px; font-weight: 800; }
+.gemaakt-met:hover { border-color: var(--free); }
+.gemaakt-met:hover strong { color: var(--free); }

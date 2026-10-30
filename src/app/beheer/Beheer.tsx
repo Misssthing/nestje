@@ -185,6 +185,7 @@ export default function Beheer({
             key={k.id}
             kitten={k}
             nestId={nest.id}
+            nestSlug={nest.slug}
             supabase={supabase}
             eerste={i === 0}
             laatste={i === kittens.length - 1}

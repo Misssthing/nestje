@@ -13,6 +13,7 @@ const VACHTEN = ['zwart', 'zwart/wit', 'rood', 'rood/wit', 'cyperse', 'cyperse/w
 type Props = {
   kitten: KittenMetFotos;
   nestId: string;
+  nestSlug: string;
   supabase: SupabaseClient;
   eerste: boolean;
   laatste: boolean;
@@ -22,7 +23,7 @@ type Props = {
   onVerplaats: (richting: -1 | 1) => void;
 };
 
-export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste, onWijzig, onFotos, onVerwijder, onVerplaats }: Props) {
+export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste, laatste, onWijzig, onFotos, onVerwijder, onVerplaats }: Props) {
   const toast = useToast();
   const [naam, setNaam] = useState(kitten.naam);
   const [vacht, setVacht] = useState(kitten.vacht ?? '');
@@ -178,6 +179,23 @@ export default function KittenKaart({ kitten, nestId, supabase, eerste, laatste,
         <p className="hint teller">{omschrijving.length}/{CONFIG.maxOmschrijving}</p>
       </label>
 
+      {kitten.status !== 'verhuisd' && (
+        <div className="veld" style={{ margin: 0 }}>
+          <span>Nestupdate voor je story</span>
+          <div className="storyrij">
+            <a className="btn ghost klein" href={`/n/${nestSlug}/story/${kitten.id}?download=1`} download>
+              Story-afbeelding downloaden
+            </a>
+            <a className="storylink" href={`/n/${nestSlug}/story/${kitten.id}`} target="_blank" rel="noopener">
+              Bekijken
+            </a>
+          </div>
+          <p className="hint">
+            Een afbeelding met foto, naam en aftelling, voor Instagram of TikTok. Zonder prijs, “te koop” of telefoonnummer,
+            zodat het een update is en geen advertentie. Zet je link erbij met de linksticker in je story, of in je bio.
+          </p>
+        </div>
+      )}
       <button className="btn danger klein" style={{ alignSelf: 'flex-start' }} onClick={onVerwijder}>
         Kitten verwijderen
       </button>
