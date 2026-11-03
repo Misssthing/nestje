@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import KopieerLink from '@/components/KopieerLink';
+import SocialIcoon from '@/components/SocialIcoon';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen } from '@/lib/nest';
@@ -74,22 +75,43 @@ export default async function ProfielPagina({ params }: Props) {
         <h1>{profiel.naam}</h1>
         {profiel.intro && <p className="profiel-intro">{profiel.intro}</p>}
         {(profiel.website || profiel.facebook || profiel.instagram) && (
-          <div className="profiel-links">
-            {profiel.website && (
-              <a href={profiel.website} target="_blank" rel="nofollow ugc noopener noreferrer">
-                Website
-              </a>
-            )}
-            {profiel.facebook && (
-              <a href={profiel.facebook} target="_blank" rel="nofollow ugc noopener noreferrer">
-                Facebook
-              </a>
-            )}
-            {profiel.instagram && (
-              <a href={profiel.instagram} target="_blank" rel="nofollow ugc noopener noreferrer">
-                Instagram
-              </a>
-            )}
+          <div className="profiel-links-blok">
+            <p className="profiel-links-kop">Meer van {profiel.naam}</p>
+            <div className="profiel-links">
+              {profiel.facebook && (
+                <a
+                  href={profiel.facebook}
+                  target="_blank"
+                  rel="nofollow ugc noopener noreferrer"
+                  aria-label={`Facebook-pagina van ${profiel.naam} (opent in een nieuw tabblad)`}
+                >
+                  <SocialIcoon soort="facebook" />
+                  <span>Facebook</span>
+                </a>
+              )}
+              {profiel.instagram && (
+                <a
+                  href={profiel.instagram}
+                  target="_blank"
+                  rel="nofollow ugc noopener noreferrer"
+                  aria-label={`Instagram van ${profiel.naam} (opent in een nieuw tabblad)`}
+                >
+                  <SocialIcoon soort="instagram" />
+                  <span>Instagram</span>
+                </a>
+              )}
+              {profiel.website && (
+                <a
+                  href={profiel.website}
+                  target="_blank"
+                  rel="nofollow ugc noopener noreferrer"
+                  aria-label={`Website van ${profiel.naam} (opent in een nieuw tabblad)`}
+                >
+                  <SocialIcoon soort="website" />
+                  <span>Website</span>
+                </a>
+              )}
+            </div>
           </div>
         )}
       </section>

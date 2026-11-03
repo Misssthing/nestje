@@ -291,9 +291,11 @@ details.panel[open] summary { margin-bottom: 12px; }
 .gemaakt-met:hover strong { color: var(--free); }
 
 /* Links op de profielpagina */
-.profiel-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.profiel-links a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 7px 14px; border-radius: 999px;
-  border: 1px solid var(--line); background: var(--surface); }
+.profiel-links-blok { margin-top: 16px; }
+.profiel-links-kop { font-size: 13px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+.profiel-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.profiel-links a { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: none;
+  padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); }
 .profiel-links a:hover { border-color: var(--free); color: var(--free); }
 
 /* Overzicht: zoek- en filterbalk */
@@ -322,3 +324,10 @@ details.panel[open] summary { margin-bottom: 12px; }
   .alleen-desktop { display: block; }
   .overzicht-lijst > .hero:first-child h1 { margin-top: 0; }
 }
+
+/* Profielpaneel: duidelijke blokken */
+.paneelkop { margin: 18px 0 10px; padding-top: 16px; border-top: 1px solid var(--line); }
+.paneelkop h3 { font-size: 16px; margin: 0 0 2px; }
+.paneelkop .hint { margin: 0; }
+.metlogo { display: inline-flex; align-items: center; gap: 6px; }
+.paneelscheiding { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }

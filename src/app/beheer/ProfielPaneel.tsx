@@ -5,6 +5,7 @@ import KopieerLink from '@/components/KopieerLink';
 import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import { schoonLink } from '@/lib/nest';
+import SocialIcoon from '@/components/SocialIcoon';
 import { createClient } from '@/lib/supabase/browser';
 import type { Profiel } from '@/lib/types';
 
@@ -145,25 +146,29 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           />
           <p className="hint teller">{intro.length}/{MAX_INTRO}</p>
         </label>
+        <div className="paneelkop">
+          <h3>Je links (optioneel)</h3>
+          <p className="hint">Kopers zien deze als knoppen op je profielpagina. Zo zien ze dat je echt bestaat.</p>
+        </div>
         <label className="veld">
-          <span>Website <span className="hint">(optioneel)</span></span>
+          <span className="metlogo"><SocialIcoon soort="website" maat={16} /> Website</span>
           <input value={website} onChange={(e) => setWebsite(e.target.value)} inputMode="url" autoCapitalize="none" placeholder="jouwcattery.nl" maxLength={200} />
         </label>
         <div className="row stapel">
           <label className="veld">
-            <span>Facebook <span className="hint">(optioneel)</span></span>
+            <span className="metlogo"><SocialIcoon soort="facebook" maat={16} /> Facebook-pagina</span>
             <input value={facebook} onChange={(e) => setFacebook(e.target.value)} inputMode="url" autoCapitalize="none" placeholder="facebook.com/jouwcattery" maxLength={200} />
           </label>
           <label className="veld">
-            <span>Instagram <span className="hint">(optioneel)</span></span>
+            <span className="metlogo"><SocialIcoon soort="instagram" maat={16} /> Instagram</span>
             <input value={instagram} onChange={(e) => setInstagram(e.target.value)} autoCapitalize="none" placeholder="@jouwcattery" maxLength={200} />
           </label>
         </div>
         <p className="hint" style={{ marginTop: -4 }}>
-          Kopers zien zo dat je echt bestaat. Tip: zet op je eigen website ook een link naar je profiel op Nestje.
+          Tip: zet op je eigen website ook een link naar je profiel op Nestje.
         </p>
-        <div className="veld">
-          <span>Profielpagina</span>
+        <div className="veld paneelscheiding">
+          <span>Profielpagina tonen</span>
           <div className="seg" role="group" aria-label="Profielpagina aan of uit">
             <button type="button" aria-pressed={!zichtbaar} onClick={() => setZichtbaar(false)}>Uit</button>
             <button type="button" aria-pressed={zichtbaar} onClick={() => setZichtbaar(true)}>Aan</button>
