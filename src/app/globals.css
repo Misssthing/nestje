@@ -295,3 +295,24 @@ details.panel[open] summary { margin-bottom: 12px; }
 .profiel-links a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 7px 14px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface); }
 .profiel-links a:hover { border-color: var(--free); color: var(--free); }
+
+/* Overzicht: zoek- en filterbalk */
+.overzicht-grid { display: flex; flex-direction: column; gap: 18px; margin-top: 18px; }
+.zoekfilters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 20px; padding: 16px; }
+.zoekfilters h2 { grid-column: 1 / -1; font-size: 18px; margin: 0; }
+.zoekfilters .veld { margin: 0; }
+.zoekfilters .breedveld { grid-column: 1 / -1; }
+.zoekfilters .vink { margin: 0; }
+.zoekfilters select, .zoekfilters input[type="search"] { height: 46px; }
+.filterknoppen { display: flex; align-items: center; gap: 14px; }
+.filterknoppen .btn { width: auto; }
+.wisfilters { font-size: 14px; color: var(--muted); }
+.overzicht-lijst .aantal { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+@media (min-width: 1024px) {
+  .wrap.breed { max-width: 1180px; }
+  .wrap.breed .hero { max-width: 760px; }
+  .overzicht-grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .filterbalk { position: sticky; top: 20px; }
+  .zoekfilters { grid-template-columns: 1fr; padding: 20px; }
+}

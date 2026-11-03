@@ -8,7 +8,9 @@ import type { OverzichtNest } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-type Props = { searchParams: Promise<{ ras?: string; provincie?: string; soort?: string }> };
+type Props = {
+  searchParams: Promise<{ q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string }>;
+};
 
 const SOORTEN: Record<string, string> = {
   stamboom: 'Met stamboom',
@@ -17,8 +19,8 @@ const SOORTEN: Record<string, string> = {
 };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { ras, provincie, soort } = await searchParams;
-  const gefilterd = Boolean(ras || provincie || soort);
+  const { q, ras, provincie, soort, vrij, binnen4 } = await searchParams;
+  const gefilterd = Boolean(q || ras || provincie || soort || vrij || binnen4);
   return {
     title: 'Kittens te koop',
     description:
@@ -38,7 +40,11 @@ function rasVan(n: OverzichtNest) {
 }
 
 export default async function Overzicht({ searchParams }: Props) {
-  const { ras: rasParam, provincie: provParam, soort: soortParam } = await searchParams;
+  const sp = await searchParams;
+  const { ras: rasParam, provincie: provParam, soort: soortParam } = sp;
+  const zoekterm = (sp.q ?? '').replace(/[%,()*:]/g, ' ').trim().slice(0, 40);
+  const alleenVrij = sp.vrij === '1';
+  const binnenVier = sp.binnen4 === '1';
   const soort = soortParam && soortParam in SOORTEN ? soortParam : '';
   const ras = rasParam && rasParam.length <= 60 ? rasParam : '';
   const provincie = provParam && (PROVINCIES as readonly string[]).includes(provParam) ? provParam : '';
@@ -53,8 +59,19 @@ export default async function Overzicht({ searchParams }: Props) {
     const veilig = ras.replace(/[%,()*]/g, '');
     query = query.or(`moeder_ras.ilike.*${veilig}*,vader_ras.ilike.*${veilig}*`);
   }
+  if (zoekterm) {
+    query = query.or(
+      `moeder_naam.ilike.*${zoekterm}*,woonplaats.ilike.*${zoekterm}*,moeder_ras.ilike.*${zoekterm}*,vader_ras.ilike.*${zoekterm}*`,
+    );
+  }
+  if (alleenVrij) query = query.gt('vrij', 0);
   const { data } = await query.returns<OverzichtNest[]>();
-  const nesten = data ?? [];
+  const nesten = (data ?? []).filter((n) => {
+    if (!binnenVier) return true;
+    const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
+    return !a.verwacht && a.wekenTeGaan <= 4;
+  });
+  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier);
 
   // Rassen voor het filter: de vaste lijst, aangevuld met wat verkopers zelf hebben ingetypt.
   const { data: rasRijen } = await supabase
@@ -84,7 +101,7 @@ export default async function Overzicht({ searchParams }: Props) {
   const zonderNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) === 0);
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
         <Link href="/login" className="btn ghost klein">Zelf een nestje?</Link>
@@ -99,42 +116,63 @@ export default async function Overzicht({ searchParams }: Props) {
         </p>
       </section>
 
-      <form className="filters" method="get" action="/kittens">
-        <label className="veld">
-          <span>Ras</span>
-          <select name="ras" defaultValue={ras}>
-            <option value="">Alle rassen</option>
-            {metNestjes.length > 0 && (
-              <optgroup label="Nu beschikbaar">
-                {metNestjes.map((r) => (
-                  <option key={r} value={r}>{`${r} (${aantalPerRas.get(r)})`}</option>
-                ))}
-              </optgroup>
-            )}
-            <optgroup label="Andere rassen">
-              {zonderNestjes.map((r) => <option key={r} value={r}>{r}</option>)}
-            </optgroup>
-          </select>
-        </label>
-        <label className="veld">
-          <span>Provincie</span>
-          <select name="provincie" defaultValue={provincie}>
-            <option value="">Heel Nederland en België</option>
-            {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
-        </label>
-        <label className="veld">
-          <span>Soort</span>
-          <select name="soort" defaultValue={soort}>
-            <option value="">Alle nestjes</option>
-            {Object.entries(SOORTEN).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-          </select>
-        </label>
-        <button className="btn primary">Toon</button>
-      </form>
+      <div className="overzicht-grid">
+        <aside className="filterbalk" aria-label="Zoeken en filteren">
+          <form className="zoekfilters" method="get" action="/kittens">
+            <h2>Zoeken</h2>
+            <label className="veld breedveld">
+              <span>Zoekwoord</span>
+              <input type="search" name="q" defaultValue={zoekterm} placeholder="Naam, ras of woonplaats" maxLength={40} />
+            </label>
+            <label className="veld">
+              <span>Ras</span>
+              <select name="ras" defaultValue={ras}>
+                <option value="">Alle rassen</option>
+                {metNestjes.length > 0 && (
+                  <optgroup label="Nu beschikbaar">
+                    {metNestjes.map((r) => (
+                      <option key={r} value={r}>{`${r} (${aantalPerRas.get(r)})`}</option>
+                    ))}
+                  </optgroup>
+                )}
+                <optgroup label="Andere rassen">
+                  {zonderNestjes.map((r) => <option key={r} value={r}>{r}</option>)}
+                </optgroup>
+              </select>
+            </label>
+            <label className="veld">
+              <span>Provincie</span>
+              <select name="provincie" defaultValue={provincie}>
+                <option value="">Heel Nederland en België</option>
+                {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </label>
+            <label className="veld">
+              <span>Soort</span>
+              <select name="soort" defaultValue={soort}>
+                <option value="">Alle nestjes</option>
+                {Object.entries(SOORTEN).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+            </label>
+            <label className="vink breedveld">
+              <input type="checkbox" name="vrij" value="1" defaultChecked={alleenVrij} />
+              <span>Alleen met kittens die nog vrij zijn</span>
+            </label>
+            <label className="vink breedveld">
+              <input type="checkbox" name="binnen4" value="1" defaultChecked={binnenVier} />
+              <span>Verhuist binnen 4 weken</span>
+            </label>
+            <div className="filterknoppen breedveld">
+              <button className="btn primary">Toon</button>
+              {filtersActief && <Link href="/kittens" className="wisfilters">Wis filters</Link>}
+            </div>
+          </form>
+        </aside>
 
+        <div className="overzicht-lijst">
+          <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
       {nesten.length ? (
-        <div className="lijst" style={{ marginTop: 18 }}>
+        <div className="lijst">
           {nesten.map((n) => {
             const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
             const r = rasVan(n);
@@ -171,12 +209,13 @@ export default async function Overzicht({ searchParams }: Props) {
           })}
         </div>
       ) : (
-        <p className="hint" style={{ marginTop: 18 }}>
-          {ras || provincie || soort
-            ? 'Geen nestjes gevonden met deze keuze. Probeer een ander ras of een andere provincie.'
+        <p className="hint">
+          {filtersActief
+            ? 'Geen nestjes gevonden met deze keuze. Probeer een ander filter, of wis de filters.'
             : 'Er staan nog geen nestjes in het overzicht. Kijk binnenkort nog eens.'}
         </p>
       )}
+
 
       <section className="panel" style={{ marginTop: 26 }}>
         <h2>Heb je zelf een nestje?</h2>
@@ -188,6 +227,9 @@ export default async function Overzicht({ searchParams }: Props) {
           <a className="btn ghost" href={metUtm(CONFIG.starterslijstUrl, 'overzicht')}>Wat heb je nodig voor een kitten?</a>
         </div>
       </section>
+
+        </div>
+      </div>
 
       <Voet />
     </main>
