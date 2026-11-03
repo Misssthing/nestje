@@ -311,8 +311,14 @@ details.panel[open] summary { margin-bottom: 12px; }
 .overzicht-lijst .aantal { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
 @media (min-width: 1024px) {
   .wrap.breed { max-width: 1180px; }
-  .wrap.breed .hero { max-width: 760px; }
   .overzicht-grid { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 32px; align-items: start; }
   .filterbalk { position: sticky; top: 20px; }
   .zoekfilters { grid-template-columns: 1fr; padding: 20px; }
+}
+
+/* Zijbalk op de nestjespagina: alleen op de computer */
+.alleen-desktop { display: none; }
+@media (min-width: 1024px) {
+  .alleen-desktop { display: block; }
+  .overzicht-lijst > .hero:first-child h1 { margin-top: 0; }
 }

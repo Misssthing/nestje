@@ -38,7 +38,7 @@ export default function Privacy() {
       <p>
         <strong>Het overzicht van nestjes:</strong> alleen als je bij een nestje kiest voor “Tonen in het overzicht”, verschijnt
         het op nestje.kattenverzorging.com/kittens, met de naam van de moeder, je woonplaats, provincie, ras, prijs en een foto.
-        Die pagina is ook via zoekmachines te vinden. Je telefoonnummer en e-mailadres staan er nooit op. Je zet het op elk
+        Het overzicht en je nestjespagina zijn dan ook via zoekmachines te vinden. Je telefoonnummer en e-mailadres staan er nooit op. Je zet het op elk
         moment weer uit. Meldt een bezoeker een nestje, dan bewaren we die melding om haar te kunnen beoordelen.
       </p>
       <p>
@@ -57,7 +57,7 @@ export default function Privacy() {
         ziet je nummer in WhatsApp; dat is nodig om contact te kunnen opnemen. Zet daarom geen adres, achternaam of herkenbare
         details van je huis in teksten of op foto’s als je dat niet wilt delen.
       </p>
-      <p>Nestjespagina’s worden niet aangeboden aan zoekmachines.</p>
+      <p>Nestjespagina’s worden alleen aangeboden aan zoekmachines als je zelf kiest voor “Tonen in het overzicht”. Anders zijn ze alleen te vinden voor wie de link heeft.</p>
 
       <h2>Waarom we dit doen</h2>
       <p>

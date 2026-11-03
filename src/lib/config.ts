@@ -13,7 +13,7 @@ export const CONFIG = {
   },
   promoUrl: 'https://www.kattenverzorging.com/nestje/',
   kopenArtikelUrl: 'https://www.kattenverzorging.com/kitten-kopen-waar-op-letten/',
-  juridischBijgewerkt: '28 oktober 2026',
+  juridischBijgewerkt: '3 november 2026',
   fotoBucket: 'kitten-fotos',
   maxFotosPerKitten: 5,
   maxNestFotos: 3,

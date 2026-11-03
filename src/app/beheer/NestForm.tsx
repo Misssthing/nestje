@@ -428,7 +428,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </div>
           <p className="hint">
             Je nestje verschijnt dan op nestje.kattenverzorging.com/kittens, met je woonplaats, zolang er kittens vrij of onder
-            optie zijn. Dat overzicht is ook via Google te vinden. Je nummer staat er niet op.
+            optie zijn. Het overzicht en je nestjespagina zijn dan ook via Google te vinden. Je nummer staat er niet op.
           </p>
         </div>
         <p className={`opslagstatus${status === 'fout' ? ' fout' : ''}`} role="status" aria-live="polite">
