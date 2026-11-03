@@ -18,9 +18,16 @@ const haalProfiel = cache(async (slug: string) => {
   const supabase = createPublicClient();
   const { data: profiel } = await supabase
     .from('openbare_profielen')
-    .select('slug, naam, intro')
+    .select('slug, naam, intro, website, facebook, instagram')
     .eq('slug', slug)
-    .maybeSingle<{ slug: string; naam: string; intro: string | null }>();
+    .maybeSingle<{
+      slug: string;
+      naam: string;
+      intro: string | null;
+      website: string | null;
+      facebook: string | null;
+      instagram: string | null;
+    }>();
   if (!profiel) return null;
 
   const { data: nesten } = await supabase
@@ -66,6 +73,25 @@ export default async function ProfielPagina({ params }: Props) {
       <section className="hero">
         <h1>{profiel.naam}</h1>
         {profiel.intro && <p className="profiel-intro">{profiel.intro}</p>}
+        {(profiel.website || profiel.facebook || profiel.instagram) && (
+          <div className="profiel-links">
+            {profiel.website && (
+              <a href={profiel.website} target="_blank" rel="nofollow ugc noopener noreferrer">
+                Website
+              </a>
+            )}
+            {profiel.facebook && (
+              <a href={profiel.facebook} target="_blank" rel="nofollow ugc noopener noreferrer">
+                Facebook
+              </a>
+            )}
+            {profiel.instagram && (
+              <a href={profiel.instagram} target="_blank" rel="nofollow ugc noopener noreferrer">
+                Instagram
+              </a>
+            )}
+          </div>
+        )}
       </section>
 
       {nesten.length ? (

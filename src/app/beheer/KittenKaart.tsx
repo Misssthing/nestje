@@ -191,8 +191,9 @@ export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste
             </a>
           </div>
           <p className="hint">
-            Een afbeelding met foto, naam en aftelling, voor Instagram of TikTok. Zonder prijs, “te koop” of telefoonnummer,
-            zodat het een update is en geen advertentie. Zet je link erbij met de linksticker in je story, of in je bio.
+            Een afbeelding met foto, naam en aftelling, voor je story op Instagram, Facebook, TikTok of WhatsApp. Zonder prijs,
+            “te koop” of telefoonnummer, zodat het een update is en geen advertentie. Zet je link erbij met de linksticker in je
+            story, of in je bio.
           </p>
         </div>
       )}

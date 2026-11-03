@@ -289,3 +289,9 @@ details.panel[open] summary { margin-bottom: 12px; }
 .gemaakt-met strong { color: var(--ink); font-size: 16px; font-weight: 800; }
 .gemaakt-met:hover { border-color: var(--free); }
 .gemaakt-met:hover strong { color: var(--free); }
+
+/* Links op de profielpagina */
+.profiel-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.profiel-links a { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); }
+.profiel-links a:hover { border-color: var(--free); color: var(--free); }

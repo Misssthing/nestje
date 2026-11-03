@@ -28,7 +28,7 @@ export default async function Overzicht() {
   const nesten = data ?? [];
   const { data: profiel } = await supabase
     .from('profielen')
-    .select('owner_id, slug, naam, intro, zichtbaar')
+    .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram')
     .maybeSingle<Profiel>();
 
   if (!nesten.length) return <NieuwNestje eerste />;

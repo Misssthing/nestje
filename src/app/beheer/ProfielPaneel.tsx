@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import KopieerLink from '@/components/KopieerLink';
 import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
+import { schoonLink } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/browser';
 import type { Profiel } from '@/lib/types';
 
@@ -36,6 +37,9 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const [slugAangepast, setSlugAangepast] = useState(Boolean(profiel));
   const [intro, setIntro] = useState(profiel?.intro ?? '');
   const [zichtbaar, setZichtbaar] = useState(profiel?.zichtbaar ?? false);
+  const [website, setWebsite] = useState(profiel?.website ?? '');
+  const [facebook, setFacebook] = useState(profiel?.facebook ?? '');
+  const [instagram, setInstagram] = useState(profiel?.instagram ?? '');
   const [fout, setFout] = useState('');
   const [bezig, setBezig] = useState(false);
 
@@ -48,11 +52,32 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
     if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(schoon))
       return setFout('Het webadres moet minstens 3 tekens zijn, met alleen kleine letters, cijfers en streepjes.');
 
+    const w = schoonLink(website, 'website');
+    if (w.fout) return setFout(`Website: ${w.fout}`);
+    const f = schoonLink(facebook, 'facebook');
+    if (f.fout) return setFout(`Facebook: ${f.fout}`);
+    const i = schoonLink(instagram, 'instagram');
+    if (i.fout) return setFout(`Instagram: ${i.fout}`);
+    setWebsite(w.url ?? '');
+    setFacebook(f.url ?? '');
+    setInstagram(i.url ?? '');
+
     setBezig(true);
     const { data, error } = await supabase
       .from('profielen')
-      .upsert({ slug: schoon, naam: naam.trim(), intro: intro.trim() || null, zichtbaar }, { onConflict: 'owner_id' })
-      .select('owner_id, slug, naam, intro, zichtbaar')
+      .upsert(
+        {
+          slug: schoon,
+          naam: naam.trim(),
+          intro: intro.trim() || null,
+          zichtbaar,
+          website: w.url,
+          facebook: f.url,
+          instagram: i.url,
+        },
+        { onConflict: 'owner_id' },
+      )
+      .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram')
       .single<Profiel>();
     setBezig(false);
 
@@ -120,6 +145,23 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           />
           <p className="hint teller">{intro.length}/{MAX_INTRO}</p>
         </label>
+        <label className="veld">
+          <span>Website <span className="hint">(optioneel)</span></span>
+          <input value={website} onChange={(e) => setWebsite(e.target.value)} inputMode="url" autoCapitalize="none" placeholder="jouwcattery.nl" maxLength={200} />
+        </label>
+        <div className="row stapel">
+          <label className="veld">
+            <span>Facebook <span className="hint">(optioneel)</span></span>
+            <input value={facebook} onChange={(e) => setFacebook(e.target.value)} inputMode="url" autoCapitalize="none" placeholder="facebook.com/jouwcattery" maxLength={200} />
+          </label>
+          <label className="veld">
+            <span>Instagram <span className="hint">(optioneel)</span></span>
+            <input value={instagram} onChange={(e) => setInstagram(e.target.value)} autoCapitalize="none" placeholder="@jouwcattery" maxLength={200} />
+          </label>
+        </div>
+        <p className="hint" style={{ marginTop: -4 }}>
+          Kopers zien zo dat je echt bestaat. Tip: zet op je eigen website ook een link naar je profiel op Nestje.
+        </p>
         <div className="veld">
           <span>Profielpagina</span>
           <div className="seg" role="group" aria-label="Profielpagina aan of uit">

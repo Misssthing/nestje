@@ -154,6 +154,33 @@ export function stamboomnrProbleem(nr: string): string | null {
   return null;
 }
 
+/** Maakt van wat iemand intypt een nette link, of geeft een foutmelding. */
+export function schoonLink(
+  invoer: string,
+  soort: 'website' | 'facebook' | 'instagram',
+): { url: string | null; fout?: string } {
+  let t = invoer.trim();
+  if (!t) return { url: null };
+  if (soort === 'instagram' && /^@?[a-z0-9._]{2,30}$/i.test(t)) t = `https://www.instagram.com/${t.replace(/^@/, '')}`;
+  if (!/^https?:\/\//i.test(t)) t = `https://${t}`;
+  let u: URL;
+  try {
+    u = new URL(t);
+  } catch {
+    return { url: null, fout: 'Dit lijkt geen geldige link.' };
+  }
+  const host = u.hostname.toLowerCase();
+  if (soort === 'facebook' && !/^(www\.|m\.|web\.)?(facebook|fb)\.com$/.test(host))
+    return { url: null, fout: 'Vul een link naar je Facebook-pagina in, bijvoorbeeld facebook.com/jouwcattery.' };
+  if (soort === 'instagram' && !/^(www\.)?instagram\.com$/.test(host))
+    return { url: null, fout: 'Vul je Instagram-naam in, of een link als instagram.com/jouwcattery.' };
+  if (soort === 'website' && !host.includes('.')) return { url: null, fout: 'Dit lijkt geen geldige website.' };
+  if (soort !== 'website' && (u.pathname === '/' || u.pathname === ''))
+    return { url: null, fout: 'Vul de link naar je eigen pagina in, niet alleen de hoofdpagina.' };
+  if (soort !== 'website') u.protocol = 'https:';
+  return { url: u.toString().slice(0, 200) };
+}
+
 /** Eén test van een ouder */
 export type OuderTest = { test: string; uitslag: string; datum: string };
 

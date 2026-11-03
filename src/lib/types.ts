@@ -84,6 +84,9 @@ export interface Profiel {
   naam: string;
   intro: string | null;
   zichtbaar: boolean;
+  website: string | null;
+  facebook: string | null;
+  instagram: string | null;
 }
 
 /** Nestje zoals het op een openbare profielpagina verschijnt */
