@@ -68,6 +68,7 @@ export default async function Overzicht() {
                     {n.in_overzicht ? '✓ In het overzicht' : 'Niet in het overzicht · aanzetten bij Gegevens'}
                   </span>
                 )}
+                <span className="aanpassen-label" aria-hidden="true">✎ Aanpassen ›</span>
               </div>
               <span className={`chip ${n.afgerond ? 'verhuisd' : 'vrij'}`}>
                 {n.afgerond

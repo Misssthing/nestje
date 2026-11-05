@@ -88,9 +88,15 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Mijn gegevens aanpassen',
+    a: (
+      <p>Log in en tik in “Je nestjes” op je nestje. Tik daarna op het blok “Gegevens van je nestje aanpassen” om het open te klappen. Daar wijzig je de moeder, de vader, de geboortedatum, de prijs, je WhatsApp-nummer en meer. Alles wordt vanzelf opgeslagen. Kittens pas je aan in hun eigen kaart, verder naar beneden.</p>
+    ),
+  },
+  {
     v: 'Mijn nestje verwijderen',
     a: (
-      <p>Klap in je beheer onderaan “Account” open en kies “Nestje verwijderen”. Je pagina en alle foto’s zijn daarna direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>
+      <p>Open je nestje en scroll naar het blok “Nestje afronden of verwijderen”, onderaan. Zijn al je kittens verhuisd, kies dan liever “Nestje afronden”: je pagina blijft bewaard. Met “Nestje verwijderen” zijn je pagina en alle foto’s direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>
     ),
   },
 ];

@@ -222,7 +222,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
 
   return (
     <details className="panel" open={openStandaard}>
-      <summary>Gegevens</summary>
+      <summary className="aanpassen">
+        <span aria-hidden="true">✎</span> Gegevens van je nestje aanpassen
+        <small>Moeder, vader, geboortedatum, prijs, WhatsApp en meer</small>
+      </summary>
       <p className="hint" style={{ marginTop: 0, marginBottom: 12 }}>Wijzigingen worden vanzelf opgeslagen.</p>
       <form
         onSubmit={(e) => {

@@ -331,3 +331,13 @@ details.panel[open] summary { margin-bottom: 12px; }
 .paneelkop .hint { margin: 0; }
 .metlogo { display: inline-flex; align-items: center; gap: 6px; }
 .paneelscheiding { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+/* Duidelijker beheer */
+summary.aanpassen { font-weight: 800; }
+summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; color: var(--muted); margin-top: 2px; }
+.afrondblok { padding: 14px 0; border-top: 1px solid var(--line); }
+.afrondblok:first-of-type { border-top: 0; padding-top: 4px; }
+.afrondblok h3 { font-size: 16px; margin: 0 0 4px; }
+.afrondblok .hint { margin: 0 0 10px; }
+.nestkaart { position: relative; }
+.nestkaart span.aanpassen-label { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--free); }

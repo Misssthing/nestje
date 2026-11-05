@@ -204,27 +204,33 @@ export default function Beheer({
 
       <NestForm nest={nest} supabase={supabase} onOpgeslagen={setNest} openStandaard={!nest.whatsapp_nummer} />
 
-      <section className="panel" aria-label="Nestje afronden">
-        <h2>{nest.afgerond ? 'Dit nestje is afgerond' : 'Alle kittens verhuisd?'}</h2>
-        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
-          {nest.afgerond
-            ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
-            : 'Rond je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden.'}
-        </p>
-        <button className="btn ghost" onClick={wisselAfgerond}>
-          {nest.afgerond ? 'Nestje weer openen' : 'Nestje afronden'}
-        </button>
-      </section>
+      <section className="panel" aria-labelledby="afronden-kop">
+        <h2 id="afronden-kop">Nestje afronden of verwijderen</h2>
 
-      <details className="panel">
-        <summary>Account</summary>
-        <p className="hint" style={{ marginTop: 0 }}>Ingelogd als {email}</p>
-        <div className="actions">
+        <div className="afrondblok">
+          <h3>{nest.afgerond ? 'Dit nestje is afgerond' : 'Alle kittens verhuisd?'}</h3>
+          <p className="hint">
+            {nest.afgerond
+              ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
+              : 'Rond je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden. Het nestje verdwijnt uit het overzicht.'}
+          </p>
+          <button className="btn ghost" onClick={wisselAfgerond}>
+            {nest.afgerond ? 'Nestje weer openen' : 'Nestje afronden'}
+          </button>
+        </div>
+
+        <div className="afrondblok">
+          <h3>Nestje helemaal verwijderen</h3>
+          <p className="hint">
+            Je pagina en alle foto’s zijn daarna direct weg, en de link werkt niet meer. Dit kun je niet ongedaan maken.
+          </p>
           <button className="btn danger" onClick={verwijderNestje}>
             Nestje verwijderen
           </button>
         </div>
-      </details>
+
+        <p className="hint" style={{ marginBottom: 0 }}>Ingelogd als {email}</p>
+      </section>
     </main>
   );
 }
