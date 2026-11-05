@@ -13,6 +13,25 @@ const MAX_INTRO = 500;
 
 /** Maakt een webadres-deel van vrije tekst. Een geplakt website-adres wordt opgeschoond:
  *  "https://www.xarana.nl/index.html" wordt "xarana". */
+/** Webadressen van platforms die je niet als eigen Nestje-link kunt gebruiken. */
+const PLATFORMS = /(^|\.)(facebook|fb|instagram|tiktok|whatsapp|wa|youtube|google|marktplaats|kittentekoop|nestjes)\.[a-z]{2,}/i;
+const PLATFORMNAAM: Record<string, string> = { fb: 'Facebook', wa: 'WhatsApp' };
+
+/** Namen die gereserveerd zijn voor Nestje of die verwarring geven. */
+const GERESERVEERD = new Set([
+  'facebook', 'fb', 'instagram', 'insta', 'tiktok', 'whatsapp', 'youtube', 'google', 'marktplaats',
+  'nestje', 'nestjes', 'kattenverzorging', 'admin', 'beheer', 'login', 'kittens', 'huisregels', 'hulp',
+  'privacy', 'voorwaarden', 'www', 'http', 'https',
+]);
+
+/** Herkent een geplakte link naar Facebook, Instagram en dergelijke. Geeft de naam van het platform terug. */
+function platformLink(t: string) {
+  const tekst = t.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0];
+  const m = tekst.match(PLATFORMS);
+  if (!m) return null;
+  return PLATFORMNAAM[m[2]] ?? m[2].charAt(0).toUpperCase() + m[2].slice(1);
+}
+
 function maakSlug(t: string, tijdensTypen = false) {
   let tekst = tijdensTypen ? t.toLowerCase().trimStart() : t.trim().toLowerCase();
   if (/^https?:\/\/|^www\.|\.[a-z]{2,}(\/|$)/.test(tekst)) {
@@ -42,6 +61,7 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const [facebook, setFacebook] = useState(profiel?.facebook ?? '');
   const [instagram, setInstagram] = useState(profiel?.instagram ?? '');
   const [fout, setFout] = useState('');
+  const [slugFout, setSlugFout] = useState('');
   const [bezig, setBezig] = useState(false);
 
   async function bewaar(e: React.FormEvent) {
@@ -50,6 +70,8 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
     if (!naam.trim()) return setFout('Vul een naam in, bijvoorbeeld je eigen naam of die van je cattery of opvang.');
     const schoon = maakSlug(slug);
     setSlug(schoon);
+    if (GERESERVEERD.has(schoon))
+      return setFout(`“${schoon}” kun je niet als je link op Nestje gebruiken. Kies je eigen naam, bijvoorbeeld je catterynaam.`);
     if (!/^[a-z0-9][a-z0-9-]{2,39}$/.test(schoon))
       return setFout('Het webadres moet minstens 3 tekens zijn, met alleen kleine letters, cijfers en streepjes.');
 
@@ -129,12 +151,21 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
             autoCapitalize="none"
             onChange={(e) => {
               setSlugAangepast(true);
+              const platform = platformLink(e.target.value);
+              if (platform) {
+                setSlugFout(
+                  `Dit is een link naar ${platform}. Vul hier de naam in die je in je Nestje-link wilt, bijvoorbeeld je catterynaam. Je ${platform}-link zet je hieronder bij “Je links”.`,
+                );
+                return;
+              }
+              setSlugFout('');
               setSlug(maakSlug(e.target.value, true));
             }}
           />
           <p className="hint">
             Wordt: nestje.kattenverzorging.com/van/{slug || 'jouw-naam'}. Dit is niet het adres van je eigen website.
           </p>
+          {slugFout && <p className="fout" role="alert">{slugFout}</p>}
         </label>
         <label className="veld">
           <span>Over jou <span className="hint">(optioneel)</span></span>
