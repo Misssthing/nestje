@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import Aftelling from '@/components/Aftelling';
 import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
+import AccountKnop from '@/components/AccountKnop';
+import EigenaarBalk from '@/components/EigenaarBalk';
 import Voet from '@/components/Voet';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
@@ -101,8 +103,12 @@ export default async function NestjesPagina({ params }: Props) {
             Nestje
           </Link>
         )}
-        <KopieerLink url={paginaUrl} className="btn ghost klein" />
+        <span className="balkrechts">
+          <AccountKnop />
+          <KopieerLink url={paginaUrl} className="btn ghost klein" />
+        </span>
       </div>
+      <EigenaarBalk slug={nest.slug} />
 
       <div className={inOverzicht ? 'overzicht-grid' : undefined}>
         {inOverzicht && (

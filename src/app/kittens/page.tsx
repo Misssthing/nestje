@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import AccountKnop from '@/components/AccountKnop';
 import Voet from '@/components/Voet';
 import ZoekFilters, { SOORTEN } from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
@@ -73,7 +74,7 @@ export default async function Overzicht({ searchParams }: Props) {
     <main className="wrap breed">
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
-        <Link href="/login" className="btn ghost klein">Zelf een nestje?</Link>
+        <AccountKnop metNieuw />
       </div>
 
 

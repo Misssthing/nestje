@@ -341,3 +341,11 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .afrondblok .hint { margin: 0 0 10px; }
 .nestkaart { position: relative; }
 .nestkaart span.aanpassen-label { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--free); }
+
+/* Inloggen terugvinden */
+.balkrechts { display: inline-flex; align-items: center; gap: 12px; }
+.accountknoppen { display: inline-flex; align-items: center; gap: 12px; }
+.inloglink { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.eigenaarbalk { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; padding: 10px 12px 10px 16px;
+  border-radius: 14px; background: var(--free-bg); color: var(--free); font-weight: 700; font-size: 15px; }
+.eigenaarbalk .btn { width: auto; }

@@ -19,8 +19,11 @@ export default async function LoginPagina({ searchParams }: { searchParams: Prom
       <div className="bar">
         <Link href="/" className="brand">Nestje</Link>
       </div>
-      <h1>Inloggen</h1>
-      <p>Geen wachtwoord nodig. Je krijgt een mail met een inloglink en een code.</p>
+      <h1>Inloggen of account maken</h1>
+      <p>
+        Vul je e-mailadres in. Heb je al een nestje, dan kom je in je eigen overzicht. Ben je nieuw, dan maken we meteen een
+        account voor je. Geen wachtwoord nodig: je krijgt een mail met een inloglink en een code.
+      </p>
       {fout && <p className="fout">De inloglink is verlopen of al gebruikt. Vraag hieronder een nieuwe aan.</p>}
       <LoginForm />
     </main>
