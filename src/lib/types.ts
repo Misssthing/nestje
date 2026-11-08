@@ -39,6 +39,8 @@ export interface Nest {
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 'vader_stamboomnr' | 'moeder_chip'> & {
   heeft_whatsapp: boolean;
+  /** Datum van het eerste nestje van deze verkoper op Nestje (“Lid sinds”) */
+  lid_sinds?: string | null;
 };
 
 /** Gemeenschappelijke vorm van kitten- en nestfoto's */
@@ -121,4 +123,7 @@ export interface OverzichtNest {
   optie: number;
   foto: string | null;
   soort?: 'eigen' | 'vondeling';
+  /** 'fokker', 'particulier' of null (vondelingen) */
+  verkoper?: 'fokker' | 'particulier' | null;
+  lid_sinds?: string | null;
 }

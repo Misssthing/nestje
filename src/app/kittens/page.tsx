@@ -4,7 +4,7 @@ import AccountKnop from '@/components/AccountKnop';
 import Voet from '@/components/Voet';
 import ZoekFilters, { SOORTEN } from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, prijsNL, PROVINCIES } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, maandJaarNL, prijsNL, PROVINCIES, rasDelen, VERKOPER_LABEL } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
 
@@ -30,10 +30,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 function rasVan(n: OverzichtNest) {
-  const m = n.moeder_ras?.trim();
-  const v = n.vader_ras?.trim();
-  if (m && v && m.toLowerCase() !== v.toLowerCase()) return `${m} × ${v}`;
-  return m || v || null;
+  const delen = [...new Map([...rasDelen(n.moeder_ras), ...rasDelen(n.vader_ras)].map((r) => [r.toLowerCase(), r])).values()];
+  return delen.length ? delen.join(' × ') : null;
 }
 
 export default async function Overzicht({ searchParams }: Props) {
@@ -52,10 +50,6 @@ export default async function Overzicht({ searchParams }: Props) {
   if (soort === 'stamboom') query = query.eq('stamboom', true);
   if (soort === 'huiskat') query = query.eq('soort', 'eigen').or('stamboom.is.null,stamboom.eq.false');
   if (soort === 'vondeling') query = query.eq('soort', 'vondeling');
-  if (ras) {
-    const veilig = ras.replace(/[%,()*]/g, '');
-    query = query.or(`moeder_ras.ilike.*${veilig}*,vader_ras.ilike.*${veilig}*`);
-  }
   if (zoekterm) {
     query = query.or(
       `moeder_naam.ilike.*${zoekterm}*,woonplaats.ilike.*${zoekterm}*,moeder_ras.ilike.*${zoekterm}*,vader_ras.ilike.*${zoekterm}*`,
@@ -63,7 +57,11 @@ export default async function Overzicht({ searchParams }: Props) {
   }
   if (alleenVrij) query = query.gt('vrij', 0);
   const { data } = await query.returns<OverzichtNest[]>();
+  const rasGezocht = ras.toLowerCase();
   const nesten = (data ?? []).filter((n) => {
+    // Ras: zelfde logica als de telling in het filter (afkortingen netjes, een kruising telt bij beide rassen).
+    if (rasGezocht && ![...rasDelen(n.moeder_ras), ...rasDelen(n.vader_ras)].some((r) => r.toLowerCase() === rasGezocht))
+      return false;
     if (!binnenVier) return true;
     const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
     return !a.verwacht && a.wekenTeGaan <= 4;
@@ -115,6 +113,11 @@ export default async function Overzicht({ searchParams }: Props) {
                 <div>
                   <strong>Het nestje van {n.moeder_naam}</strong>
                   {n.soort === 'vondeling' && <span className="chip optie" style={{ marginTop: 6 }}>Vondelingen</span>}
+                  {n.verkoper && (
+                    <span className="chip verkoper" title={n.lid_sinds ? `Lid sinds ${maandJaarNL(n.lid_sinds)}` : undefined}>
+                      {VERKOPER_LABEL[n.verkoper]}
+                    </span>
+                  )}
                   <span>
                     {a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens)}
                     {r ? `, ${r}` : ''}

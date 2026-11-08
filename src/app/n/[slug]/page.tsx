@@ -9,7 +9,7 @@ import EigenaarBalk from '@/components/EigenaarBalk';
 import Voet from '@/components/Voet';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, ouderLabel, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const dynamic = 'force-dynamic';
@@ -90,6 +90,8 @@ export default async function NestjesPagina({ params }: Props) {
     ([, n]) => n > 0,
   );
   const paginaUrl = `${CONFIG.siteUrl}/n/${nest.slug}`;
+  const verkoper = verkoperVan(nest);
+  const organisatie = nest.stamboom_organisatie?.replace(/ \(.*\)$/, '');
 
   return (
     <main className={inOverzicht ? 'wrap breed' : 'wrap'}>
@@ -132,6 +134,18 @@ export default async function NestjesPagina({ params }: Props) {
             )}
             {vondeling && <span className="chip optie labelchip">Vondelingen</span>}
             <h1>Het nestje van {nest.moeder_naam}</h1>
+            {verkoper && (
+              <p className="verkoper-info">
+                <span className="chip verkoper">{VERKOPER_LABEL[verkoper]}</span>
+                {verkoper === 'fokker' && nest.cattery && (
+                  <span>
+                    Cattery {nest.cattery}
+                    {organisatie && organisatie !== 'Anders' ? `, aangesloten bij ${organisatie}` : ''}
+                  </span>
+                )}
+                {nest.lid_sinds && <span>Lid sinds {maandJaarNL(nest.lid_sinds)}</span>}
+              </p>
+            )}
             {a.verwacht ? (
               <p>
                 De kittens van {nest.moeder_naam} worden verwacht rond {datumNL(a.geboren)}

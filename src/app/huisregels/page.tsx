@@ -52,6 +52,12 @@ export default function Huisregels() {
           een Maine Coon, maar heeft geen stamboom.” Woorden als “raszuiver”, “rasecht” of “volbloed” gebruik je alleen met een
           stamboom. Zo weten kopers precies waar ze aan toe zijn.
         </p>
+        <p>
+          Elk nestje krijgt een label. “Fokker” is voor nestjes met stamboom van een cattery die is aangesloten bij een
+          stamboomorganisatie; kopers zien dan je catterynaam en de organisatie. Alle andere nestjes krijgen het label
+          “Particulier”. Beide labels zijn gelijkwaardig: ze laten alleen zien met wie je te maken hebt. Klopt de catterynaam of
+          de organisatie niet, dan kan dat leiden tot verwijdering uit het overzicht.
+        </p>
 
         <h2>5. Niet te vaak</h2>
         <p>

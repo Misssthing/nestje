@@ -349,3 +349,9 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .eigenaarbalk { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; padding: 10px 12px 10px 16px;
   border-radius: 14px; background: var(--free-bg); color: var(--free); font-weight: 700; font-size: 15px; }
 .eigenaarbalk .btn { width: auto; }
+
+/* Verkoperslabel: Fokker en Particulier zien er bewust hetzelfde uit */
+.chip.verkoper { background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 13px; padding: 3px 10px; }
+.pnest .chip.verkoper { display: table; margin: 6px 0 2px; color: var(--ink); font-size: 13px; }
+.verkoper-info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font-size: 15px; color: var(--muted); }
+.verkoper-info .chip.verkoper { font-size: 14px; }

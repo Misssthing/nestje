@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PROVINCIES, RASSEN } from '@/lib/nest';
+import { PROVINCIES, RASSEN, rasDelen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 
 export const SOORTEN: Record<string, string> = {
@@ -32,24 +32,25 @@ export default async function ZoekFilters({
     .from('openbare_overzicht')
     .select('moeder_ras, vader_ras')
     .returns<{ moeder_ras: string | null; vader_ras: string | null }[]>();
+  // Elk veld wordt eerst netjes gemaakt (“BKH” → “Brits korthaar”, “BKH x BLH” → twee rassen),
+  // zodat afkortingen en kruisingen geen dubbele of losse opties in de lijst geven.
+  const rassenPerNest = (rasRijen ?? []).map(
+    (rij) => new Set([...rasDelen(rij.moeder_ras), ...rasDelen(rij.vader_ras)].map((r) => r.toLowerCase())),
+  );
   const bekend = new Set(RASSEN.map((r) => r.toLowerCase()));
   const extra = new Map<string, string>();
   for (const rij of rasRijen ?? []) {
-    for (const r of [rij.moeder_ras, rij.vader_ras]) {
-      const t = r?.trim();
-      if (t && !bekend.has(t.toLowerCase()) && !extra.has(t.toLowerCase())) extra.set(t.toLowerCase(), t);
+    for (const t of [...rasDelen(rij.moeder_ras), ...rasDelen(rij.vader_ras)]) {
+      if (!bekend.has(t.toLowerCase()) && !extra.has(t.toLowerCase())) extra.set(t.toLowerCase(), t);
     }
   }
   const rassenFilter = [...RASSEN, ...[...extra.values()].sort((a, b) => a.localeCompare(b, 'nl'))];
 
-  // Hoeveel nestjes er per ras in het overzicht staan (zelfde logica als het filter: moeder of vader).
+  // Hoeveel nestjes er per ras in het overzicht staan. Een kruising telt mee bij beide rassen.
   const aantalPerRas = new Map<string, number>();
   for (const r of rassenFilter) {
     const zoek = r.toLowerCase();
-    const n = (rasRijen ?? []).filter((rij) =>
-      [rij.moeder_ras, rij.vader_ras].some((x) => x?.toLowerCase().includes(zoek)),
-    ).length;
-    aantalPerRas.set(r, n);
+    aantalPerRas.set(r, rassenPerNest.filter((set) => set.has(zoek)).length);
   }
   const metNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) > 0);
   const zonderNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) === 0);

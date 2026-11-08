@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  MAX_DAGEN_VOORUIT, nestjeMelding, normaliseerNummer, ORGANISATIES, PROVINCIES, RASSEN, toonNummer,
+  MAX_DAGEN_VOORUIT, nestjeMelding, netjesRas, normaliseerNummer, ORGANISATIES, PROVINCIES, RASSEN, toonNummer,
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom, type OuderTest,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
@@ -129,8 +129,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       whatsapp_nummer: nummer,
       over_moeder: v.over_moeder.trim() || null,
       vader_naam: v.vader_naam.trim() || null,
-      moeder_ras: v.moeder_ras.trim() || null,
-      vader_ras: v.vader_ras.trim() || null,
+      moeder_ras: netjesRas(v.moeder_ras),
+      vader_ras: netjesRas(v.vader_ras),
       stamboom,
       moeder_gewicht: mg,
       vader_gewicht: vg,
@@ -215,6 +215,14 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     };
   }, [opslaan]);
 
+  /** “bkh” wordt na het typen “Brits korthaar”, zodat de verkoper ziet wat er wordt opgeslagen. */
+  function netjesRasVeld(k: 'moeder_ras' | 'vader_ras') {
+    setV((s) => {
+      const netjes = netjesRas(s[k]) ?? '';
+      return netjes === s[k] ? s : { ...s, [k]: netjes };
+    });
+  }
+
   function netjesNummer() {
     const nummer = normaliseerNummer(v.whatsapp);
     if (nummer) setV((s) => ({ ...s, whatsapp: toonNummer(nummer) }));
@@ -251,7 +259,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           <label className="veld">
             <span>Ras moeder (optioneel)</span>
-            <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} maxLength={60} placeholder="Bijv. Huiskat" />
+            <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} onBlur={() => netjesRasVeld('moeder_ras')} maxLength={60} placeholder="Bijv. Huiskat" />
           </label>
         </div>
         <label className="veld">
@@ -348,7 +356,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           <label className="veld">
             <span>Ras vader (optioneel)</span>
-            <input list="rassen" value={v.vader_ras} onChange={zet('vader_ras')} maxLength={60} />
+            <input list="rassen" value={v.vader_ras} onChange={zet('vader_ras')} onBlur={() => netjesRasVeld('vader_ras')} maxLength={60} />
           </label>
         </div>
         <label className="veld">

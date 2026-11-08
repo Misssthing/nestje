@@ -88,12 +88,47 @@ export const RASSEN = [
   'Ragamuffin', 'Amerikaanse korthaar', 'Singapura', 'LaPerm',
 ];
 
+/** Afkortingen en andere schrijfwijzen die verkopers vaak intypen, met de nette rasnaam. Kleine letters. */
+export const RAS_ALIASSEN: Record<string, string> = {
+  bkh: 'Brits korthaar', 'britse korthaar': 'Brits korthaar', 'british shorthair': 'Brits korthaar', 'brits kort haar': 'Brits korthaar',
+  blh: 'Brits langhaar', 'britse langhaar': 'Brits langhaar', 'british longhair': 'Brits langhaar', 'brits lang haar': 'Brits langhaar',
+  mc: 'Maine Coon', mco: 'Maine Coon', mainecoon: 'Maine Coon', 'main coon': 'Maine Coon', 'maine coone': 'Maine Coon',
+  nbk: 'Noorse boskat', nfo: 'Noorse boskat', 'noorse bos kat': 'Noorse boskat', 'norwegian forest cat': 'Noorse boskat',
+  ekh: 'Europese korthaar', eur: 'Europese korthaar', 'europees korthaar': 'Europese korthaar',
+  pers: 'Perzisch', perzer: 'Perzisch', perser: 'Perzisch', 'perzische kat': 'Perzisch',
+  sib: 'Siberische kat', siberian: 'Siberische kat', 'siberische boskat': 'Siberische kat', siberiër: 'Siberische kat',
+  ragdol: 'Ragdoll', bengal: 'Bengaal', bengaalse: 'Bengaal', birmaan: 'Heilige Birmaan', 'sacred birman': 'Heilige Birmaan',
+  'huis kat': 'Huiskat', 'gewone huiskat': 'Huiskat', 'russisch blauwe': 'Russisch blauw', okh: 'Oosterse korthaar',
+};
+
+/** Scheidingstekens tussen twee rassen in één veld, zoals “BKH x BLH” of “Ragdoll/Maine Coon”. */
+const RAS_SCHEIDING = /\s+(?:x|×|en)\s+|\s*[×/+&]\s*/i;
+
+/** Eén rasnaam netjes: “bkh” → “Brits korthaar”, “maine coon” → “Maine Coon”. Onbekend blijft zoals getypt. */
+function eenRasNetjes(deel: string) {
+  const t = deel.trim().replace(/\s+/g, ' ');
+  if (!t) return '';
+  const l = t.toLowerCase();
+  return RAS_ALIASSEN[l] ?? RASSEN.find((r) => r.toLowerCase() === l) ?? t;
+}
+
+/** De losse, nette rassen in één veld: “BKH x BLH” → [“Brits korthaar”, “Brits langhaar”]. */
+export function rasDelen(waarde?: string | null): string[] {
+  const delen = (waarde ?? '').split(RAS_SCHEIDING).map(eenRasNetjes).filter(Boolean);
+  return [...new Map(delen.map((d) => [d.toLowerCase(), d])).values()];
+}
+
+/** Het hele veld netjes, met “ × ” tussen twee rassen. Leeg → null. Zo slaan we het op. */
+export function netjesRas(waarde?: string | null): string | null {
+  const delen = rasDelen(waarde);
+  return delen.length ? delen.join(' × ').slice(0, 60) : null;
+}
+
 /** Deze mag je zonder stamboom gebruiken; elke andere rasnaam alleen met stamboom. */
 export const RASSEN_ZONDER_STAMBOOM = ['huiskat', 'kruising', 'europese korthaar', 'eur', 'ekh'];
 
 export function vraagtStamboom(ras: string) {
-  const r = ras.trim().toLowerCase();
-  return r !== '' && !RASSEN_ZONDER_STAMBOOM.includes(r);
+  return rasDelen(ras).some((r) => !RASSEN_ZONDER_STAMBOOM.includes(r.toLowerCase()));
 }
 
 /** Fokverbod in Nederland: naaktkatten en katten met vouworen. */
@@ -221,4 +256,31 @@ export function ouderLabel(naam: string | null | undefined, ras?: string | null,
   const n = naam?.trim() || '';
   if (n && extra) return `${n} (${extra})`;
   return n || extra;
+}
+
+export type Verkoper = 'fokker' | 'particulier';
+
+/**
+ * Fokker of particulier, afgeleid van wat de verkoper invult: een nestje met stamboom, catterynaam en
+ * stamboomorganisatie is van een fokker. Vondelingen krijgen geen van beide (die hebben hun eigen label).
+ */
+export function verkoperVan(n: {
+  soort?: string | null;
+  stamboom?: boolean | null;
+  cattery?: string | null;
+  stamboom_organisatie?: string | null;
+}): Verkoper | null {
+  if (n.soort === 'vondeling') return null;
+  if (n.stamboom === true && n.cattery?.trim() && n.stamboom_organisatie?.trim()) return 'fokker';
+  return 'particulier';
+}
+
+export const VERKOPER_LABEL: Record<Verkoper, string> = { fokker: 'Fokker', particulier: 'Particulier' };
+
+/** “2026-11-03T…” → “november 2026” */
+export function maandJaarNL(iso?: string | null) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('nl-NL', { month: 'long', year: 'numeric', timeZone: 'Europe/Amsterdam' });
 }
