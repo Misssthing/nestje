@@ -271,7 +271,8 @@ export function verkoperVan(n: {
   stamboom_organisatie?: string | null;
 }): Verkoper | null {
   if (n.soort === 'vondeling') return null;
-  if (n.stamboom === true && n.cattery?.trim() && n.stamboom_organisatie?.trim()) return 'fokker';
+    if (n.stamboom === true && n.cattery?.trim() && n.stamboom_organisatie?.trim()) return 'fokker';
+  if (n.stamboom === true) return null;
   return 'particulier';
 }
 
