@@ -469,3 +469,25 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 }
 .interesse-link { margin: 14px 0 0; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px dashed var(--line); font-size: 15px; color: var(--muted); }
 .interesse-link a { color: var(--ink); font-weight: 600; }
+
+/* ─── Kopfoto op /kittens (uitbreiding 22) ─── */
+.kop-hero { position: relative; overflow: hidden; border-radius: 24px; min-height: 300px; display: flex; align-items: flex-end; margin: 0 0 8px; background: #23392E; color: #fff; }
+.kop-hero picture, .kop-hero img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.kop-hero img { object-fit: cover; object-position: 70% 40%; }
+.kop-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(26 52 39 / .92) 0%, rgb(26 52 39 / .72) 45%, rgb(26 52 39 / 0) 80%); }
+.kop-hero-tekst { position: relative; z-index: 1; padding: 36px 32px; max-width: 560px; }
+.kop-hero h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1; font-weight: 800; letter-spacing: -.02em; margin: 0 0 14px; color: #fff; }
+.kop-hero p { margin: 0; font-size: 18px; line-height: 1.5; color: rgb(255 255 255 / .92); max-width: 46ch; text-wrap: pretty; }
+.kop-hero .kop-hero-klein { margin-top: 10px; font-size: 15px; color: rgb(255 255 255 / .75); }
+@media (min-width: 1024px) { .kop-hero { min-height: 380px; } .kop-hero-tekst { padding: 48px 48px; } }
+@media (max-width: 700px) {
+  .kop-hero { margin-inline: -18px; border-radius: 0; min-height: 420px; }
+  .kop-hero img { object-position: 75% 20%; }
+  .kop-hero::after { background: linear-gradient(0deg, rgb(26 52 39 / .95) 0%, rgb(26 52 39 / .8) 42%, rgb(26 52 39 / 0) 75%); }
+  .kop-hero-tekst { padding: 24px 20px 26px; }
+  .kop-hero p { font-size: 16.5px; }
+}
+.overzicht-kop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+.overzicht-kop .aantal { margin: 0; }
+.overzicht-tip { font-size: 15px; font-weight: 600; color: var(--free); text-decoration: none; }
+.overzicht-tip:hover { text-decoration: underline; }

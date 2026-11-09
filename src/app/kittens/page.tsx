@@ -75,6 +75,22 @@ export default async function Overzicht({ searchParams }: Props) {
         <AccountKnop metNieuw />
       </div>
 
+      <section className="kop-hero">
+        <picture>
+          <source media="(max-width: 700px)" srcSet="/kittens-header-800.jpg" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/kittens-header.jpg" alt="" fetchPriority="high" />
+        </picture>
+        <div className="kop-hero-tekst">
+          <h1>Kittens te koop</h1>
+          <p>
+            Vind jouw kitten bij hobbyverkopers en fokkers in Nederland en België. Je ziet meteen welke kittens nog vrij zijn
+            en wanneer ze mogen verhuizen.
+          </p>
+          <p className="kop-hero-klein">Kom altijd eerst kijken, bij de kittens én hun moeder.</p>
+        </div>
+      </section>
+
 
       <div className="overzicht-grid">
         <aside className="filterbalk" aria-label="Zoeken en filteren">
@@ -89,15 +105,10 @@ export default async function Overzicht({ searchParams }: Props) {
         </aside>
 
         <div className="overzicht-lijst">
-          <section className="hero">
-            <h1>Kittens te koop</h1>
-            <p>
-              Nestjes van hobbyverkopers en fokkers. Je ziet meteen welke kittens nog vrij zijn en wanneer ze mogen verhuizen.
-              Kom altijd eerst kijken, bij de kittens én hun moeder.{' '}
-              <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Lees waar je op let bij het kopen van een kitten</a>.
-            </p>
-          </section>
-          <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
+          <div className="overzicht-kop">
+            <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
+            <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
+          </div>
       {nesten.length ? (
         <div className="kaart-grid">
           {nesten.map((n) => (
