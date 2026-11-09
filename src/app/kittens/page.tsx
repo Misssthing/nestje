@@ -7,6 +7,7 @@ import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, maandJaarNL, prijsNL, PROVINCIES, rasDelen, VERKOPER_LABEL } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
+import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
 
 export const dynamic = 'force-dynamic';
 
@@ -149,7 +150,20 @@ export default async function Overzicht({ searchParams }: Props) {
       )}
 
 
-      <section className="panel" style={{ marginTop: 26 }}>
+      <section className="panel wl-raspaneel" style={{ marginTop: 26 }}>
+        <h2>Niet gevonden wat je zoekt?</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
+          Krijg een mail zodra er een nieuw nestje met stamboom van jouw ras bij komt. Met één klik zet je je dan op de wachtlijst.
+        </p>
+        <Link
+          className="btn primary"
+          href={ras && RASLIJST_RASSEN.includes(ras) ? `/wachtlijst/ras?ras=${encodeURIComponent(ras)}` : '/wachtlijst/ras'}
+        >
+          {ras && RASLIJST_RASSEN.includes(ras) ? `Mail me bij een nieuw nestje ${ras}` : 'Mail me bij een nieuw nestje'}
+        </Link>
+      </section>
+
+      <section className="panel" style={{ marginTop: 16 }}>
         <h2>Heb je zelf een nestje?</h2>
         <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
           Maak gratis een pagina met al je kittens en kies of je nestje hier verschijnt.

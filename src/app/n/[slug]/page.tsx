@@ -9,8 +9,9 @@ import EigenaarBalk from '@/components/EigenaarBalk';
 import Voet from '@/components/Voet';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
 import { haalNestje } from './data';
+import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
 
 export const dynamic = 'force-dynamic';
 
@@ -92,6 +93,12 @@ export default async function NestjesPagina({ params }: Props) {
   const paginaUrl = `${CONFIG.siteUrl}/n/${nest.slug}`;
   const verkoper = verkoperVan(nest);
   const organisatie = nest.stamboom_organisatie?.replace(/ \(.*\)$/, '');
+  // Wachtlijst: open zolang het nestje loopt en er nog kittens vrij of onder optie zijn (of ze nog niet geboren zijn).
+  const wachtlijstOpen =
+    !nest.afgerond && (a.verwacht || kittens.some((k) => k.status === 'vrij' || k.status === 'optie'));
+  const rassenNest = [...rasDelen(nest.moeder_ras), ...rasDelen(nest.vader_ras)];
+  const rasVoorLijst =
+    nest.stamboom === true && rassenNest.length === 1 && RASLIJST_RASSEN.includes(rassenNest[0]) ? rassenNest[0] : null;
 
   return (
     <main className={inOverzicht ? 'wrap breed' : 'wrap'}>
@@ -160,18 +167,37 @@ export default async function NestjesPagina({ params }: Props) {
               </p>
             )}
             <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
-            {a.verwacht && nest.heeft_whatsapp && (
+            {wachtlijstOpen && (
               <div className="interesse">
-                <a className="btn primary" href={`/n/${nest.slug}/interesse`} target="_blank" rel="noopener nofollow">
-                  Interesse in dit nestje
-                </a>
-                <p className="hint">Laat de verkoper alvast weten dat je belangstelling hebt. Je opent dan WhatsApp.</p>
+                <Link className="btn primary" href={`/n/${nest.slug}/wachtlijst`} rel="nofollow">
+                  {a.verwacht ? 'Interesse in dit nestje' : 'Zet me op de wachtlijst'}
+                </Link>
+                <p className="hint">
+                  {a.verwacht
+                    ? 'Meld je aan voor de wachtlijst. Je krijgt een mail als de kittens geboren zijn.'
+                    : 'De verkoper kiest wie een kitten krijgt aangeboden. Je krijgt dan een mail.'}
+                  {a.verwacht && nest.heeft_whatsapp && (
+                    <>
+                      {' '}Liever direct contact?{' '}
+                      <a href={`/n/${nest.slug}/interesse`} target="_blank" rel="noopener nofollow">Stuur een WhatsApp</a>.
+                    </>
+                  )}
+                </p>
               </div>
             )}
           </section>
 
-          {nest.afgerond && (
-            <p className="afgerond-melding">Alle kittens van dit nestje hebben een thuis gevonden.</p>
+          {(nest.afgerond || (!a.verwacht && !wachtlijstOpen && kittens.length > 0)) && (
+            <div className="afgerond-melding">
+              <p style={{ margin: 0 }}>Alle kittens van dit nestje hebben een thuis gevonden.</p>
+              {!vondeling && (
+                <p className="hint" style={{ margin: '6px 0 0' }}>
+                  <Link href={rasVoorLijst ? `/wachtlijst/ras?ras=${encodeURIComponent(rasVoorLijst)}` : '/kittens'}>
+                    {rasVoorLijst ? `Mail me bij een nieuw nestje ${rasVoorLijst}` : 'Bekijk andere nestjes'}
+                  </Link>
+                </p>
+              )}
+            </div>
           )}
 
           {telling.length > 0 && (

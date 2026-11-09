@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { KittenMetFotos, Nest, NestFoto } from '@/lib/types';
 import Beheer from '../Beheer';
+import WachtlijstBeheer from '../WachtlijstBeheer';
 
 export const metadata: Metadata = { title: 'Je nestje beheren', robots: { index: false } };
 export const dynamic = 'force-dynamic';
@@ -26,5 +27,13 @@ export default async function NestBeheer({ params }: { params: Promise<{ id: str
     supabase.from('kittens').select('*, kitten_photos(*)').eq('nest_id', nest.id).order('volgorde').returns<KittenMetFotos[]>(),
   ]);
 
-  return <Beheer nest={nest} nestFotos={nestFotos ?? []} kittens={kittens ?? []} email={user.email ?? ''} />;
+  return (
+    <>
+      <Beheer nest={nest} nestFotos={nestFotos ?? []} kittens={kittens ?? []} email={user.email ?? ''} />
+      {/* Wachtlijst onder het beheer van het nestje (uitbreiding 19) */}
+      <div className="wrap" style={{ paddingTop: 0, marginTop: -40 }}>
+        <WachtlijstBeheer nestId={nest.id} />
+      </div>
+    </>
+  );
 }

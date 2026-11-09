@@ -355,3 +355,45 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .pnest .chip.verkoper { display: table; margin: 6px 0 2px; color: var(--ink); font-size: 13px; }
 .verkoper-info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font-size: 15px; color: var(--muted); }
 .verkoper-info .chip.verkoper { font-size: 14px; }
+
+/* ─── Wachtlijst (uitbreiding 19) ─── */
+.wl-form { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
+.wl-form .btn { width: auto; align-self: flex-start; margin-top: 6px; padding-inline: 20px; }
+.wl-val { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.wl-voorkeur { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
+.wl-voorkeur legend { font-size: 13px; color: var(--muted); margin-bottom: 3px; padding: 0; }
+.wl-keuze { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px 6px; border-radius: 9px; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; min-height: 40px; }
+.wl-keuze:has(input:checked) { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+.wl-keuze:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.wl-keuze input { position: absolute; opacity: 0; pointer-events: none; }
+.wl-uitleg { margin: 0 0 20px; padding-left: 20px; color: var(--muted); font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.wl-klaar { border-left: 4px solid var(--free); }
+.toast-melding { background: var(--free-bg); color: var(--ink); border-radius: 12px; padding: 10px 14px; margin: 0 0 16px; font-size: 15px; }
+.wl-aanbod { border: 2px solid var(--ginger); }
+.wl-aanbod .actions form { display: inline; }
+.wl-bevestig { margin: 0 0 20px; }
+.wl-afmelden { margin: 18px 0; font-size: 15px; }
+.wl-afmelden summary { cursor: pointer; color: var(--muted); }
+.wl-afmelden form { margin-top: 6px; }
+.wl-gegevens { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 16px; }
+.wl-gegevens dt { color: var(--muted); font-size: 15px; }
+.wl-gegevens dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+
+/* Beheer: wachtlijst van de verkoper */
+.wl-lijst { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.wl-rij { padding: 14px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.wl-rij.is-gesloten { opacity: .55; }
+.wl-kop { display: flex; align-items: center; gap: 10px; }
+.wl-plek { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.wl-wie { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.wl-wie span { color: var(--muted); font-size: 14px; }
+.wl-info { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; color: var(--muted); padding-left: 38px; }
+.wl-info a { overflow-wrap: anywhere; }
+.wl-motivatie { margin: 0; padding-left: 38px; font-size: 15px; white-space: pre-line; }
+.wl-acties { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-left: 38px; font-size: 15px; }
+.wl-groep { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.wl-groep select { max-width: 100%; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+.linkknop { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 14px; }
+@media (max-width: 480px) {
+  .wl-info, .wl-motivatie, .wl-acties { padding-left: 0; }
+}
