@@ -467,3 +467,5 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
   .artikel-tekst strong { font-size: 16px; }
   .artikel-intro { -webkit-line-clamp: 2; font-size: 14px; }
 }
+.interesse-link { margin: 14px 0 0; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px dashed var(--line); font-size: 15px; color: var(--muted); }
+.interesse-link a { color: var(--ink); font-weight: 600; }

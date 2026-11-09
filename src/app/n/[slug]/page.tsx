@@ -98,6 +98,22 @@ export default async function NestjesPagina({ params }: Props) {
   // Wachtlijst: open zolang het nestje loopt en er nog kittens vrij of onder optie zijn (of ze nog niet geboren zijn).
   const wachtlijstOpen =
     !nest.afgerond && (a.verwacht || kittens.some((k) => k.status === 'vrij' || k.status === 'optie'));
+  // Tekst bij de knop hangt af van de situatie: nog niet geboren, kittens vrij, of alles onder optie.
+  const vrijeKittens = kittens.filter((k) => k.status === 'vrij').length;
+  // Zijn er kittens vrij en heeft de verkoper WhatsApp, dan is de knop bij elk kitten het contact.
+  // De interesselijst staat dan als kleine link onder de kittens, voor wie liever niet appt.
+  const whatsappPerKitten = !a.verwacht && vrijeKittens > 0 && nest.heeft_whatsapp;
+  const interesse = a.verwacht
+    ? { knop: 'Interesse in dit nestje', uitleg: 'Laat je gegevens achter. Je krijgt een mail als de kittens geboren zijn.' }
+    : vrijeKittens > 0
+      ? {
+          knop: 'Ik heb interesse',
+          uitleg: `Er ${vrijeKittens === 1 ? 'is nog 1 kitten' : `zijn nog ${vrijeKittens} kittens`} vrij. Laat je gegevens achter, dan kan de verkoper je een kitten aanbieden.`,
+        }
+      : {
+          knop: 'Zet me op de wachtlijst',
+          uitleg: 'Alle kittens staan onder optie. Komt er een kitten vrij, dan kan de verkoper het jou aanbieden.',
+        };
   const rassenNest = [...rasDelen(nest.moeder_ras), ...rasDelen(nest.vader_ras)];
   const rasVoorLijst =
     nest.stamboom === true && rassenNest.length === 1 && RASLIJST_RASSEN.includes(rassenNest[0]) ? rassenNest[0] : null;
@@ -169,15 +185,13 @@ export default async function NestjesPagina({ params }: Props) {
               </p>
             )}
             <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
-            {wachtlijstOpen && (
+            {wachtlijstOpen && !whatsappPerKitten && (
               <div className="interesse">
                 <Link className="btn primary" href={`/n/${nest.slug}/wachtlijst`} rel="nofollow">
-                  {a.verwacht ? 'Interesse in dit nestje' : 'Zet me op de wachtlijst'}
+                  {interesse.knop}
                 </Link>
                 <p className="hint">
-                  {a.verwacht
-                    ? 'Meld je aan voor de wachtlijst. Je krijgt een mail als de kittens geboren zijn.'
-                    : 'De verkoper kiest wie een kitten krijgt aangeboden. Je krijgt dan een mail.'}
+                  {interesse.uitleg}
                   {a.verwacht && nest.heeft_whatsapp && (
                     <>
                       {' '}Liever direct contact?{' '}
@@ -255,6 +269,13 @@ export default async function NestjesPagina({ params }: Props) {
               </article>
             ))}
           </div>
+
+          {wachtlijstOpen && whatsappPerKitten && (
+            <p className="interesse-link">
+              Liever niet via WhatsApp?{' '}
+              <Link href={`/n/${nest.slug}/wachtlijst`} rel="nofollow">Laat je gegevens achter</Link>, dan neemt de verkoper contact met je op.
+            </p>
+          )}
 
           {heeftGezondheid && <p className="hint" style={{ marginTop: 10 }}>{nest.gezondheid_bij_verhuizing
                 ? 'De vinkjes laten zien wat geregeld is als de kittens verhuizen. Ingevuld door de verkoper.'

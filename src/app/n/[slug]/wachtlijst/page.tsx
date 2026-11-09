@@ -8,7 +8,7 @@ import AanmeldFormulier from '@/app/wachtlijst/AanmeldFormulier';
 import { meldAanVoorNest } from '@/app/wachtlijst/acties';
 
 export const dynamic = 'force-dynamic';
-export const metadata: Metadata = { title: 'Op de wachtlijst', robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: 'Interesse in dit nestje', robots: { index: false, follow: false } };
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,11 +25,11 @@ export default async function WachtlijstNest({ params }: Props) {
         <Link href={`/n/${nest.slug}`} className="brand">← Het nestje van {nest.moeder_naam}</Link>
       </div>
       <section className="hero">
-        <h1>Op de wachtlijst</h1>
+        <h1>Interesse in het nestje van {nest.moeder_naam}</h1>
         <p>
           {a.verwacht
             ? `De kittens van ${nest.moeder_naam} worden verwacht rond ${datumNL(a.geboren)}. Meld je nu al aan; je krijgt een mail zodra ze geboren zijn.`
-            : `Meld je aan voor het nestje van ${nest.moeder_naam}. De verkoper kiest zelf wie een kitten krijgt aangeboden.`}
+            : 'Laat je gegevens achter. De verkoper ziet je aanmelding en kiest zelf wie een kitten krijgt aangeboden.'}
         </p>
       </section>
 
@@ -43,7 +43,7 @@ export default async function WachtlijstNest({ params }: Props) {
           <AanmeldFormulier
             actie={meldAanVoorNest}
             verborgen={{ slug: nest.slug }}
-            knop="Zet me op de wachtlijst"
+            knop="Aanmelden"
             uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult. Lees ook onze privacyverklaring."
           />
           <p className="hint">
