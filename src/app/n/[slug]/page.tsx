@@ -12,6 +12,8 @@ import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, datumNL, GEZONDHEID, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
 import { haalNestje } from './data';
 import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
+import AndereNestjes from '@/components/AndereNestjes';
+import Artikelen from '@/components/Artikelen';
 
 export const dynamic = 'force-dynamic';
 
@@ -310,6 +312,10 @@ export default async function NestjesPagina({ params }: Props) {
               Wat heb je nodig voor een kitten?
             </a>
           </section>
+
+          {/* Andere nestjes alleen als de verkoper zelf in het openbare overzicht staat */}
+          {inOverzicht && <AndereNestjes slug={nest.slug} moederRas={nest.moeder_ras} vaderRas={nest.vader_ras} />}
+          <Artikelen trefwoorden={rassenNest} plek="nestje-artikelen" slug={nest.slug} />
 
           <p className="hint" style={{ marginTop: 24, textAlign: 'center' }}>
             <Link href={`/n/${nest.slug}/melden`}>Klopt er iets niet? Meld dit nestje</Link>

@@ -397,3 +397,73 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 @media (max-width: 480px) {
   .wl-info, .wl-motivatie, .wl-acties { padding-left: 0; }
 }
+
+/* ─── Fotokaarten, andere nestjes en artikelen (uitbreiding 20) ─── */
+.kaart-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px; }
+.nkaart { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; transition: box-shadow .2s, transform .2s; }
+@media (hover: hover) and (pointer: fine) {
+  .nkaart:hover { box-shadow: 0 10px 28px rgb(31 42 36 / .10); transform: translateY(-2px); }
+}
+.nkaart-media { position: relative; aspect-ratio: 1 / 1; background: var(--bg); }
+.nkaart-strook { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.nkaart-strook::-webkit-scrollbar { display: none; }
+.nkaart-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; display: block; }
+.nkaart-slide.leeg { background: linear-gradient(135deg, var(--free-bg), var(--opt-bg)); }
+.nkaart-slide img { width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.nkaart-pijl { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgb(255 255 255 / .92); color: #1F2A24; font-size: 24px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 8px rgb(0 0 0 / .18); opacity: 0; transition: opacity .15s; }
+.nkaart-pijl.links { left: 10px; }
+.nkaart-pijl.rechts { right: 10px; }
+.nkaart-media:hover .nkaart-pijl, .nkaart-pijl:focus-visible { opacity: 1; }
+@media (hover: none) { .nkaart-pijl { display: none; } }
+.nkaart-stippen { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+.nkaart-stippen span { width: 6px; height: 6px; border-radius: 999px; background: rgb(255 255 255 / .6); box-shadow: 0 0 2px rgb(0 0 0 / .3); transition: width .2s, background .2s; }
+.nkaart-stippen span.aan { width: 18px; background: #fff; }
+.nkaart-badge { position: absolute; top: 10px; left: 10px; background: var(--opt-bg); color: var(--opt); font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+.nkaart-tekst { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 16px; text-decoration: none; color: var(--ink); flex: 1; }
+.nkaart-label { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+.nkaart-label.vrij { color: var(--free); }
+.nkaart-label.optie { color: var(--opt); }
+.nkaart-label.rustig { color: var(--muted); }
+.nkaart-titel { font-size: 21px; font-weight: 800; line-height: 1.15; letter-spacing: -.01em; text-wrap: balance; }
+.nkaart-regel { font-size: 15px; color: var(--muted); }
+.nkaart-voet { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: auto; padding-top: 12px; }
+.nkaart-verkoper { font-size: 13px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.nkaart-verkoper::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ginger); }
+.nkaart-prijs { font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; margin-left: auto; }
+.nkaart.klein .nkaart-titel { font-size: 18px; }
+.nkaart.klein .nkaart-regel { font-size: 14px; }
+
+/* Kopjes boven een blok met een link rechts */
+.blokkop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 14px; }
+.blokkop h2 { margin: 0; font-size: clamp(22px, 4vw, 28px); font-weight: 800; letter-spacing: -.01em; }
+.blokkop-link { font-weight: 600; font-size: 15px; color: var(--free); text-decoration: none; }
+.blokkop-link:hover { text-decoration: underline; }
+
+/* Andere nestjes: op de telefoon een swipe-rij, op de computer een raster */
+.andere-nestjes, .artikelen { margin-top: 40px; }
+.kaart-rij { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: thin; }
+.kaart-rij > .nkaart { scroll-snap-align: start; }
+@media (min-width: 640px) {
+  .kaart-rij { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); overflow: visible; }
+}
+
+/* Artikelen van kattenverzorging.com */
+.artikel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 16px; }
+.artikel { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; text-decoration: none; color: var(--ink); transition: box-shadow .2s, transform .2s; }
+@media (hover: hover) and (pointer: fine) {
+  .artikel:hover { box-shadow: 0 10px 28px rgb(31 42 36 / .10); transform: translateY(-2px); }
+}
+.artikel img, .artikel-geenfoto { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--bg); display: block; }
+.artikel-tekst { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 16px; flex: 1; }
+.artikel-tekst strong { font-size: 17px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
+.artikel-intro { font-size: 14.5px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.artikel-meta { font-size: 13px; color: var(--muted); margin-top: auto; padding-top: 4px; }
+@media (prefers-reduced-motion: reduce) { .nkaart, .artikel, .nkaart-stippen span { transition: none; } }
+@media (max-width: 520px) {
+  .artikel-grid { gap: 12px; }
+  .artikel { flex-direction: row; }
+  .artikel img, .artikel-geenfoto { width: 112px; flex: none; aspect-ratio: auto; align-self: stretch; }
+  .artikel-tekst { padding: 12px 14px; }
+  .artikel-tekst strong { font-size: 16px; }
+  .artikel-intro { -webkit-line-clamp: 2; font-size: 14px; }
+}

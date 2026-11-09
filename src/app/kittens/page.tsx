@@ -3,8 +3,11 @@ import Link from 'next/link';
 import AccountKnop from '@/components/AccountKnop';
 import Voet from '@/components/Voet';
 import ZoekFilters, { SOORTEN } from '@/components/ZoekFilters';
-import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, maandJaarNL, prijsNL, PROVINCIES, rasDelen, VERKOPER_LABEL } from '@/lib/nest';
+import { CONFIG, metUtm } from '@/lib/config';
+import { aftelling, PROVINCIES, rasDelen } from '@/lib/nest';
+import { naarKaart } from '@/lib/kaart';
+import NestKaart from '@/components/NestKaart';
+import Artikelen from '@/components/Artikelen';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
 import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
@@ -30,10 +33,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
-function rasVan(n: OverzichtNest) {
-  const delen = [...new Map([...rasDelen(n.moeder_ras), ...rasDelen(n.vader_ras)].map((r) => [r.toLowerCase(), r])).values()];
-  return delen.length ? delen.join(' × ') : null;
-}
 
 export default async function Overzicht({ searchParams }: Props) {
   const sp = await searchParams;
@@ -100,46 +99,10 @@ export default async function Overzicht({ searchParams }: Props) {
           </section>
           <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
       {nesten.length ? (
-        <div className="lijst">
-          {nesten.map((n) => {
-            const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
-            const r = rasVan(n);
-            return (
-              <Link key={n.slug} href={`/n/${n.slug}`} className="pnest">
-                {n.foto ? (
-                  <img className="pnest-foto" src={fotoUrl(n.foto)} alt={`Het nestje van ${n.moeder_naam}`} loading="lazy" />
-                ) : (
-                  <span className="pnest-foto" aria-hidden="true" />
-                )}
-                <div>
-                  <strong>Het nestje van {n.moeder_naam}</strong>
-                  {n.soort === 'vondeling' && <span className="chip optie" style={{ marginTop: 6 }}>Vondelingen</span>}
-                  {n.verkoper && (
-                    <span className="chip verkoper" title={n.lid_sinds ? `Lid sinds ${maandJaarNL(n.lid_sinds)}` : undefined}>
-                      {VERKOPER_LABEL[n.verkoper]}
-                    </span>
-                  )}
-                  <span>
-                    {a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens)}
-                    {r ? `, ${r}` : ''}
-                    {n.stamboom ? ', met stamboom' : ''}
-                  </span>
-                  <span>
-                    {[n.woonplaats, n.provincie].filter(Boolean).join(', ')}
-                    {n.prijs ? ` · ${prijsNL(Number(n.prijs))}` : ''}
-                  </span>
-                  {a.verwacht ? (
-                    <span className="chip optie">Verwacht over {dagen(a.dagenTotGeboorte)}</span>
-                  ) : (
-                    <span className="chip vrij">
-                      {n.vrij > 0 ? `${n.vrij} vrij` : `${n.optie} onder optie`}
-                      {a.wekenTeGaan > 0 ? ` · nog ${a.wekenTeGaan} wk` : ' · mag verhuizen'}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
+        <div className="kaart-grid">
+          {nesten.map((n) => (
+            <NestKaart key={n.slug} n={naarKaart(n)} />
+          ))}
         </div>
       ) : (
         <p className="hint">
@@ -149,6 +112,8 @@ export default async function Overzicht({ searchParams }: Props) {
         </p>
       )}
 
+
+      <Artikelen titel="Over katten en kittens" plek="overzicht-artikelen" />
 
       <section className="panel wl-raspaneel" style={{ marginTop: 26 }}>
         <h2>Niet gevonden wat je zoekt?</h2>

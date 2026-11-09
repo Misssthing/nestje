@@ -126,4 +126,6 @@ export interface OverzichtNest {
   /** 'fokker', 'particulier' of null (vondelingen) */
   verkoper?: 'fokker' | 'particulier' | null;
   lid_sinds?: string | null;
+  /** Nestfoto's en de eerste foto van elk kitten, maximaal 6 (om doorheen te swipen) */
+  fotos?: string[] | null;
 }
