@@ -252,20 +252,30 @@ export function mailRasHerinnering(o: { naam: string; ras: string; token: string
 
 // ─── Mails aan verkopers ──────────────────────────────────────
 
-const beheerLink = () => url('/beheer');
+/** Rechtstreeks naar de wachtlijst van dit nestje in het beheer (klapt vanzelf open). */
+const beheerLink = (nestId: string) => url(`/beheer/${nestId}#wachtlijst`);
 
-export function mailVerkoperNieuweAanmelding(o: { moeder: string; naam: string; woonplaats: string }) {
+export function mailVerkoperNieuweAanmelding(o: {
+  nestId: string; moeder: string; naam: string; woonplaats: string;
+  voorkeur_geslacht: string; voorkeur_vacht: string | null; motivatie: string | null;
+}) {
+  const voorkeur = [o.voorkeur_geslacht === 'geen' ? '' : o.voorkeur_geslacht, o.voorkeur_vacht ?? ''].filter(Boolean).join(', ');
   return {
     onderwerp: `Nieuwe aanmelding voor het nestje van ${o.moeder}`,
     html: opmaak(
       `Nieuwe aanmelding op je wachtlijst`,
-      [`${esc(o.naam)} uit ${esc(o.woonplaats)} heeft zich aangemeld voor het nestje van ${esc(o.moeder)}.`],
-      { tekst: 'Bekijk je wachtlijst', href: beheerLink() },
+      [
+        `${esc(o.naam)} uit ${esc(o.woonplaats)} heeft zich aangemeld voor het nestje van ${esc(o.moeder)}.`,
+        voorkeur ? `<strong>Voorkeur:</strong> ${esc(voorkeur)}` : '',
+        o.motivatie ? `<strong>Over ${esc(o.naam)}:</strong><br>${esc(o.motivatie).replace(/\n/g, '<br>')}` : '',
+      ].filter(Boolean),
+      { tekst: 'Bekijk je wachtlijst', href: beheerLink(o.nestId) },
+      `Beantwoord deze mail om ${esc(o.naam)} direct te mailen.`,
     ),
   };
 }
 
-export function mailVerkoperReactie(o: { moeder: string; naam: string; kitten: string; soort: 'ja' | 'nee' | 'verlopen' }) {
+export function mailVerkoperReactie(o: { nestId: string; moeder: string; naam: string; kitten: string; soort: 'ja' | 'nee' | 'verlopen' }) {
   const kop = {
     ja: `${o.naam} zegt ja tegen ${o.kitten}`,
     nee: `${o.naam} zegt nee tegen ${o.kitten}`,
@@ -278,6 +288,6 @@ export function mailVerkoperReactie(o: { moeder: string; naam: string; kitten: s
   }[o.soort];
   return {
     onderwerp: kop,
-    html: opmaak(kop, [tekst, `Nestje van ${esc(o.moeder)}.`], { tekst: 'Naar je wachtlijst', href: beheerLink() }),
+    html: opmaak(kop, [tekst, `Nestje van ${esc(o.moeder)}.`], { tekst: 'Naar je wachtlijst', href: beheerLink(o.nestId) }),
   };
 }

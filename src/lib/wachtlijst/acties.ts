@@ -76,7 +76,10 @@ export async function aanmeldenVoorNest(nest: NestRij, g: Aanmelding, viaRasId?:
   await stuurMail(g.email, m.onderwerp, m.html);
   const ve = await verkoperEmail(nest.owner_id);
   if (ve) {
-    const v = mailVerkoperNieuweAanmelding({ moeder: nest.moeder_naam, naam: g.naam, woonplaats: g.woonplaats });
+    const v = mailVerkoperNieuweAanmelding({
+      nestId: nest.id, moeder: nest.moeder_naam, naam: g.naam, woonplaats: g.woonplaats,
+      voorkeur_geslacht: g.voorkeur_geslacht, voorkeur_vacht: g.voorkeur_vacht, motivatie: g.motivatie,
+    });
     await stuurMail(ve, v.onderwerp, v.html, g.email);
   }
   return { token: data.token };
@@ -231,7 +234,7 @@ export async function reageerOpAanbod(token: string, ja: boolean) {
     const mk = mailGeaccepteerdKoper({ naam: rij.naam, moeder: nest.moeder_naam, kitten: kitten.naam, slug: nest.slug, verkoperEmail: ve });
     await stuurMail(rij.email, mk.onderwerp, mk.html, ve ?? undefined);
     if (ve) {
-      const mv = mailVerkoperReactie({ moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten.naam, soort: 'ja' });
+      const mv = mailVerkoperReactie({ nestId: nest.id, moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten.naam, soort: 'ja' });
       await stuurMail(ve, mv.onderwerp, mv.html, rij.email);
     }
     return { ok: true, kitten: kitten.naam };
@@ -239,7 +242,7 @@ export async function reageerOpAanbod(token: string, ja: boolean) {
 
   await aanbodTerug(rij, true);
   if (ve) {
-    const mv = mailVerkoperReactie({ moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten.naam, soort: 'nee' });
+    const mv = mailVerkoperReactie({ nestId: nest.id, moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten.naam, soort: 'nee' });
     await stuurMail(ve, mv.onderwerp, mv.html);
   }
   return { ok: true, kitten: kitten.naam };
@@ -249,7 +252,7 @@ async function verlopenAfhandelen(rij: WachtRij, nest: NestRij, kitten: KittenRi
   await aanbodTerug(rij, true);
   const ve = await verkoperEmail(nest.owner_id);
   if (ve) {
-    const mv = mailVerkoperReactie({ moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten?.naam ?? 'het kitten', soort: 'verlopen' });
+    const mv = mailVerkoperReactie({ nestId: nest.id, moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten?.naam ?? 'het kitten', soort: 'verlopen' });
     await stuurMail(ve, mv.onderwerp, mv.html);
   }
 }

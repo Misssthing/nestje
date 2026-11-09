@@ -37,6 +37,14 @@ export default function WachtlijstBeheer({ nestId }: Props) {
   const [doorKeuze, setDoorKeuze] = useState<Record<string, string>>({});
   const [weg, setWeg] = useState<string | null>(null);
   const [annuleer, setAnnuleer] = useState<string | null>(null);
+  // Via de link in een mail (#wachtlijst): blok openklappen en ernaartoe scrollen zodra het geladen is.
+  const [viaLink, setViaLink] = useState(false);
+  useEffect(() => {
+    if (window.location.hash === '#wachtlijst') setViaLink(true);
+  }, []);
+  useEffect(() => {
+    if (viaLink && !laden) document.getElementById('wachtlijst')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [viaLink, laden]);
 
   const ophalen = useCallback(async () => {
     const res = await fetch(`/api/wachtlijst/beheer?nest=${nestId}`, { cache: 'no-store' });
@@ -91,7 +99,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
   const wachtend = rijen.filter((r) => r.status === 'wachtend').length;
 
   return (
-    <details id="wachtlijst" className="panel wl-beheer" open={wachtend > 0 || rijen.some((r) => r.status === 'aangeboden')}>
+    <details id="wachtlijst" className="panel wl-beheer" open={viaLink || wachtend > 0 || rijen.some((r) => r.status === 'aangeboden')}>
       <summary className="aanpassen">
         Wachtlijst {laden ? '' : `(${actief.length})`}
       </summary>
