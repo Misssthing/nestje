@@ -1,3 +1,6 @@
 {
-  "crons": [{ "path": "/api/wakker", "schedule": "0 6 * * *" }]
+  "crons": [
+    { "path": "/api/wakker", "schedule": "0 6 * * *" },
+    { "path": "/api/wachtlijst/cron", "schedule": "0 7 * * *" }
+  ]
 }
