@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Voet from '@/components/Voet';
-import { haalNest, type WachtRij } from '@/lib/wachtlijst/acties';
+import { eersteFoto, haalNest, type WachtRij } from '@/lib/wachtlijst/acties';
 import { adminClient, isUuid } from '@/lib/wachtlijst/server';
 import AanmeldFormulier from '../AanmeldFormulier';
 import { afmeldenNest, reageer, wijzigNestAanmelding } from '../acties';
@@ -35,6 +35,8 @@ export default async function MijnAanmelding({ params, searchParams }: Props) {
     : { data: null };
 
   const actief = ['wachtend', 'aangeboden', 'geaccepteerd'].includes(rij.status);
+  const kittenFoto = rij.kitten_id && rij.status === 'aangeboden' ? await eersteFoto(rij.kitten_id) : null;
+  const kittenLink = rij.kitten_id ? `/n/${nest.slug}#kitten-${rij.kitten_id}` : `/n/${nest.slug}`;
 
   return (
     <main className="wrap">
@@ -56,10 +58,17 @@ export default async function MijnAanmelding({ params, searchParams }: Props) {
       {rij.status === 'aangeboden' && kitten && (
         <section className="panel wl-aanbod">
           <h2>Er is een kitten voor je: {kitten.naam}</h2>
+          {kittenFoto && (
+            <Link href={kittenLink} className="wl-aanbod-foto">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={kittenFoto} alt={kitten.naam} />
+            </Link>
+          )}
           <p>
             {kitten.geslacht === 'kater' ? 'Kater' : 'Poes'}
             {kitten.vacht ? `, ${kitten.vacht}` : ''}. Laat vóór {datum(rij.aanbod_verloopt_op!, true)} weten of je {kitten.naam} wilt.
           </p>
+          <p><Link href={kittenLink}>Bekijk {kitten.naam} en de rest van het nestje →</Link></p>
           <p className="hint">Zeg je nee, dan blijf je op de wachtlijst. Kom altijd eerst kijken en betaal nooit vooruit aan iemand die je niet hebt ontmoet.</p>
           <div className="actions">
             <form action={reageer}>
@@ -81,7 +90,12 @@ export default async function MijnAanmelding({ params, searchParams }: Props) {
         <p style={{ marginBottom: 0 }}>
           {rij.status === 'wachtend' && 'Je staat op de wachtlijst. De verkoper laat het je weten als er een kitten voor je is.'}
           {rij.status === 'aangeboden' && 'Er staat een aanbod voor je klaar. Zie hierboven.'}
-          {rij.status === 'geaccepteerd' && `${kitten?.naam ?? 'Je kitten'} is voor je gereserveerd. De verkoper neemt contact met je op.`}
+          {rij.status === 'geaccepteerd' && (
+            <>
+              {kitten?.naam ?? 'Je kitten'} is voor je gereserveerd. De verkoper neemt contact met je op.{' '}
+              <Link href={kittenLink}>Bekijk het nestje</Link>.
+            </>
+          )}
           {rij.status === 'gesloten' && 'Dit nestje is vol. Je aanmelding is gesloten.'}
           {rij.status === 'afgemeld' && 'Je bent afgemeld voor dit nestje.'}
         </p>

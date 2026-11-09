@@ -1,3 +1,4 @@
+import { fotoUrl } from '@/lib/config';
 import { aftelling, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
 import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
@@ -42,6 +43,13 @@ export async function nestIsOpen(nest: NestRij) {
     .from('kittens').select('id', { count: 'exact', head: true })
     .eq('nest_id', nest.id).in('status', ['vrij', 'optie']);
   return (count ?? 0) > 0;
+}
+
+/** Eerste foto van een kitten als volledige link, of null. */
+export async function eersteFoto(kittenId: string) {
+  const { data } = await db()
+    .from('kitten_photos').select('storage_path').eq('kitten_id', kittenId).order('volgorde').limit(1).maybeSingle<{ storage_path: string }>();
+  return data ? fotoUrl(data.storage_path) : null;
 }
 
 // ─── Koper meldt zich aan voor een nestje ───────────────────────
@@ -107,6 +115,7 @@ export async function aanbieden(rijId: string, kittenId: string, ownerId: string
   const m = mailAanbod({
     naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kitten.naam,
     omschrijving: kittenOmschrijving(kitten), token: r.rij.token, verlooptOp,
+    slug: r.nest.slug, kittenId: kitten.id, foto: await eersteFoto(kitten.id),
   });
   await stuurMail(r.rij.email, m.onderwerp, m.html);
   return { ok: true };

@@ -228,7 +228,7 @@ export default async function NestjesPagina({ params }: Props) {
 
           <div className="kittens">
             {kittens.map((k) => (
-              <article key={k.id} className={`kit${k.status === 'verhuisd' ? ' is-verhuisd' : ''}`}>
+              <article key={k.id} id={`kitten-${k.id}`} className={`kit${k.status === 'verhuisd' ? ' is-verhuisd' : ''}`}>
                 <div className="portrait">
                   <Fotostrip fotos={k.fotos.map(fotoUrl)} naam={k.naam} />
                   <span className={`chip ${k.status}`}>{STATUS_PUBLIEK[k.status]}</span>

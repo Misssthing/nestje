@@ -491,3 +491,9 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .overzicht-kop .aantal { margin: 0; }
 .overzicht-tip { font-size: 15px; font-weight: 600; color: var(--free); text-decoration: none; }
 .overzicht-tip:hover { text-decoration: underline; }
+
+/* ─── Aanbod: foto van het kitten en sprong naar het kitten (uitbreiding 23) ─── */
+.wl-aanbod-foto { display: block; margin: 4px 0 12px; }
+.wl-aanbod-foto img { width: 100%; max-width: 420px; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+.kit { scroll-margin-top: 20px; }
+.kit:target { outline: 3px solid var(--ginger); outline-offset: 4px; border-radius: 20px; }

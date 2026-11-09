@@ -90,10 +90,15 @@ export function mailGeboren(o: { naam: string; moeder: string; slug: string; tok
 
 export function mailAanbod(o: {
   naam: string; moeder: string; kitten: string; omschrijving: string; token: string; verlooptOp: Date;
+  slug: string; kittenId: string; foto: string | null;
 }) {
   const tot = o.verlooptOp.toLocaleString('nl-NL', {
     weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Amsterdam',
   });
+  const kittenLink = url(`/n/${o.slug}#kitten-${o.kittenId}`);
+  const foto = o.foto
+    ? `<a href="${kittenLink}"><img src="${o.foto}" alt="${esc(o.kitten)}" width="472" style="display:block;width:100%;max-width:472px;height:auto;border-radius:14px;margin:0 0 6px" /></a>`
+    : '';
   return {
     onderwerp: `Er is een kitten voor je: ${o.kitten}`,
     html: opmaak(
@@ -101,6 +106,8 @@ export function mailAanbod(o: {
       [
         `Hoi ${esc(o.naam)},`,
         `De verkoper van het nestje van ${esc(o.moeder)} biedt je <strong>${esc(o.kitten)}</strong> aan (${esc(o.omschrijving)}).`,
+        ...(foto ? [foto] : []),
+        `<a href="${kittenLink}" style="color:#1F2A24;font-weight:600">Bekijk ${esc(o.kitten)} en de rest van het nestje →</a>`,
         `Laat vóór <strong>${esc(tot)}</strong> weten of je dit kitten wilt. Daarna kan de verkoper het aan iemand anders aanbieden.`,
         'Zeg je nee, dan blijf je gewoon op de wachtlijst staan.',
       ],
