@@ -2,7 +2,7 @@ import { fotoUrl } from '@/lib/config';
 import { aftelling, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
 import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
-  mailNieuwNestRas, mailRasHerinnering, mailVerkoperNieuweAanmelding, mailVerkoperReactie, stuurMail,
+  mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding, mailVerkoperReactie, stuurMail,
 } from './mail';
 import { AANBOD_UREN, adminClient, type Aanmelding, verkoperEmail } from './server';
 
@@ -170,6 +170,37 @@ export async function verwijderen(rijId: string, ownerId: string) {
   if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
   if (r.rij.status === 'aangeboden') await aanbodTerug(r.rij, false);
   await db().from('wachtlijst').update({ status: 'afgemeld', gesloten_op: new Date().toISOString() }).eq('id', r.rij.id);
+  return { ok: true };
+}
+
+/**
+ * Reservering gaat niet door. Het kitten gaat terug naar Vrij (als het op Gereserveerd stond)
+ * en de koper komt terug op de wachtlijst met zijn oude plek, of gaat van de lijst af.
+ */
+export async function reserveringAnnuleren(rijId: string, ownerId: string, terugOpLijst: boolean) {
+  const r = await rijVanEigenaar(rijId, ownerId);
+  if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
+  if (r.rij.status !== 'geaccepteerd') return { fout: 'Er is geen reservering om te annuleren.' };
+
+  let kittenNaam = 'het kitten';
+  if (r.rij.kitten_id) {
+    const { data: k } = await db().from('kittens').select('naam').eq('id', r.rij.kitten_id).maybeSingle<{ naam: string }>();
+    if (k) kittenNaam = k.naam;
+    await db().from('kittens').update({ status: 'vrij' }).eq('id', r.rij.kitten_id).eq('status', 'gereserveerd');
+  }
+  await db()
+    .from('wachtlijst')
+    .update(
+      terugOpLijst
+        ? { status: 'wachtend', kitten_id: null, aanbod_verloopt_op: null }
+        : { status: 'afgemeld', gesloten_op: new Date().toISOString() },
+    )
+    .eq('id', r.rij.id);
+
+  const m = mailReserveringGeannuleerd({
+    naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kittenNaam, slug: r.nest.slug, token: r.rij.token, terugOpLijst,
+  });
+  await stuurMail(r.rij.email, m.onderwerp, m.html);
   return { ok: true };
 }
 

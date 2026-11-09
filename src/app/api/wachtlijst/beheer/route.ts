@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { aanbieden, doorschuiven, haalNest, intrekken, nestIsOpen, verlopenAanbiedingen, verwijderen, type WachtRij } from '@/lib/wachtlijst/acties';
+import { aanbieden, doorschuiven, reserveringAnnuleren, haalNest, intrekken, nestIsOpen, verlopenAanbiedingen, verwijderen, type WachtRij } from '@/lib/wachtlijst/acties';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, isUuid } from '@/lib/wachtlijst/server';
 
@@ -38,12 +38,12 @@ export async function GET(req: Request) {
   return NextResponse.json({ rijen: (rijen ?? []) as Partial<WachtRij>[], kittens: kittens ?? [], anderen });
 }
 
-/** Acties van de verkoper: aanbieden, intrekken, doorschuiven, verwijderen. */
+/** Acties van de verkoper: aanbieden, intrekken, doorschuiven, verwijderen, reservering annuleren. */
 export async function POST(req: Request) {
   const user = await verkoper();
   if (!user) return nee('Log opnieuw in.', 401);
   const body = await req.json().catch(() => ({}));
-  const { actie, rijId, kittenId, naarNestId } = body as Record<string, string>;
+  const { actie, rijId, kittenId, naarNestId, terug } = body as Record<string, string>;
   if (!isUuid(rijId ?? '')) return nee('Onbekende aanmelding.');
 
   let r: { ok?: boolean; fout?: string };
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
   else if (actie === 'intrekken') r = await intrekken(rijId, user.id);
   else if (actie === 'doorschuiven' && isUuid(naarNestId ?? '')) r = await doorschuiven(rijId, naarNestId, user.id);
   else if (actie === 'verwijderen') r = await verwijderen(rijId, user.id);
+  else if (actie === 'annuleren') r = await reserveringAnnuleren(rijId, user.id, terug === 'ja');
   else return nee('Onbekende actie.');
 
   return r.fout ? nee(r.fout) : NextResponse.json({ ok: true });

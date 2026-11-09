@@ -135,6 +135,28 @@ export function mailGeaccepteerdKoper(o: { naam: string; moeder: string; kitten:
   };
 }
 
+export function mailReserveringGeannuleerd(o: {
+  naam: string; moeder: string; kitten: string; slug: string; token: string; terugOpLijst: boolean;
+}) {
+  return {
+    onderwerp: `Reservering van ${o.kitten} gaat niet door`,
+    html: opmaak(
+      `De reservering gaat niet door`,
+      [
+        `Hoi ${esc(o.naam)},`,
+        `De verkoper van het nestje van ${esc(o.moeder)} heeft de reservering van ${esc(o.kitten)} geannuleerd.`,
+        o.terugOpLijst
+          ? 'Je staat weer op de wachtlijst, met je oorspronkelijke aanmelddatum. Komt er een kitten voor je vrij, dan krijg je een mail.'
+          : 'Je staat niet meer op de wachtlijst van dit nestje. In het overzicht vind je andere nestjes met kittens die nog vrij zijn.',
+      ],
+      o.terugOpLijst
+        ? { tekst: 'Bekijk het nestje', href: url(`/n/${o.slug}`) }
+        : { tekst: 'Bekijk andere nestjes', href: url('/kittens') },
+      o.terugOpLijst ? beheerVoet(o.token) : 'Vragen hierover? Neem contact op met de verkoper.',
+    ),
+  };
+}
+
 export function mailDoorgeschoven(o: { naam: string; vanMoeder: string; naarMoeder: string; naarSlug: string; token: string }) {
   return {
     onderwerp: `Je staat nu op de wachtlijst voor het nestje van ${o.naarMoeder}`,

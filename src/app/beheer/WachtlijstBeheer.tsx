@@ -36,6 +36,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
   const [keuze, setKeuze] = useState<Record<string, string>>({});
   const [doorKeuze, setDoorKeuze] = useState<Record<string, string>>({});
   const [weg, setWeg] = useState<string | null>(null);
+  const [annuleer, setAnnuleer] = useState<string | null>(null);
 
   const ophalen = useCallback(async () => {
     const res = await fetch(`/api/wachtlijst/beheer?nest=${nestId}`, { cache: 'no-store' });
@@ -71,7 +72,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) setFout(data.fout ?? 'Dat lukte niet. Probeer het opnieuw.');
-    else if (actie === 'aanbieden' || actie === 'intrekken') {
+    else if (actie === 'aanbieden' || actie === 'intrekken' || actie === 'annuleren') {
       // De kittenkaarten bovenaan moeten de nieuwe status (Optie of Vrij) laten zien: pagina opnieuw laden.
       sessionStorage.setItem('wl-melding', gelukt);
       window.location.hash = 'wachtlijst';
@@ -79,6 +80,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
       return;
     } else setMelding(gelukt);
     setWeg(null);
+    setAnnuleer(null);
     await ophalen();
     setBezig(null);
   }
@@ -138,7 +140,36 @@ export default function WachtlijstBeheer({ nestId }: Props) {
               )}
 
               {r.status === 'geaccepteerd' && (
-                <div className="wl-acties"><span>{kittenNaam(r.kitten_id)} is voor {r.naam} gereserveerd.</span></div>
+                <div className="wl-acties">
+                  <span>{kittenNaam(r.kitten_id)} is voor {r.naam} gereserveerd.</span>
+                  {kittens.find((k) => k.id === r.kitten_id)?.status === 'vrij' && (
+                    <span className="fout" style={{ margin: 0 }}>
+                      Let op: {kittenNaam(r.kitten_id)} staat weer op vrij. Gaat de koop niet door? Annuleer dan hieronder de reservering.
+                    </span>
+                  )}
+                  {annuleer === r.id ? (
+                    <span className="wl-groep wl-annuleer">
+                      <span>Gaat de koop niet door? {kittenNaam(r.kitten_id)} gaat dan terug naar vrij en {r.naam} krijgt een mail.</span>
+                      <button
+                        className="btn ghost klein"
+                        disabled={bezig === r.id}
+                        onClick={() => doe(r, 'annuleren', { terug: 'ja' }, `${r.naam} staat weer op de wachtlijst.`)}
+                      >
+                        Terug op de wachtlijst
+                      </button>
+                      <button
+                        className="btn ghost klein"
+                        disabled={bezig === r.id}
+                        onClick={() => doe(r, 'annuleren', { terug: 'nee' }, `${r.naam} staat niet meer op je wachtlijst.`)}
+                      >
+                        Van de lijst halen
+                      </button>
+                      <button className="linkknop" onClick={() => setAnnuleer(null)}>Toch niet</button>
+                    </span>
+                  ) : (
+                    <button className="linkknop" onClick={() => setAnnuleer(r.id)}>Reservering annuleren</button>
+                  )}
+                </div>
               )}
 
               {r.status === 'wachtend' && (
