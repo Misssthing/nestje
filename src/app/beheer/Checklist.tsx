@@ -99,7 +99,7 @@ export default function Checklist({ nest, kittens, nestFotos, supabase, onNest, 
         </div>
         <ol className="cl-lijst">
           {lijst.map((s) => (
-            <li key={s.id} className={s.klaar ? 'klaar' : ''}>
+            <li key={s.id} className={s.klaar ? 'cl-klaar' : ''}>
               <span className="cl-vink" aria-hidden="true">{s.klaar ? '✓' : ''}</span>
               <div>
                 <strong>

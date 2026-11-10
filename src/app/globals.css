@@ -548,8 +548,8 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .cl-lijst strong { font-size: 15.5px; }
 .cl-uitleg { font-size: 14px; color: var(--muted); }
 .cl-vink { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 800; margin-top: 1px; }
-.cl-lijst li.klaar .cl-vink { background: var(--free); border-color: var(--free); color: #fff; }
-.cl-lijst li.klaar strong { color: var(--muted); font-weight: 500; }
+.cl-lijst li.cl-klaar .cl-vink { background: var(--free); border-color: var(--free); color: #fff; }
+.cl-lijst li.cl-klaar strong { color: var(--muted); font-weight: 500; }
 .cl-ster { color: var(--danger); }
 .cl-lijst .linkknop { white-space: nowrap; margin-top: 2px; }
 @media (prefers-reduced-motion: reduce) { .cl-balk span { transition: none; } }
@@ -639,3 +639,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .labelcheck .labelcheck-extra strong { display: inline; margin: 0; }
 .ctl-let-op { color: var(--opt) !important; }
 .ctl-cattery button[disabled] { opacity: .45; }
+
+/* Checklist: afgevinkte stappen licht en leesbaar (niet de donkere stijl van "Klaar voor je kitten?") */
+.cl-lijst li.cl-klaar { background: none; color: var(--ink); border-radius: 0; padding: 10px 0; }
+.cl-lijst li.cl-klaar strong { color: var(--muted); font-weight: 500; }
