@@ -42,9 +42,13 @@ function opmaak(kop: string, alineas: string[], knop?: { tekst: string; href: st
   const v = voet ? `<p style="margin:24px 0 0;font-size:13px;color:#5E6B63;line-height:1.5">${voet}</p>` : '';
   return `<!doctype html><html lang="nl"><body style="margin:0;background:#EEF1EC;padding:24px 12px;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;color:#1F2A24">
 <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:28px 24px">
-<p style="margin:0 0 18px;font-weight:700;color:#E39B3B">Nestje</p>
+<p style="margin:0 0 18px"><img src="${url('/logo-nestje-mail.png')}" alt="Nestje" width="115" height="32" style="display:block;height:32px;width:auto;border:0" /></p>
 <h1 style="font-size:22px;line-height:1.25;margin:0 0 16px">${esc(kop)}</h1>${p}${b}${v}
-</div></body></html>`;
+</div>
+<p style="max-width:520px;margin:14px auto 0;font-size:12px;color:#5E6B63;line-height:1.5;text-align:center">
+Volg ons op <a href="https://www.instagram.com/nestjespagina/" style="color:#5E6B63">Instagram: @nestjespagina</a><br>
+Nestje is onderdeel van <a href="https://www.kattenverzorging.com/" style="color:#5E6B63">kattenverzorging.com</a>
+</p></body></html>`;
 }
 
 const beheerVoet = (token: string) =>

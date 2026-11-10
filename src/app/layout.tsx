@@ -3,7 +3,9 @@ import { Bricolage_Grotesque } from 'next/font/google';
 import { ToastProvider } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import Meting from '@/components/Meting';
+import SiteKop from '@/components/SiteKop';
 import './globals.css';
+import './sitekop.css';
 
 const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
@@ -32,7 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="nl" className={bricolage.variable}>
       <body>
-        <ToastProvider>{children}</ToastProvider>
+        <ToastProvider>
+          <SiteKop />
+          {children}
+        </ToastProvider>
         <Meting />
       </body>
     </html>

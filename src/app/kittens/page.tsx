@@ -71,7 +71,7 @@ export default async function Overzicht({ searchParams }: Props) {
   return (
     <main className="wrap breed">
       <div className="bar">
-        <Link href="/kittens" className="brand">Nestje</Link>
+        <span className="brand" aria-hidden="true" />
         <AccountKnop metNieuw />
       </div>
 
