@@ -26,6 +26,7 @@ const SNELLE_REDENEN = [
   'Een rasnaam mag alleen met stamboom. Vul de stamboomgegevens in, of kies Huiskat of Kruising.',
   'De kittens verhuizen te vroeg. Volgens de huisregels is dat op zijn vroegst na 12 weken.',
   'Deze moeder heeft volgens onze gegevens te veel nestjes in korte tijd (huisregel: max. 2 per 12 maanden).',
+  'Vul de stamboomnummers van beide ouders in (alleen zichtbaar voor Nestje). Dan kunnen we je cattery controleren en krijg je het vinkje Gecontroleerd.',
   'We konden je cattery niet terugvinden. Stuur een foto van je catterycertificaat of de stamboom van de moeder naar nestje@kattenverzorging.com.',
 ];
 
@@ -100,6 +101,26 @@ export default async function Controle() {
     }),
   );
   const info = (id: string) => extra.find((e) => e.id === id)!;
+
+  // Stamboomnummers die ook bij een andere verkoper voorkomen
+  const { data: nummers } = await db
+    .from('nests')
+    .select('owner_id, moeder_stamboomnr, vader_stamboomnr')
+    .or('moeder_stamboomnr.not.is.null,vader_stamboomnr.not.is.null');
+  const schoon = (t: string | null) => (t ?? '').replace(/\s+/g, '').toLowerCase();
+  const dubbel = (r: Rij) => {
+    const m = schoon(r.moeder_stamboomnr);
+    const v = schoon(r.vader_stamboomnr);
+    const anderen = (nummers ?? []).filter((x) => x.owner_id !== r.owner_id);
+    const eigen = (nummers ?? []).filter((x) => x.owner_id === r.owner_id);
+    return {
+      moederElders: m ? anderen.filter((x) => schoon(x.moeder_stamboomnr) === m).length : 0,
+      moederAlsVader: m ? (nummers ?? []).filter((x) => schoon(x.vader_stamboomnr) === m).length : 0,
+      vaderElders: v ? anderen.filter((x) => schoon(x.vader_stamboomnr) === v).length : 0,
+      vaderAlsMoeder: v ? (nummers ?? []).filter((x) => schoon(x.moeder_stamboomnr) === v).length : 0,
+      eigenMoeder: m ? eigen.filter((x) => schoon(x.moeder_stamboomnr) === m).length : 0,
+    };
+  };
   const { data: gc } = await db.from('catteries_gecontroleerd').select('owner_id, cattery');
   const gecontroleerd = (r: Rij) =>
     Boolean(r.cattery && (gc ?? []).some((g) => g.owner_id === r.owner_id && g.cattery.trim().toLowerCase() === r.cattery!.trim().toLowerCase()));
@@ -120,7 +141,7 @@ export default async function Controle() {
       {wachtend.length === 0 && <p className="hint">Er wacht niets. Mooi zo.</p>}
       <div className="lijst">
         {wachtend.map((r) => (
-          <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} />
+          <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} d={dubbel(r)} />
         ))}
       </div>
 
@@ -129,7 +150,7 @@ export default async function Controle() {
           <summary className="aanpassen">Wacht op aanpassing door verkoper ({afgekeurd.length})</summary>
           <div className="lijst" style={{ marginTop: 12 }}>
             {afgekeurd.map((r) => (
-              <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} />
+              <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} d={dubbel(r)} />
             ))}
           </div>
         </details>
@@ -138,7 +159,13 @@ export default async function Controle() {
   );
 }
 
-function Kaart({ r, i, gc }: { r: Rij; i: { nestjes: number; kittens: number; chipNestjes: number | null; email: string | null }; gc: boolean }) {
+type Dubbel = { moederElders: number; moederAlsVader: number; vaderElders: number; vaderAlsMoeder: number; eigenMoeder: number };
+
+function Kaart({ r, i, gc: gcNaam, d }: {
+  r: Rij; i: { nestjes: number; kittens: number; chipNestjes: number | null; email: string | null }; gc: boolean; d: Dubbel;
+}) {
+  const nummers = Boolean(r.moeder_stamboomnr && r.vader_stamboomnr);
+  const gc = gcNaam && nummers;
   const a = aftelling(r.geboortedatum, r.verhuisleeftijd_weken);
   const ras = rasTekst(r.moeder_ras, r.vader_ras) || 'Geen ras ingevuld';
   const compleet = Boolean(r.stamboom && r.stamboom_organisatie && r.cattery?.trim() && r.vader_naam?.trim());
@@ -153,6 +180,9 @@ function Kaart({ r, i, gc }: { r: Rij; i: { nestjes: number; kittens: number; ch
     i.nestjes > 4 ? `${i.nestjes} nestjes in 12 maanden bij deze verkoper` : '',
     i.chipNestjes && i.chipNestjes > 2 ? `Zelfde moederchip in ${i.chipNestjes} nestjes (12 mnd)` : '',
     r.stamboom && !compleet ? 'Stamboom op Ja, maar organisatie, catterynaam of naam vader ontbreekt' : '',
+    d.moederElders ? `Stamboomnummer moeder komt ook voor bij ${d.moederElders === 1 ? 'een andere verkoper' : `${d.moederElders} andere nestjes van andere verkopers`}` : '',
+    d.moederAlsVader || d.vaderAlsMoeder ? 'Een stamboomnummer staat elders als moeder én als vader: dat kan niet kloppen' : '',
+    d.eigenMoeder > 2 ? `Zelfde moeder (stamboomnummer) in ${d.eigenMoeder} nestjes van deze verkoper` : '',
   ].filter(Boolean);
 
   return (
@@ -191,21 +221,39 @@ function Kaart({ r, i, gc }: { r: Rij; i: { nestjes: number; kittens: number; ch
         <div className="ctl-cattery">
           <div>
             <strong>Cattery {r.cattery}</strong>
-            <span>{gc ? '✓ Al nagekeken. Dit label geldt ook voor volgende nestjes.' : 'Nog niet nagekeken. Zoek de naam op:'}</span>
+            <span>
+              {gc
+                ? '✓ Nagekeken. Dit label geldt ook voor volgende nestjes (met stamboomnummers).'
+                : gcNaam
+                  ? 'Cattery eerder nagekeken, maar bij dit nestje missen de stamboomnummers, dus geen vinkje.'
+                  : 'Nog niet nagekeken. Zoek de naam op:'}
+            </span>
           </div>
-          {!gc && (
+          {!gcNaam && (
             <div className="ctl-zoek">
               {zoekLinks(r.cattery, r.stamboom_organisatie).map(([t, u]) => (
                 <a key={t} href={u} target="_blank" rel="noopener noreferrer" className="chipknop">{t} ↗</a>
               ))}
             </div>
           )}
+          {!nummers && !gc && (
+            <span className="ctl-let-op">
+              Zonder stamboomnummers van beide ouders kun je de cattery niet als gecontroleerd markeren. Vraag ze op met
+              “Aanpassing vragen”, of keur goed zonder vinkje.
+            </span>
+          )}
+          {nummers && (
+            <span>
+              Moeder {r.moeder_stamboomnr} · vader {r.vader_stamboomnr} ·{' '}
+              <a href={`https://www.google.com/search?q=${encodeURIComponent(`"${r.moeder_stamboomnr}"`)}`} target="_blank" rel="noopener noreferrer">zoek nummer moeder ↗</a>
+            </span>
+          )}
           <form action={zetCattery}>
             <input type="hidden" name="owner_id" value={r.owner_id} />
             <input type="hidden" name="cattery" value={r.cattery} />
-            <input type="hidden" name="aan" value={gc ? '0' : '1'} />
-            <button className={`btn ${gc ? 'ghost' : 'primary'} klein`} type="submit">
-              {gc ? 'Nagekeken intrekken' : '✓ Cattery nagekeken'}
+            <input type="hidden" name="aan" value={gcNaam ? '0' : '1'} />
+            <button className={`btn ${gc ? 'ghost' : 'primary'} klein`} type="submit" disabled={!gc && !nummers}>
+              {gcNaam ? 'Nagekeken intrekken' : '✓ Cattery nagekeken'}
             </button>
           </form>
         </div>
@@ -220,6 +268,12 @@ function Kaart({ r, i, gc }: { r: Rij; i: { nestjes: number; kittens: number; ch
         <ul className="ctl-signalen">
           {signalen.map((s) => <li key={s}>{s}</li>)}
         </ul>
+      )}
+      {d.vaderElders > 0 && (
+        <p className="hint" style={{ margin: 0 }}>
+          Stamboomnummer vader komt ook voor bij {d.vaderElders === 1 ? 'een andere verkoper' : `${d.vaderElders} nestjes van andere verkopers`}.
+          Dat kan kloppen als het een dekkater is.
+        </p>
       )}
       {r.controle_status === 'aanpassen' && r.controle_reden && (
         <p className="hint">Gevraagd: {r.controle_reden}</p>

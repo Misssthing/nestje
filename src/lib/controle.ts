@@ -85,6 +85,16 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
       voorOverzicht: false,
     });
   }
+  if (nest.stamboom === true) {
+    lijst.push({
+      id: 'stamboomnrs',
+      tekst: 'Stamboomnummers (aanbevolen)',
+      uitleg: 'Met de nummers van beide ouders kunnen we je cattery controleren. Je krijgt dan het vinkje “✓ Gecontroleerd” en komt bovenaan bij Catteries. Kopers zien de nummers nooit.',
+      klaar: Boolean(nest.moeder_stamboomnr && nest.vader_stamboomnr),
+      plek: 'gegevens',
+      voorOverzicht: false,
+    });
+  }
   lijst.push({
     id: 'gezondheid',
     tekst: 'Gezondheid en vertrouwen',
