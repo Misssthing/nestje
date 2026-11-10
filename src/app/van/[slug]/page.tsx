@@ -6,7 +6,7 @@ import KopieerLink from '@/components/KopieerLink';
 import SocialIcoon from '@/components/SocialIcoon';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, rasDelen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { ProfielNest } from '@/lib/types';
 
@@ -45,7 +45,29 @@ const haalProfiel = cache(async (slug: string) => {
     .order('geboortedatum', { ascending: false })
     .returns<ProfielNest[]>();
 
-  return { profiel, extra, nesten: nesten ?? [] };
+  // Cattery: uit de nestjes van deze verkoper (ook afgeronde) met complete stamboomgegevens
+  const { data: alle } = await supabase.from('openbare_profiel_nesten').select('slug').eq('profiel_slug', slug);
+  const slugs = (alle ?? []).map((n: { slug: string }) => n.slug);
+  const { data: stamboomNesten } = slugs.length
+    ? await supabase
+        .from('openbare_nesten')
+        .select('cattery, stamboom_organisatie, moeder_ras, vader_ras, stamboom, geboortedatum')
+        .in('slug', slugs)
+        .eq('stamboom', true)
+        .order('geboortedatum', { ascending: false })
+    : { data: [] };
+  const rijen = (stamboomNesten ?? []) as {
+    cattery: string | null; stamboom_organisatie: string | null; moeder_ras: string | null; vader_ras: string | null;
+  }[];
+  const cattery = rijen.length
+    ? {
+        naam: rijen[0].cattery,
+        organisatie: rijen[0].stamboom_organisatie?.replace(/ \(.*\)$/, '') ?? null,
+        rassen: [...new Set(rijen.flatMap((r) => [...rasDelen(r.moeder_ras), ...rasDelen(r.vader_ras)]))],
+      }
+    : null;
+
+  return { profiel, extra, cattery, nesten: nesten ?? [] };
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -68,10 +90,10 @@ export default async function ProfielPagina({ params }: Props) {
   const { slug } = await params;
   const data = await haalProfiel(slug);
   if (!data) notFound();
-  const { profiel, extra, nesten } = data;
+  const { profiel, extra, cattery, nesten } = data;
   const feiten = [
     extra?.sinds_jaar ? `Fokt sinds ${extra.sinds_jaar}` : '',
-    extra?.rassen ?? '',
+    extra?.rassen ?? (cattery?.rassen.length ? cattery.rassen.join(', ') : ''),
     extra?.vereniging && extra.vereniging !== 'Anders' ? `Aangesloten bij ${extra.vereniging.replace(/ \(.*\)$/, '')}` : '',
   ].filter(Boolean);
 
@@ -84,6 +106,15 @@ export default async function ProfielPagina({ params }: Props) {
 
       <section className="hero">
         <h1>{profiel.naam}</h1>
+        {cattery && (
+          <div className="cattery-kaart">
+            <span className="chip verkoper">Fokker · met stamboom</span>
+            <div>
+              {cattery.naam && <strong>Cattery {cattery.naam}</strong>}
+              {cattery.organisatie && cattery.organisatie !== 'Anders' && <span>Aangesloten bij {cattery.organisatie}</span>}
+            </div>
+          </div>
+        )}
         {feiten.length > 0 && <p className="profiel-feiten">{feiten.join(' · ')}</p>}
         {profiel.intro && <p className="profiel-intro">{profiel.intro}</p>}
         {(profiel.website || profiel.facebook || profiel.instagram) && (

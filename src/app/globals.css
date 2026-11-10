@@ -600,3 +600,9 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .labelcheck li.ok { color: var(--muted); }
 .labelcheck p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
 .ctl-label { margin: 0; font-size: 15px; }
+
+/* ─── Cattery op de profielpagina (uitbreiding 30) ─── */
+.cattery-kaart { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 14px; margin: 4px 0 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.cattery-kaart div { display: flex; flex-direction: column; min-width: 0; }
+.cattery-kaart strong { font-size: 17px; }
+.cattery-kaart span:not(.chip) { color: var(--muted); font-size: 15px; }

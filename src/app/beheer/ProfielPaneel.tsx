@@ -200,7 +200,10 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
         </label>
         <div className="paneelkop">
           <h3>Fokker of cattery <small className="opt">optioneel</small></h3>
-          <p className="hint">Fok je met stamboom? Dan helpt dit kopers om je te leren kennen.</p>
+          <p className="hint">
+            Fok je met stamboom? Dan helpt dit kopers om je te leren kennen. Je catterynaam en vereniging verschijnen vanzelf op je
+            profielpagina, met het label “Fokker · met stamboom”, zodra een van je nestjes de stamboomgegevens compleet heeft.
+          </p>
         </div>
         <div className="row stapel">
           <label className="veld">
