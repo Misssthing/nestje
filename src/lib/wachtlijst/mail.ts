@@ -335,3 +335,24 @@ export function mailAdminControle(o: { aantal: number }) {
     ),
   };
 }
+
+export function mailAdminNieuwNestje(o: {
+  moeder: string; slug: string; plaats: string; ras: string; vondeling: boolean;
+  foto: string | null; verkoper: string; opnieuw: boolean;
+}) {
+  const foto = o.foto
+    ? `<img src="${o.foto}" alt="" width="240" style="display:block;width:240px;max-width:100%;height:auto;border-radius:12px" />`
+    : '<em>Geen foto van de moeder</em>';
+  return {
+    onderwerp: `${o.opnieuw ? 'Opnieuw ter controle' : 'Nieuw ter controle'}: het nestje van ${o.moeder}`,
+    html: opmaak(
+      o.opnieuw ? 'Opnieuw ter controle' : 'Nieuw nestje ter controle',
+      [
+        `<strong>Het nestje van ${esc(o.moeder)}</strong>${o.vondeling ? ' (vondelingen)' : ''}<br>${esc(o.ras)}<br>${esc(o.plaats)}<br>Verkoper: ${esc(o.verkoper)}`,
+        foto,
+        `<a href="${url(`/n/${o.slug}`)}" style="color:#1F2A24;font-weight:600">Bekijk de pagina →</a>`,
+      ],
+      { tekst: 'Naar de controle', href: url('/beheer/controle') },
+    ),
+  };
+}

@@ -118,7 +118,21 @@ export default function Beheer({
   async function verversControle() {
     const { data } = await supabase.from('nests').select('controle_status, controle_reden').eq('id', nest.id).single<Partial<Nest>>();
     if (data) setNest((n) => ({ ...n, ...data }));
+    if (data?.controle_status === 'wacht') meldControle();
   }
+
+  /** Staat het nestje klaar voor controle, dan krijgt de beheerder direct een mail (de server stuurt er maar één). */
+  function meldControle() {
+    fetch('/api/controle/melden', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ nestId: nest.id }),
+    }).catch(() => {});
+  }
+  useEffect(() => {
+    if (beginNest.controle_status === 'wacht') meldControle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
 
@@ -161,7 +175,10 @@ export default function Beheer({
         kittens={kittens}
         nestFotos={nestFotos}
         supabase={supabase}
-        onNest={(patch) => setNest((n) => ({ ...n, ...patch }))}
+        onNest={(patch) => {
+          setNest((n) => ({ ...n, ...patch }));
+          if (patch.controle_status === 'wacht') meldControle();
+        }}
       />
 
       <section className="panel" id="sectie-nestfotos" aria-label="Nestfoto's">
