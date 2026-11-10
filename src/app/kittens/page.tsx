@@ -107,7 +107,10 @@ export default async function Overzicht({ searchParams }: Props) {
         <div className="overzicht-lijst">
           <div className="overzicht-kop">
             <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
-            <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
+            <span className="overzicht-links">
+              <Link className="overzicht-tip" href="/catteries">Alle catteries →</Link>
+              <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
+            </span>
           </div>
       {nesten.length ? (
         <div className="kaart-grid">

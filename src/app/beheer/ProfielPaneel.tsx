@@ -202,7 +202,8 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           <h3>Fokker of cattery <small className="opt">optioneel</small></h3>
           <p className="hint">
             Fok je met stamboom? Dan helpt dit kopers om je te leren kennen. Je catterynaam en vereniging verschijnen vanzelf op je
-            profielpagina, met het label “Fokker · met stamboom”, zodra een van je nestjes de stamboomgegevens compleet heeft.
+            profielpagina, met het label “Fokker · met stamboom”, zodra een van je nestjes de stamboomgegevens compleet heeft. Staat je
+            profielpagina aan en is dat nestje goedgekeurd, dan sta je ook op de pagina <a href="/catteries">Catteries</a>.
           </p>
         </div>
         <div className="row stapel">
