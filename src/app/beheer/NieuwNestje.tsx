@@ -65,7 +65,12 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
       </div>
       <section className="hero">
         <h1>{eerste ? 'Je nestje aanmaken' : 'Nieuw nestje'}</h1>
-        <p>Drie gegevens en je pagina staat. Foto's, namen en de rest vul je daarna aan.</p>
+        <p>Drie gegevens en je pagina staat. Daarna zie je een checklist met wat er nog nodig is, zoals foto&apos;s en je WhatsApp-nummer.</p>
+        <ol className="mini-stappen" aria-label="Zo gaat het verder">
+          <li className="nu">Nestje aanmaken</li>
+          <li>Foto&apos;s en gegevens aanvullen</li>
+          <li>Delen, en eventueel in het overzicht</li>
+        </ol>
       </section>
       <form className="panel" onSubmit={maak}>
         <div className="veld">

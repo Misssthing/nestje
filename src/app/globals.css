@@ -499,3 +499,72 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .kit:target { outline: 3px solid var(--ginger); outline-offset: 4px; border-radius: 20px; }
 .wl-annuleer { background: var(--bg); border-radius: 12px; padding: 10px 12px; }
 .wl-annuleer > span:first-child { flex-basis: 100%; font-size: 14px; }
+
+/* ─── Start voor verkopers, checklist en controle (uitbreiding 26) ─── */
+.start-grid { display: grid; gap: 28px; }
+@media (min-width: 900px) {
+  .start-grid { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 48px; align-items: start; }
+  .start-form { position: sticky; top: 20px; }
+}
+.start-form h1 { font-size: clamp(34px, 6vw, 50px); line-height: 1.02; font-weight: 800; letter-spacing: -.02em; margin: 0 0 12px; text-wrap: balance; }
+.start-intro { font-size: 18px; color: var(--muted); margin: 0 0 18px; text-wrap: pretty; }
+.start-sub { font-size: 15px; margin: 0 0 8px; }
+.start-uitleg { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+.start-uitleg h2 { font-size: 24px; font-weight: 800; margin: 0 0 12px; }
+.start-uitleg p { margin: 0; }
+.start-stappen { list-style: none; counter-reset: stap; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.start-stappen li { counter-increment: stap; display: grid; grid-template-columns: 36px 1fr; column-gap: 12px; }
+.start-stappen li::before { content: counter(stap); grid-row: span 2; width: 36px; height: 36px; border-radius: 50%; background: var(--ginger); color: var(--ginger-ink); font-weight: 800; display: grid; place-items: center; }
+.start-stappen strong { font-size: 17px; }
+.start-stappen span { color: var(--muted); font-size: 15px; }
+.start-nodig { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.start-faq { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.start-faq dt { font-weight: 700; margin-top: 8px; }
+.start-faq dd { margin: 0; color: var(--muted); }
+.mini-stappen { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; counter-reset: m; }
+.mini-stappen li { counter-increment: m; font-size: 14px; padding: 4px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.mini-stappen li::before { content: counter(m) ". "; font-weight: 700; }
+.mini-stappen li.nu { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Checklist in het beheer */
+.checklist { display: flex; flex-direction: column; gap: 14px; }
+.cl-stand { border-radius: 14px; padding: 12px 14px; background: var(--bg); }
+.cl-stand strong { display: block; font-size: 17px; }
+.cl-stand p { margin: 4px 0 0; font-size: 15px; color: var(--muted); }
+.cl-stand.ok { background: var(--free-bg); }
+.cl-stand.ok strong { color: var(--free); }
+.cl-stand.wacht { background: var(--opt-bg); }
+.cl-stand.wacht strong { color: var(--opt); }
+.cl-stand.actie { background: color-mix(in srgb, var(--danger) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent); }
+.cl-stand.actie strong { color: var(--danger); }
+.cl-stand.actie p:first-of-type { color: var(--ink); white-space: pre-line; }
+.cl-kop { display: flex; justify-content: space-between; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; font-size: 17px; }
+.cl-teller { font-size: 14px; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cl-balk { height: 6px; border-radius: 999px; background: var(--bg); overflow: hidden; margin: 10px 0 4px; }
+.cl-balk span { display: block; height: 100%; background: var(--free); border-radius: 999px; transition: width .3s; }
+.cl-lijst { list-style: none; margin: 8px 0 10px; padding: 0; display: flex; flex-direction: column; }
+.cl-lijst li { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); }
+.cl-lijst li > div { min-width: 0; display: flex; flex-direction: column; }
+.cl-lijst strong { font-size: 15.5px; }
+.cl-uitleg { font-size: 14px; color: var(--muted); }
+.cl-vink { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-size: 13px; font-weight: 800; margin-top: 1px; }
+.cl-lijst li.klaar .cl-vink { background: var(--free); border-color: var(--free); color: #fff; }
+.cl-lijst li.klaar strong { color: var(--muted); font-weight: 500; }
+.cl-ster { color: var(--danger); }
+.cl-lijst .linkknop { white-space: nowrap; margin-top: 2px; }
+@media (prefers-reduced-motion: reduce) { .cl-balk span { transition: none; } }
+
+/* Controle (beheerder) */
+.ctl-melding { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 16px; border-radius: 16px; background: var(--opt-bg); color: var(--ink); text-decoration: none; margin-bottom: 8px; }
+.ctl-melding span { color: var(--opt); font-weight: 600; }
+.ctl-kaart { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+.ctl-kop { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: start; }
+.ctl-kop h3 { margin: 0 0 4px; font-size: 19px; }
+.ctl-foto { width: 96px; height: 96px; border-radius: 14px; object-fit: cover; background: var(--bg); }
+.ctl-foto.leeg { display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--danger); padding: 6px; }
+.ctl-stamboom { margin: 0; font-size: 14px; }
+.ctl-signalen { margin: 0; padding: 10px 14px 10px 30px; border-radius: 12px; background: color-mix(in srgb, var(--danger) 10%, var(--surface)); color: var(--danger); font-size: 14px; }
+.ctl-afkeur summary { cursor: pointer; color: var(--muted); font-size: 15px; }
+.ctl-afkeur form { margin-top: 10px; }
+.ctl-redenen { display: flex; flex-wrap: wrap; gap: 6px; margin: -2px 0 12px; }
+.ctl-redenen .chipknop { text-align: left; font-size: 13px; }

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { isAdmin } from '@/lib/controle';
 import { aantalKittens, aftelling, dagen, datumNL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import type { Nest, Profiel } from '@/lib/types';
+import { adminClient } from '@/lib/wachtlijst/server';
 import NieuwNestje from './NieuwNestje';
 import ProfielPaneel from './ProfielPaneel';
 
@@ -11,6 +13,14 @@ export const metadata: Metadata = { title: 'Je nestjes', robots: { index: false 
 export const dynamic = 'force-dynamic';
 
 type NestRij = Nest & { aangemaakt_op: string; afgerond: boolean; kittens: { status: string }[] };
+
+/** Korte stand voor het overzicht, zodat de verkoper ziet wat er met zijn nestje aan de hand is. */
+function overzichtLabel(n: NestRij) {
+  if (!n.in_overzicht) return { tekst: 'Niet in het overzicht · aanzetten bij Gegevens', aan: false };
+  if (n.controle_status === 'aanpassen') return { tekst: '! Aanpassen nodig voor het overzicht', aan: false };
+  if (n.controle_status === 'wacht') return { tekst: 'In controle voor het overzicht', aan: false };
+  return { tekst: '✓ In het overzicht', aan: true };
+}
 
 export default async function Overzicht() {
   const supabase = await createClient();
@@ -31,7 +41,15 @@ export default async function Overzicht() {
     .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram')
     .maybeSingle<Profiel>();
 
-  if (!nesten.length) return <NieuwNestje eerste />;
+  // Alleen voor de beheerder: hoeveel nestjes wachten op controle
+  const admin = isAdmin(user.email);
+  const { count: teControleren } = admin
+    ? await adminClient()
+        .from('nests').select('id', { count: 'exact', head: true })
+        .eq('controle_status', 'wacht').eq('in_overzicht', true).eq('afgerond', false)
+    : { count: 0 };
+
+  if (!nesten.length && !admin) return <NieuwNestje eerste />;
 
   return (
     <main className="wrap">
@@ -46,6 +64,17 @@ export default async function Overzicht() {
         </div>
       </div>
 
+      {admin && (
+        <Link href="/beheer/controle" className="ctl-melding">
+          <strong>Controle</strong>
+          <span>
+            {teControleren
+              ? `${teControleren} ${teControleren === 1 ? 'nestje wacht' : 'nestjes wachten'} op controle →`
+              : 'Niets te controleren →'}
+          </span>
+        </Link>
+      )}
+
       <section className="hero">
         <h1>Je nestjes</h1>
       </section>
@@ -54,6 +83,7 @@ export default async function Overzicht() {
         {nesten.map((n) => {
           const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
           const vrij = n.kittens.filter((k) => k.status === 'vrij').length;
+          const label = overzichtLabel(n);
           return (
             <Link key={n.id} href={`/beheer/${n.id}`} className={`nestkaart${n.afgerond ? ' is-afgerond' : ''}`}>
               <div>
@@ -64,9 +94,7 @@ export default async function Overzicht() {
                     : `${aantalKittens(n.kittens.length)}, geboren ${datumNL(a.geboren)}${n.afgerond ? '' : `, ${vrij} vrij`}`}
                 </span>
                 {!n.afgerond && (
-                  <span className={`overzichtlabel${n.in_overzicht ? ' aan' : ''}`}>
-                    {n.in_overzicht ? '✓ In het overzicht' : 'Niet in het overzicht · aanzetten bij Gegevens'}
-                  </span>
+                  <span className={`overzichtlabel${label.aan ? ' aan' : ''}`}>{label.tekst}</span>
                 )}
                 <span className="aanpassen-label" aria-hidden="true">✎ Aanpassen ›</span>
               </div>

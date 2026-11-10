@@ -35,6 +35,10 @@ export interface Nest {
   moeder_chip?: string | null;
   moeder_testen: { test: string; uitslag: string; datum: string }[];
   vader_testen: { test: string; uitslag: string; datum: string }[];
+  /** Controle voor het openbare overzicht (uitbreiding 26) */
+  controle_status?: 'wacht' | 'goedgekeurd' | 'aanpassen';
+  controle_reden?: string | null;
+  gecontroleerd_op?: string | null;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 'vader_stamboomnr' | 'moeder_chip'> & {

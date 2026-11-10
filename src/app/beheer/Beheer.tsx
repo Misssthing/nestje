@@ -11,6 +11,7 @@ import { CONFIG } from '@/lib/config';
 import { aantalKittens, STATUS_LABEL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/browser';
 import type { Foto, Kitten, KittenMetFotos, Nest, NestFoto } from '@/lib/types';
+import Checklist from './Checklist';
 import KittenKaart from './KittenKaart';
 import NestForm from './NestForm';
 
@@ -113,6 +114,12 @@ export default function Beheer({
     toast(afgerond ? 'Nestje afgerond' : 'Nestje weer geopend');
   }
 
+  /** Na het opslaan kan de controle-status in de database zijn veranderd (bijv. ras of moederfoto gewijzigd). */
+  async function verversControle() {
+    const { data } = await supabase.from('nests').select('controle_status, controle_reden').eq('id', nest.id).single<Partial<Nest>>();
+    if (data) setNest((n) => ({ ...n, ...data }));
+  }
+
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
 
   return (
@@ -149,7 +156,15 @@ export default function Beheer({
         )}
       </section>
 
-      <section className="panel" aria-label="Nestfoto's">
+      <Checklist
+        nest={nest}
+        kittens={kittens}
+        nestFotos={nestFotos}
+        supabase={supabase}
+        onNest={(patch) => setNest((n) => ({ ...n, ...patch }))}
+      />
+
+      <section className="panel" id="sectie-nestfotos" aria-label="Nestfoto's">
         <h2>Nestfoto&apos;s</h2>
         <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
           Komen bovenaan je pagina en in de deelafbeelding. Bijvoorbeeld het hele nestje samen, of de moeder met haar kittens.
@@ -166,19 +181,19 @@ export default function Beheer({
         />
       </section>
 
-      <section className="panel" aria-label="Foto's van de ouders">
+      <section className="panel" id="sectie-ouders" aria-label="Foto's van de ouders">
         <h2>Foto&apos;s van de ouders</h2>
         <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
           Komen in het blok “De ouders” op je pagina. Bij de moeder het liefst een foto van haar samen met haar kittens: zo zien
           kopers dat ze er echt bij is.{nest.soort === 'vondeling' ? ' Bij vondelingen is een foto van de moeder niet nodig.' : ''}
         </p>
         <div className="ouderfoto">
-          <OuderFoto supabase={supabase} nest={nest} kolom="moeder_foto" label={`Moeder (${nest.moeder_naam})`} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />
+          <OuderFoto supabase={supabase} nest={nest} kolom="moeder_foto" label={`Moeder (${nest.moeder_naam})`} onWijzig={(p) => { setNest((n) => ({ ...n, ...p })); verversControle(); }} />
           <OuderFoto supabase={supabase} nest={nest} kolom="vader_foto" label={nest.vader_naam ? `Vader (${nest.vader_naam})` : 'Vader'} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />
         </div>
       </section>
 
-      <h2 className="kop2">Kittens</h2>
+      <h2 className="kop2" id="sectie-kittens">Kittens</h2>
       <div className="lijst">
         {kittens.map((k, i) => (
           <KittenKaart
@@ -202,7 +217,9 @@ export default function Beheer({
         </button>
       </div>
 
-      <NestForm nest={nest} supabase={supabase} onOpgeslagen={setNest} openStandaard={!nest.whatsapp_nummer} />
+      <div id="sectie-gegevens">
+        <NestForm nest={nest} supabase={supabase} onOpgeslagen={(n) => { setNest(n); verversControle(); }} openStandaard={!nest.whatsapp_nummer} />
+      </div>
 
       <section className="panel" aria-labelledby="afronden-kop">
         <h2 id="afronden-kop">Nestje afronden of verwijderen</h2>

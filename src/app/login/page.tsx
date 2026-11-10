@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import VerkoperStart from '@/components/VerkoperStart';
 import { createClient } from '@/lib/supabase/server';
-import LoginForm from './LoginForm';
 
-export const metadata: Metadata = { title: 'Inloggen', robots: { index: false } };
+export const metadata: Metadata = { title: 'Inloggen of je nestjespagina maken', robots: { index: false } };
 
 export default async function LoginPagina({ searchParams }: { searchParams: Promise<{ fout?: string }> }) {
   const supabase = await createClient();
@@ -13,19 +12,5 @@ export default async function LoginPagina({ searchParams }: { searchParams: Prom
   } = await supabase.auth.getUser();
   if (user) redirect('/beheer');
   const { fout } = await searchParams;
-
-  return (
-    <main className="wrap tekst">
-      <div className="bar">
-        <Link href="/" className="brand">Nestje</Link>
-      </div>
-      <h1>Inloggen of account maken</h1>
-      <p>
-        Vul je e-mailadres in. Heb je al een nestje, dan kom je in je eigen overzicht. Ben je nieuw, dan maken we meteen een
-        account voor je. Geen wachtwoord nodig: je krijgt een mail met een inloglink en een code.
-      </p>
-      {fout && <p className="fout">De inloglink is verlopen of al gebruikt. Vraag hieronder een nieuwe aan.</p>}
-      <LoginForm />
-    </main>
-  );
+  return <VerkoperStart fout={Boolean(fout)} />;
 }

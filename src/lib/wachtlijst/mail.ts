@@ -291,3 +291,47 @@ export function mailVerkoperReactie(o: { nestId: string; moeder: string; naam: s
     html: opmaak(kop, [tekst, `Nestje van ${esc(o.moeder)}.`], { tekst: 'Naar je wachtlijst', href: beheerLink(o.nestId) }),
   };
 }
+
+// ─── Controle voor het overzicht (uitbreiding 26) ─────────────
+
+export function mailGoedgekeurd(o: { moeder: string; slug: string; nestId: string }) {
+  return {
+    onderwerp: `Het nestje van ${o.moeder} staat in het overzicht`,
+    html: opmaak(
+      'Je nestje staat in het overzicht',
+      [
+        `We hebben het nestje van ${esc(o.moeder)} bekeken. Het staat nu in het overzicht op Nestje, zodat kopers het ook zonder jouw link kunnen vinden.`,
+        'Tip: deel je link ook zelf, bijvoorbeeld in je WhatsApp-status of op Facebook. Daar komen de meeste kopers vandaan.',
+      ],
+      { tekst: 'Bekijk je pagina', href: url(`/n/${o.slug}`) },
+      `Iets aanpassen? <a href="${url(`/beheer/${o.nestId}`)}" style="color:#1F2A24">Ga naar je beheer</a>.`,
+    ),
+  };
+}
+
+export function mailAanpassen(o: { moeder: string; nestId: string; reden: string }) {
+  return {
+    onderwerp: `Pas het nestje van ${o.moeder} aan voor het overzicht`,
+    html: opmaak(
+      'Nog even aanpassen',
+      [
+        `We hebben het nestje van ${esc(o.moeder)} bekeken. Voordat het in het overzicht kan, vragen we je dit aan te passen:`,
+        `<span style="display:block;background:#FBE9CF;border-radius:12px;padding:12px 14px">${esc(o.reden).replace(/\n/g, '<br>')}</span>`,
+        'Je eigen link blijft gewoon werken. Klik na het aanpassen in je beheer op “Controleer opnieuw”.',
+      ],
+      { tekst: 'Naar je beheer', href: url(`/beheer/${o.nestId}`) },
+      'Vragen? Beantwoord deze mail.',
+    ),
+  };
+}
+
+export function mailAdminControle(o: { aantal: number }) {
+  return {
+    onderwerp: `${o.aantal} ${o.aantal === 1 ? 'nestje wacht' : 'nestjes wachten'} op controle`,
+    html: opmaak(
+      'Nestjes wachten op controle',
+      [`Er ${o.aantal === 1 ? 'wacht 1 nestje' : `wachten ${o.aantal} nestjes`} op je controle voor het overzicht.`],
+      { tekst: 'Naar de controle', href: url('/beheer/controle') },
+    ),
+  };
+}

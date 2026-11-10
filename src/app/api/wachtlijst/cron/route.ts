@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
+import { ADMIN_EMAIL } from '@/lib/controle';
 import { geborenMails, rasMails, rasOnderhoud, verlopenAanbiedingen, volMails } from '@/lib/wachtlijst/acties';
+import { mailAdminControle, stuurMail } from '@/lib/wachtlijst/mail';
+import { adminClient } from '@/lib/wachtlijst/server';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -18,5 +21,14 @@ export async function GET(req: Request) {
   const vol = await volMails();
   const ras = await rasMails();
   const herinneringen = await rasOnderhoud();
-  return NextResponse.json({ verlopen, geboren, vol, ras, herinneringen });
+
+  // Overzicht voor de beheerder: hoeveel nestjes wachten op controle
+  const { count } = await adminClient()
+    .from('nests').select('id', { count: 'exact', head: true })
+    .eq('controle_status', 'wacht').eq('in_overzicht', true).eq('afgerond', false);
+  if (count) {
+    const m = mailAdminControle({ aantal: count });
+    await stuurMail(ADMIN_EMAIL, m.onderwerp, m.html);
+  }
+  return NextResponse.json({ verlopen, geboren, vol, ras, herinneringen, controle: count ?? 0 });
 }
