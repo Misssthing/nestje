@@ -31,6 +31,12 @@ const haalProfiel = cache(async (slug: string) => {
     }>();
   if (!profiel) return null;
 
+  const { data: extra } = await supabase
+    .from('openbare_profiel_extra')
+    .select('sinds_jaar, rassen, vereniging')
+    .eq('slug', slug)
+    .maybeSingle<{ sinds_jaar: number | null; rassen: string | null; vereniging: string | null }>();
+
   const { data: nesten } = await supabase
     .from('openbare_profiel_nesten')
     .select('*')
@@ -39,7 +45,7 @@ const haalProfiel = cache(async (slug: string) => {
     .order('geboortedatum', { ascending: false })
     .returns<ProfielNest[]>();
 
-  return { profiel, nesten: nesten ?? [] };
+  return { profiel, extra, nesten: nesten ?? [] };
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -62,7 +68,12 @@ export default async function ProfielPagina({ params }: Props) {
   const { slug } = await params;
   const data = await haalProfiel(slug);
   if (!data) notFound();
-  const { profiel, nesten } = data;
+  const { profiel, extra, nesten } = data;
+  const feiten = [
+    extra?.sinds_jaar ? `Fokt sinds ${extra.sinds_jaar}` : '',
+    extra?.rassen ?? '',
+    extra?.vereniging && extra.vereniging !== 'Anders' ? `Aangesloten bij ${extra.vereniging.replace(/ \(.*\)$/, '')}` : '',
+  ].filter(Boolean);
 
   return (
     <main className="wrap">
@@ -73,6 +84,7 @@ export default async function ProfielPagina({ params }: Props) {
 
       <section className="hero">
         <h1>{profiel.naam}</h1>
+        {feiten.length > 0 && <p className="profiel-feiten">{feiten.join(' · ')}</p>}
         {profiel.intro && <p className="profiel-intro">{profiel.intro}</p>}
         {(profiel.website || profiel.facebook || profiel.instagram) && (
           <div className="profiel-links-blok">

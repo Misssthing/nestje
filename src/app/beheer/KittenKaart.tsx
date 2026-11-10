@@ -5,7 +5,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import FotoBeheer from '@/components/FotoBeheer';
 import { CONFIG } from '@/lib/config';
-import { GEZONDHEID, STATUS_LABEL, STATUSSEN } from '@/lib/nest';
+import { STATUS_LABEL, STATUSSEN } from '@/lib/nest';
 import type { Foto, Kitten, KittenMetFotos } from '@/lib/types';
 
 const VACHTEN = ['zwart', 'zwart/wit', 'rood', 'rood/wit', 'cyperse', 'cyperse/wit', 'schildpad', 'lapjes', 'blauw', 'blauw/wit', 'crème', 'wit'];
@@ -21,9 +21,11 @@ type Props = {
   onFotos: (fn: (f: Foto[]) => Foto[]) => void;
   onVerwijder: () => void;
   onVerplaats: (richting: -1 | 1) => void;
+  /** Huisregel: verhuizen kan pas als het nestje gechipt en ingeënt is (bij Gezondheid en vertrouwen) */
+  magVerhuizen: boolean;
 };
 
-export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste, laatste, onWijzig, onFotos, onVerwijder, onVerplaats }: Props) {
+export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste, laatste, onWijzig, onFotos, onVerwijder, onVerplaats, magVerhuizen }: Props) {
   const toast = useToast();
   const [naam, setNaam] = useState(kitten.naam);
   const [vacht, setVacht] = useState(kitten.vacht ?? '');
@@ -77,8 +79,8 @@ export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste
             aria-pressed={kitten.status === s}
             onClick={() => {
               if (kitten.status === s) return;
-              if (s === 'verhuisd' && !(kitten.gechipt && kitten.enting1)) {
-                toast(`Vink eerst Gechipt en 1e enting aan. Kittens verhuizen gechipt en ingeënt; bij Gezondheid lees je waarom.`);
+              if (s === 'verhuisd' && !magVerhuizen) {
+                toast('Vink eerst Gechipt en 1e enting aan bij “Gezondheid en vertrouwen”. Kittens verhuizen gechipt en ingeënt.');
                 return;
               }
               onWijzig({ status: s }, `${kitten.naam}: ${STATUS_LABEL[s].toLowerCase()}`);
@@ -139,31 +141,6 @@ export default function KittenKaart({ kitten, nestId, nestSlug, supabase, eerste
             {VACHTEN.map((v) => <option key={v} value={v} />)}
           </datalist>
         </label>
-      </div>
-
-      <div className="veld" style={{ margin: 0 }}>
-        <span>Gezondheid <span className="hint">(optioneel)</span></span>
-        <div className="gz" role="group" aria-label={`Gezondheid van ${kitten.naam}`}>
-          {GEZONDHEID.map(([v, label]) => (
-            <button
-              key={v}
-              aria-pressed={kitten[v]}
-              onClick={() => onWijzig({ [v]: !kitten[v] } as Partial<Kitten>, `${label}: ${kitten[v] ? 'uit' : 'aan'}`)}
-            >
-              {kitten[v] ? '✓ ' : ''}{label}
-            </button>
-          ))}
-        </div>
-        <p className="hint">Vink alleen aan wat geregeld is. Wat je niet aanvinkt, komt niet op de pagina.</p>
-        <details className="waarom">
-          <summary>Waarom gechipt en ingeënt voordat het kitten verhuist?</summary>
-          <p>
-            Met een chip vindt een kitten dat wegloopt of zoekraakt veel makkelijker zijn weg terug naar huis. De chip is de enige
-            manier waarop een dierenarts of asiel kan zien van wie een kat is. De eerste enting beschermt tegen kattenziekte en
-            niesziekte, die voor jonge kittens heel gevaarlijk kunnen zijn. Zo begint het kitten gezond en veilig aan zijn nieuwe
-            leven. Een chip kost bij de dierenarts meestal een paar tientjes.
-          </p>
-        </details>
       </div>
 
       <label className="veld" style={{ margin: 0 }}>

@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useState } from 'react';
 import { stappen, type Plek } from '@/lib/controle';
-import type { KittenMetFotos, Nest, NestFoto } from '@/lib/types';
+import type { KittenMetFotos, Nest, NestFoto, Profiel } from '@/lib/types';
 
 type Props = {
   nest: Nest;
@@ -11,10 +11,16 @@ type Props = {
   nestFotos: NestFoto[];
   supabase: SupabaseClient;
   onNest: (patch: Partial<Nest>) => void;
+  profiel?: Profiel | null;
 };
 
 /** Spring naar een onderdeel van het beheer; klapt "Gegevens" open als dat nodig is. */
 function ganaar(plek: Plek) {
+  // Het profiel staat op de pagina "Je nestjes"
+  if (plek === 'profiel') {
+    window.location.href = '/beheer#profiel';
+    return;
+  }
   const el = document.getElementById(`sectie-${plek}`);
   if (!el) return;
   const details = el.matches('details') ? (el as HTMLDetailsElement) : el.querySelector('details');
@@ -22,8 +28,8 @@ function ganaar(plek: Plek) {
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-export default function Checklist({ nest, kittens, nestFotos, supabase, onNest }: Props) {
-  const lijst = stappen(nest, kittens, nestFotos);
+export default function Checklist({ nest, kittens, nestFotos, supabase, onNest, profiel }: Props) {
+  const lijst = stappen(nest, kittens, nestFotos, profiel);
   const klaar = lijst.filter((s) => s.klaar).length;
   const alles = klaar === lijst.length;
   const missendVoorOverzicht = lijst.filter((s) => s.voorOverzicht && !s.klaar);

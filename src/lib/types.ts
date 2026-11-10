@@ -35,6 +35,19 @@ export interface Nest {
   moeder_chip?: string | null;
   moeder_testen: { test: string; uitslag: string; datum: string }[];
   vader_testen: { test: string; uitslag: string; datum: string }[];
+  /** Gezondheid en vertrouwen, per nestje (uitbreiding 28) */
+  dierenarts?: boolean;
+  enting1?: boolean;
+  enting2?: boolean;
+  ontwormd?: boolean;
+  ontvlooid?: boolean;
+  gechipt?: boolean;
+  paspoort?: boolean;
+  stamboom_papieren?: boolean;
+  koopovereenkomst?: boolean;
+  gesocialiseerd?: boolean;
+  ouders_te_zien?: boolean;
+  bezoek_mogelijk?: boolean;
   /** Controle voor het openbare overzicht (uitbreiding 26) */
   controle_status?: 'wacht' | 'goedgekeurd' | 'aanpassen';
   controle_reden?: string | null;
@@ -93,6 +106,10 @@ export interface Profiel {
   website: string | null;
   facebook: string | null;
   instagram: string | null;
+  /** Extra voor fokkers (uitbreiding 28) */
+  sinds_jaar?: number | null;
+  rassen?: string | null;
+  vereniging?: string | null;
 }
 
 /** Nestje zoals het op een openbare profielpagina verschijnt */

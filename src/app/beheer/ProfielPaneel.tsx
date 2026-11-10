@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import KopieerLink from '@/components/KopieerLink';
 import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
-import { schoonLink } from '@/lib/nest';
+import { ORGANISATIES, schoonLink } from '@/lib/nest';
 import SocialIcoon from '@/components/SocialIcoon';
 import { createClient } from '@/lib/supabase/browser';
 import type { Profiel } from '@/lib/types';
@@ -60,6 +60,17 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const [website, setWebsite] = useState(profiel?.website ?? '');
   const [facebook, setFacebook] = useState(profiel?.facebook ?? '');
   const [instagram, setInstagram] = useState(profiel?.instagram ?? '');
+  const [sinds, setSinds] = useState(profiel?.sinds_jaar ? String(profiel.sinds_jaar) : '');
+  const [rassen, setRassen] = useState(profiel?.rassen ?? '');
+  const [vereniging, setVereniging] = useState(profiel?.vereniging ?? '');
+  const [open, setOpen] = useState(Boolean(profiel?.zichtbaar));
+  // Via de checklist (#profiel): openklappen en ernaartoe scrollen
+  useEffect(() => {
+    if (window.location.hash === '#profiel') {
+      setOpen(true);
+      setTimeout(() => document.getElementById('profiel')?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  }, []);
   const [fout, setFout] = useState('');
   const [slugFout, setSlugFout] = useState('');
   const [bezig, setBezig] = useState(false);
@@ -85,6 +96,10 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
     setFacebook(f.url ?? '');
     setInstagram(i.url ?? '');
 
+    const jaar = sinds.trim() ? Number(sinds) : null;
+    if (jaar != null && (!Number.isInteger(jaar) || jaar < 1950 || jaar > new Date().getFullYear()))
+      return setFout('Vul bij “Fokt sinds” een jaartal in, bijvoorbeeld 2018.');
+
     setBezig(true);
     const { data, error } = await supabase
       .from('profielen')
@@ -97,10 +112,13 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           website: w.url,
           facebook: f.url,
           instagram: i.url,
+          sinds_jaar: jaar,
+          rassen: rassen.trim() || null,
+          vereniging: vereniging || null,
         },
         { onConflict: 'owner_id' },
       )
-      .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram')
+      .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram, sinds_jaar, rassen, vereniging')
       .single<Profiel>();
     setBezig(false);
 
@@ -115,11 +133,14 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const url = opgeslagen ? `${CONFIG.siteUrl}/van/${opgeslagen.slug}` : '';
 
   return (
-    <details className="panel" open={Boolean(opgeslagen?.zichtbaar)}>
-      <summary>Profielpagina (optioneel)</summary>
+    <details className="panel" id="profiel" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary className="aanpassen">
+        <span aria-hidden="true">✎</span> Over jou en je profielpagina
+        <small>Wie je bent, je cattery, je links</small>
+      </summary>
       <p className="hint" style={{ marginTop: 0, marginBottom: 12 }}>
-        Eén vaste link met al je lopende nestjes, handig als je vaker een nestje hebt. Afgeronde nestjes verdwijnen er
-        vanzelf van af. Zet je hem uit, dan is de pagina weg.
+        Kopers vertrouwen een verkoper die ze een beetje kennen. Wat je hier invult, komt op je profielpagina en als blokje
+        “Over de verkoper” bij je nestjes. Je profielpagina is ook één vaste link met al je lopende nestjes.
       </p>
 
       {opgeslagen?.zichtbaar && (
@@ -178,7 +199,28 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           <p className="hint teller">{intro.length}/{MAX_INTRO}</p>
         </label>
         <div className="paneelkop">
-          <h3>Je links (optioneel)</h3>
+          <h3>Fokker of cattery <small className="opt">optioneel</small></h3>
+          <p className="hint">Fok je met stamboom? Dan helpt dit kopers om je te leren kennen.</p>
+        </div>
+        <div className="row stapel">
+          <label className="veld">
+            <span>Fokt sinds (jaar)</span>
+            <input inputMode="numeric" value={sinds} onChange={(e) => setSinds(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="Bijv. 2018" />
+          </label>
+          <label className="veld">
+            <span>Aangesloten bij</span>
+            <select value={vereniging} onChange={(e) => setVereniging(e.target.value)}>
+              <option value="">Geen of niet vermelden</option>
+              {ORGANISATIES.map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
+          </label>
+        </div>
+        <label className="veld">
+          <span>Rassen</span>
+          <input value={rassen} onChange={(e) => setRassen(e.target.value)} maxLength={120} placeholder="Bijv. Maine Coon, Noorse boskat" />
+        </label>
+        <div className="paneelkop">
+          <h3>Je links <small className="opt">optioneel</small></h3>
           <p className="hint">Kopers zien deze als knoppen op je profielpagina. Zo zien ze dat je echt bestaat.</p>
         </div>
         <label className="veld">

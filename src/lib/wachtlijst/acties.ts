@@ -361,7 +361,7 @@ export async function rasMails() {
     const { data: o } = await db()
       .from('openbare_overzicht').select('slug, moeder_naam, woonplaats, moeder_ras, vader_ras, stamboom, geboortedatum, verhuisleeftijd_weken, prijs, vrij')
       .eq('slug', slug).maybeSingle<OverzichtRij>();
-    if (!o) continue;
+    if (!o || o.stamboom !== true) continue; // label "met stamboom" alleen met organisatie, cattery en vader
     const rassen = rassenVan(o);
     const { data: lijst } = await db()
       .from('wachtlijst_ras').select('id, ras, naam, email, token')

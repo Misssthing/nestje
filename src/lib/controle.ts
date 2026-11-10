@@ -1,11 +1,20 @@
-import type { KittenMetFotos, Nest, NestFoto } from '@/lib/types';
+import type { KittenMetFotos, Nest, NestFoto, Profiel } from '@/lib/types';
+import { ALLE_VELDEN } from '@/lib/vertrouwen';
 
-/** Wie mag nestjes controleren voor het overzicht. In Vercel aan te passen met ADMIN_EMAIL. */
-export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL ?? 'nestje@kattenverzorging.com').toLowerCase();
-export const isAdmin = (email?: string | null) => Boolean(email) && email!.toLowerCase() === ADMIN_EMAIL;
+/**
+ * Wie mag nestjes controleren voor het overzicht. Standaard nestje@kattenverzorging.com.
+ * In Vercel aan te passen met ADMIN_EMAIL, ook met meerdere adressen: "nestje@kattenverzorging.com, jij@gmail.com".
+ * Meldingen gaan naar het eerste adres.
+ */
+export const ADMIN_EMAILS = (process.env.ADMIN_EMAIL ?? 'nestje@kattenverzorging.com')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+export const ADMIN_EMAIL = ADMIN_EMAILS[0];
+export const isAdmin = (email?: string | null) => Boolean(email) && ADMIN_EMAILS.includes(email!.toLowerCase());
 
 /** Waar de checklist naartoe springt in het beheer */
-export type Plek = 'nestfotos' | 'ouders' | 'kittens' | 'gegevens';
+export type Plek = 'nestfotos' | 'ouders' | 'kittens' | 'gegevens' | 'gezondheid' | 'overzicht' | 'profiel';
 
 export type Stap = {
   id: string;
@@ -20,7 +29,7 @@ export type Stap = {
 const standaardNaam = (naam: string) => /^kitten \d+$/i.test(naam.trim());
 
 /** De stappen voor een compleet nestje, met wat al klaar is. */
-export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFoto[]): Stap[] {
+export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFoto[], profiel?: Profiel | null): Stap[] {
   const vondeling = nest.soort === 'vondeling';
   const lijst: Stap[] = [];
 
@@ -69,21 +78,40 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
   if (nest.stamboom === true) {
     lijst.push({
       id: 'stamboom',
-      tekst: 'Stamboomgegevens van beide ouders',
-      uitleg: 'Organisatie, cattery, stamboomnummers en de naam van de vader.',
-      klaar: Boolean(
-        nest.stamboom_organisatie && nest.cattery?.trim() && nest.moeder_stamboomnr && nest.vader_stamboomnr && nest.vader_naam?.trim(),
-      ),
+      tekst: 'Stamboomgegevens',
+      uitleg: 'Organisatie, catterynaam en de naam van de vader. Zonder deze drie toont je pagina geen “met stamboom”. Stamboomnummers zijn optioneel.',
+      klaar: Boolean(nest.stamboom_organisatie && nest.cattery?.trim() && nest.vader_naam?.trim()),
       plek: 'gegevens',
+      voorOverzicht: false,
+    });
+  }
+  lijst.push({
+    id: 'gezondheid',
+    tekst: 'Gezondheid en vertrouwen',
+    uitleg: 'Vink aan wat geregeld is, zoals chip en entingen, en of kopers eerst mogen komen kijken.',
+    klaar: ALLE_VELDEN.some((v) => Boolean(nest[v])),
+    plek: 'gezondheid',
+    voorOverzicht: false,
+  });
+  if (nest.soort !== 'vondeling') {
+    const fokker = nest.stamboom === true;
+    lijst.push({
+      id: 'profiel',
+      tekst: fokker ? 'Vertel wie je bent als fokker' : 'Vertel wie je bent',
+      uitleg: fokker
+        ? 'Je cattery, sinds wanneer je fokt, welke rassen en bij welke vereniging. Komt op je profielpagina en bij je nestjes.'
+        : 'Een paar zinnen over jou en je katten. Kopers vertrouwen een verkoper die ze een beetje kennen.',
+      klaar: Boolean(profiel?.zichtbaar && profiel.intro?.trim()),
+      plek: 'profiel',
       voorOverzicht: false,
     });
   }
   lijst.push({
     id: 'overzicht',
     tekst: 'In het overzicht van Nestje',
-    uitleg: 'Zet bij Gegevens “Tonen in het overzicht” aan en kies je provincie. Kopers vinden je dan op /kittens.',
+    uitleg: 'Zet bij “Gevonden worden op Nestje” het overzicht aan en kies je provincie.',
     klaar: Boolean(nest.in_overzicht && nest.provincie),
-    plek: 'gegevens',
+    plek: 'overzicht',
     voorOverzicht: true,
   });
   return lijst;

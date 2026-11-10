@@ -10,8 +10,11 @@ import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import { aantalKittens, STATUS_LABEL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/browser';
-import type { Foto, Kitten, KittenMetFotos, Nest, NestFoto } from '@/lib/types';
+import type { Foto, Kitten, KittenMetFotos, Nest, NestFoto, Profiel } from '@/lib/types';
 import Checklist from './Checklist';
+import GezondheidPaneel from './GezondheidPaneel';
+import Zichtbaarheid from './Zichtbaarheid';
+import { magVerhuizen } from '@/lib/vertrouwen';
 import KittenKaart from './KittenKaart';
 import NestForm from './NestForm';
 
@@ -25,11 +28,13 @@ export default function Beheer({
   nestFotos: beginNestFotos,
   kittens: beginKittens,
   email,
+  profiel = null,
 }: {
   nest: Nest;
   nestFotos: NestFoto[];
   kittens: KittenMetFotos[];
   email: string;
+  profiel?: Profiel | null;
 }) {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
@@ -175,9 +180,19 @@ export default function Beheer({
         kittens={kittens}
         nestFotos={nestFotos}
         supabase={supabase}
+        profiel={profiel}
         onNest={(patch) => {
           setNest((n) => ({ ...n, ...patch }));
           if (patch.controle_status === 'wacht') meldControle();
+        }}
+      />
+
+      <Zichtbaarheid
+        nest={nest}
+        supabase={supabase}
+        onNest={(patch) => {
+          setNest((n) => ({ ...n, ...patch }));
+          verversControle();
         }}
       />
 
@@ -225,6 +240,7 @@ export default function Beheer({
             onFotos={(fn) => zetFotos(k.id, fn)}
             onVerwijder={() => verwijder(k)}
             onVerplaats={(r) => verplaats(i, r)}
+            magVerhuizen={magVerhuizen(nest)}
           />
         ))}
       </div>
@@ -233,6 +249,8 @@ export default function Beheer({
           Kitten toevoegen
         </button>
       </div>
+
+      <GezondheidPaneel nest={nest} supabase={supabase} onNest={(patch) => setNest((n) => ({ ...n, ...patch }))} />
 
       <div id="sectie-gegevens">
         <NestForm nest={nest} supabase={supabase} onOpgeslagen={(n) => { setNest(n); verversControle(); }} openStandaard={!nest.whatsapp_nummer} />
