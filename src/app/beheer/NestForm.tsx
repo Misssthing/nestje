@@ -159,14 +159,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       const mist = [
         !patch.stamboom_organisatie && 'organisatie',
         !patch.cattery && 'catterynaam',
-        !patch.moeder_stamboomnr && 'stamboomnummer moeder',
-        !patch.vader_naam && 'naam vader',
-        !patch.vader_stamboomnr && 'stamboomnummer vader',
+        !patch.vader_naam && 'naam van de vader',
       ].filter(Boolean);
       if (mist.length)
-        punten.push(
-          `Vul de stamboomgegevens aan (${mist.join(', ')}). Zonder organisatie, catterynaam en naam van de vader toont je pagina geen “met stamboom”. De stamboomnummers zijn optioneel.`,
-        );
+        punten.push(`Nog niet compleet voor het label “Fokker · met stamboom”: ${mist.join(', ')}. Tot dan sta je als “Particulier”.`);
     }
     if (nestRef.current.in_overzicht && soort !== 'vondeling' && !nestRef.current.moeder_foto)
       punten.push('Je nestje verschijnt pas in het overzicht als er een foto van de moeder op staat.');
@@ -223,6 +219,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const nummer = normaliseerNummer(v.whatsapp);
     if (nummer) setV((s) => ({ ...s, whatsapp: toonNummer(nummer) }));
   }
+
+  const labelCompleet = Boolean(v.stamboom_organisatie && v.cattery.trim() && v.vader_naam.trim());
 
   return (
     <details className="panel gegevens" open={openStandaard}>
@@ -376,13 +374,28 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           <fieldset className="formblok">
             <legend>Stamboom en testen</legend>
             <JaNee label="Hebben de kittens een stamboom?" waarde={stamboom} onChange={setStamboom} />
+            {stamboom !== true && (
+              <p className="hint">Fok je met stamboom, als cattery? Kies Ja: dan krijg je het label “Fokker”. Anders sta je als “Particulier”.</p>
+            )}
             {stamboom === true && (
               <div className="stamboomblok">
-                <p className="hint" style={{ marginTop: 0 }}>
-                  Kopers zien de organisatie en je catterynaam. Met organisatie, catterynaam en de naam van de vader krijgt je
-                  nestje het label “met stamboom”. De stamboomnummers zijn optioneel en alleen voor Nestje: vul je ze in, dan
-                  zien kopers “stamboomnummers bekend bij Nestje”.
-                </p>
+                <div className="labelcheck" role="status">
+                  <strong>
+                    {labelCompleet ? '✓ Je nestje krijgt het label “Fokker · met stamboom”' : 'Voor het label “Fokker · met stamboom” vul je deze drie in:'}
+                  </strong>
+                  <ul>
+                    <li className={v.stamboom_organisatie ? 'ok' : ''}>Organisatie</li>
+                    <li className={v.cattery.trim() ? 'ok' : ''}>Catterynaam</li>
+                    <li className={v.vader_naam.trim() ? 'ok' : ''}>Naam van de vader (bij “De vader”)</li>
+                  </ul>
+                  {!labelCompleet && (
+                    <p>Zonder deze drie staat je nestje er gewoon, maar als “Particulier” en zonder stamboomlabel.</p>
+                  )}
+                  <p>
+                    Stamboomnummers zijn optioneel en alleen zichtbaar voor Nestje. Vul je ze in, dan zien kopers “stamboomnummers
+                    bekend bij Nestje”.
+                  </p>
+                </div>
                 <div className="row stapel">
                   <label className="veld">
                     <span>Organisatie</span>
@@ -406,7 +419,6 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                     <input value={v.vader_stamboomnr} onChange={zet('vader_stamboomnr')} maxLength={40} />
                   </label>
                 </div>
-                {!v.vader_naam.trim() && <p className="hint">Vul bij “De vader” ook zijn naam in. Bij een stamboom is de vader altijd bekend.</p>}
                 <details className="waarom">
                   <summary>Waarom vragen we de stamboomnummers, en is dat veilig?</summary>
                   <p>

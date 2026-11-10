@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { fotoUrl } from '@/lib/config';
 import { isAdmin } from '@/lib/controle';
 import { aftelling, datumNL, rasTekst } from '@/lib/nest';
@@ -32,7 +32,25 @@ export default async function Controle() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
-  if (!isAdmin(user.email)) notFound();
+  if (!isAdmin(user.email)) {
+    return (
+      <main className="wrap">
+        <div className="bar">
+          <Link href="/beheer" className="brand">← Je nestjes</Link>
+        </div>
+        <section className="hero">
+          <h1>Geen toegang tot de controle</h1>
+          <p>
+            Je bent ingelogd als <strong>{user.email}</strong>. Alleen het beheerdersadres kan nestjes controleren.
+            Log uit en log opnieuw in met dat adres.
+          </p>
+        </section>
+        <form action="/auth/uitloggen" method="post">
+          <button className="btn primary klein">Uitloggen</button>
+        </form>
+      </main>
+    );
+  }
 
   const db = adminClient();
   const { data } = await db
@@ -101,14 +119,14 @@ export default async function Controle() {
 function Kaart({ r, i }: { r: Rij; i: { nestjes: number; kittens: number; chipNestjes: number | null; email: string | null } }) {
   const a = aftelling(r.geboortedatum, r.verhuisleeftijd_weken);
   const ras = rasTekst(r.moeder_ras, r.vader_ras) || 'Geen ras ingevuld';
+  const compleet = Boolean(r.stamboom && r.stamboom_organisatie && r.cattery?.trim() && r.vader_naam?.trim());
+  const label = r.soort === 'vondeling' ? 'Vondelingen' : compleet ? 'Fokker · met stamboom' : 'Particulier, zonder stamboomlabel';
   const signalen = [
     r.soort !== 'vondeling' && !r.moeder_foto ? 'Geen foto van de moeder' : '',
     r.verhuisleeftijd_weken < 12 ? `Verhuisleeftijd ${r.verhuisleeftijd_weken} weken` : '',
     i.nestjes > 4 ? `${i.nestjes} nestjes in 12 maanden bij deze verkoper` : '',
     i.chipNestjes && i.chipNestjes > 2 ? `Zelfde moederchip in ${i.chipNestjes} nestjes (12 mnd)` : '',
-    r.stamboom && !(r.stamboom_organisatie && r.cattery && r.moeder_stamboomnr && r.vader_stamboomnr)
-      ? 'Stamboom aangevinkt, gegevens onvolledig'
-      : '',
+    r.stamboom && !compleet ? 'Stamboom op Ja, maar organisatie, catterynaam of naam vader ontbreekt' : '',
   ].filter(Boolean);
 
   return (
@@ -142,6 +160,11 @@ function Kaart({ r, i }: { r: Rij; i: { nestjes: number; kittens: number; chipNe
           <dt>Vader</dt><dd>{[r.vader_naam, r.vader_stamboomnr].filter(Boolean).join(', ') || '–'}</dd>
         </dl>
       )}
+
+      <p className="ctl-label">
+        Na goedkeuren in het overzicht als: <strong>{label}</strong>
+        {compleet && !(r.moeder_stamboomnr && r.vader_stamboomnr) ? ' (stamboomnummers niet ingevuld, dat mag)' : ''}
+      </p>
 
       {signalen.length > 0 && (
         <ul className="ctl-signalen">
