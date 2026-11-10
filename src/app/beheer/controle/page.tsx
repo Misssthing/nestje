@@ -6,7 +6,7 @@ import { isAdmin } from '@/lib/controle';
 import { aftelling, datumNL, rasTekst } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, verkoperEmail } from '@/lib/wachtlijst/server';
-import { keurAf, keurGoed } from './acties';
+import { keurAf, keurGoed, zetCattery } from './acties';
 import RedenVeld from './RedenVeld';
 
 export const metadata: Metadata = { title: 'Controle', robots: { index: false } };
@@ -26,7 +26,26 @@ const SNELLE_REDENEN = [
   'Een rasnaam mag alleen met stamboom. Vul de stamboomgegevens in, of kies Huiskat of Kruising.',
   'De kittens verhuizen te vroeg. Volgens de huisregels is dat op zijn vroegst na 12 weken.',
   'Deze moeder heeft volgens onze gegevens te veel nestjes in korte tijd (huisregel: max. 2 per 12 maanden).',
+  'We konden je cattery niet terugvinden. Stuur een foto van je catterycertificaat of de stamboom van de moeder naar nestje@kattenverzorging.com.',
 ];
+
+/** Snelle zoeklinks om een catterynaam na te kijken. */
+function zoekLinks(cattery: string, organisatie: string | null) {
+  const q = encodeURIComponent(`"${cattery}"`);
+  const links: [string, string][] = [
+    ['Google', `https://www.google.com/search?q=${q}+cattery`],
+    ['Facebook', `https://www.facebook.com/search/top?q=${encodeURIComponent(cattery)}`],
+  ];
+  const o = (organisatie ?? '').toLowerCase();
+  if (o.includes('tica')) links.push(['TICA', `https://www.google.com/search?q=${q}+site%3Atica.org`]);
+  if (o.includes('fife') || o.includes('felikat')) {
+    links.push(['FIFe-register', 'https://fifeweb.org/cats/cattery-names/']);
+    links.push(['Felikat', `https://www.google.com/search?q=${q}+felikat`]);
+  }
+  if (o.includes('wcf')) links.push(['WCF', `https://www.google.com/search?q=${q}+WCF+cattery`]);
+  links.push(['PawPeds', `https://www.google.com/search?q=${q}+site%3Apawpeds.com`]);
+  return links;
+}
 
 export default async function Controle() {
   const supabase = await createClient();
@@ -81,6 +100,9 @@ export default async function Controle() {
     }),
   );
   const info = (id: string) => extra.find((e) => e.id === id)!;
+  const { data: gc } = await db.from('catteries_gecontroleerd').select('owner_id, cattery');
+  const gecontroleerd = (r: Rij) =>
+    Boolean(r.cattery && (gc ?? []).some((g) => g.owner_id === r.owner_id && g.cattery.trim().toLowerCase() === r.cattery!.trim().toLowerCase()));
 
   return (
     <main className="wrap">
@@ -98,7 +120,7 @@ export default async function Controle() {
       {wachtend.length === 0 && <p className="hint">Er wacht niets. Mooi zo.</p>}
       <div className="lijst">
         {wachtend.map((r) => (
-          <Kaart key={r.id} r={r} i={info(r.id)} />
+          <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} />
         ))}
       </div>
 
@@ -107,7 +129,7 @@ export default async function Controle() {
           <summary className="aanpassen">Wacht op aanpassing door verkoper ({afgekeurd.length})</summary>
           <div className="lijst" style={{ marginTop: 12 }}>
             {afgekeurd.map((r) => (
-              <Kaart key={r.id} r={r} i={info(r.id)} />
+              <Kaart key={r.id} r={r} i={info(r.id)} gc={gecontroleerd(r)} />
             ))}
           </div>
         </details>
@@ -116,11 +138,15 @@ export default async function Controle() {
   );
 }
 
-function Kaart({ r, i }: { r: Rij; i: { nestjes: number; kittens: number; chipNestjes: number | null; email: string | null } }) {
+function Kaart({ r, i, gc }: { r: Rij; i: { nestjes: number; kittens: number; chipNestjes: number | null; email: string | null }; gc: boolean }) {
   const a = aftelling(r.geboortedatum, r.verhuisleeftijd_weken);
   const ras = rasTekst(r.moeder_ras, r.vader_ras) || 'Geen ras ingevuld';
   const compleet = Boolean(r.stamboom && r.stamboom_organisatie && r.cattery?.trim() && r.vader_naam?.trim());
-  const label = r.soort === 'vondeling' ? 'Vondelingen' : compleet ? 'Fokker · met stamboom' : 'Particulier, zonder stamboomlabel';
+  const label = r.soort === 'vondeling'
+    ? 'Vondelingen'
+    : compleet
+      ? `Fokker · met stamboom${gc ? ' · cattery gecontroleerd' : ' (opgegeven door verkoper)'}`
+      : 'Particulier, zonder stamboomlabel';
   const signalen = [
     r.soort !== 'vondeling' && !r.moeder_foto ? 'Geen foto van de moeder' : '',
     r.verhuisleeftijd_weken < 12 ? `Verhuisleeftijd ${r.verhuisleeftijd_weken} weken` : '',
@@ -159,6 +185,30 @@ function Kaart({ r, i }: { r: Rij; i: { nestjes: number; kittens: number; chipNe
           <dt>Nr. moeder</dt><dd>{r.moeder_stamboomnr ?? '–'}</dd>
           <dt>Vader</dt><dd>{[r.vader_naam, r.vader_stamboomnr].filter(Boolean).join(', ') || '–'}</dd>
         </dl>
+      )}
+
+      {r.stamboom && r.cattery?.trim() && (
+        <div className="ctl-cattery">
+          <div>
+            <strong>Cattery {r.cattery}</strong>
+            <span>{gc ? '✓ Al nagekeken. Dit label geldt ook voor volgende nestjes.' : 'Nog niet nagekeken. Zoek de naam op:'}</span>
+          </div>
+          {!gc && (
+            <div className="ctl-zoek">
+              {zoekLinks(r.cattery, r.stamboom_organisatie).map(([t, u]) => (
+                <a key={t} href={u} target="_blank" rel="noopener noreferrer" className="chipknop">{t} ↗</a>
+              ))}
+            </div>
+          )}
+          <form action={zetCattery}>
+            <input type="hidden" name="owner_id" value={r.owner_id} />
+            <input type="hidden" name="cattery" value={r.cattery} />
+            <input type="hidden" name="aan" value={gc ? '0' : '1'} />
+            <button className={`btn ${gc ? 'ghost' : 'primary'} klein`} type="submit">
+              {gc ? 'Nagekeken intrekken' : '✓ Cattery nagekeken'}
+            </button>
+          </form>
+        </div>
       )}
 
       <p className="ctl-label">

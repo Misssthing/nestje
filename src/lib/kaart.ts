@@ -37,7 +37,7 @@ export function naarKaart(n: OverzichtNest): NestKaartData {
       [n.woonplaats, n.provincie].filter(Boolean).join(', '),
     ],
     prijs: n.prijs ? prijsNL(Number(n.prijs)) : null,
-    verkoper: n.verkoper ? VERKOPER_LABEL[n.verkoper] : null,
+    verkoper: n.verkoper ? `${VERKOPER_LABEL[n.verkoper]}${n.verkoper === 'fokker' && n.cattery_gecontroleerd ? ' · gecontroleerd' : ''}` : null,
     vondeling: n.soort === 'vondeling',
     fotos,
   };

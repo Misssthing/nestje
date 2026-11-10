@@ -58,6 +58,8 @@ export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 
   heeft_whatsapp: boolean;
   /** Datum van het eerste nestje van deze verkoper op Nestje (“Lid sinds”) */
   lid_sinds?: string | null;
+  /** Cattery nagekeken door Nestje (uitbreiding 32) */
+  cattery_gecontroleerd?: boolean;
 };
 
 /** Gemeenschappelijke vorm van kitten- en nestfoto's */
@@ -149,4 +151,5 @@ export interface OverzichtNest {
   lid_sinds?: string | null;
   /** Nestfoto's en de eerste foto van elk kitten, maximaal 6 (om doorheen te swipen) */
   fotos?: string[] | null;
+  cattery_gecontroleerd?: boolean;
 }

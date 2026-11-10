@@ -8,22 +8,22 @@ import { createPublicClient } from '@/lib/supabase/public';
 
 export const dynamic = 'force-dynamic';
 
-type Props = { searchParams: Promise<{ ras?: string; provincie?: string }> };
+type Props = { searchParams: Promise<{ ras?: string; provincie?: string; gecontroleerd?: string }> };
 
 type Cattery = {
   slug: string; naam: string; intro: string | null; sinds_jaar: number | null; rassen_tekst: string | null;
   vereniging: string | null; cattery: string; organisatie: string | null; provincie: string | null; woonplaats: string | null;
-  rassen: string[] | null; foto: string | null; lopend: number; lid_sinds: string | null;
+  rassen: string[] | null; foto: string | null; lopend: number; lid_sinds: string | null; gecontroleerd: boolean;
 };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { ras, provincie } = await searchParams;
+  const { ras, provincie, gecontroleerd } = await searchParams;
   return {
     title: 'Catteries met stamboom',
     description:
       'Catteries op Nestje: fokkers met stamboom, aangesloten bij een vereniging. Bekijk hun nestjes en lees wie ze zijn.',
     alternates: { canonical: '/catteries' },
-    robots: ras || provincie ? { index: false, follow: true } : { index: true, follow: true },
+    robots: ras || provincie || gecontroleerd ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
 
@@ -33,10 +33,12 @@ export default async function Catteries({ searchParams }: Props) {
   const sp = await searchParams;
   const provincie = sp.provincie && (PROVINCIES as readonly string[]).includes(sp.provincie) ? sp.provincie : '';
   const rasGekozen = (sp.ras ?? '').slice(0, 60);
+  const alleenGecontroleerd = sp.gecontroleerd === '1';
 
   const { data } = await createPublicClient()
     .from('openbare_catteries')
     .select('*')
+    .order('gecontroleerd', { ascending: false })
     .order('lopend', { ascending: false })
     .order('cattery')
     .returns<Cattery[]>();
@@ -47,6 +49,7 @@ export default async function Catteries({ searchParams }: Props) {
   const rassenKeuze = [...new Set(alle.flatMap((c) => c.rassenNetjes))].sort((a, b) => a.localeCompare(b, 'nl'));
   const lijst = alle.filter(
     (c) =>
+      (!alleenGecontroleerd || c.gecontroleerd) &&
       (!provincie || c.provincie === provincie) &&
       (!rasGekozen || c.rassenNetjes.some((r) => r.toLowerCase() === rasGekozen.toLowerCase())),
   );
@@ -61,8 +64,9 @@ export default async function Catteries({ searchParams }: Props) {
       <section className="hero">
         <h1>Catteries</h1>
         <p>
-          Fokkers met stamboom op Nestje. Ze zijn aangesloten bij een vereniging en hun nestjes zijn door ons bekeken. Kom altijd
-          eerst kijken, bij de kittens én hun moeder.
+          Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Gecontroleerd” hebben we de cattery zelf
+          nagekeken; bij de andere zijn de gegevens opgegeven door de fokker. Kom altijd eerst kijken, bij de kittens én hun
+          moeder, en vraag naar de stamboompapieren.
         </p>
       </section>
 
@@ -80,6 +84,10 @@ export default async function Catteries({ searchParams }: Props) {
             <option value="">Heel Nederland en België</option>
             {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
+        </label>
+        <label className="vink cat-vink">
+          <input type="checkbox" name="gecontroleerd" value="1" defaultChecked={alleenGecontroleerd} />
+          <span>Alleen gecontroleerd door Nestje</span>
         </label>
         <button className="btn primary klein" type="submit">Toon</button>
       </form>
@@ -107,7 +115,10 @@ export default async function Catteries({ searchParams }: Props) {
                     {[c.woonplaats, c.provincie].filter(Boolean).join(', ')}
                     {c.sinds_jaar ? ` · fokt sinds ${c.sinds_jaar}` : ''}
                   </span>
-                  {org && <span className="chip verkoper">{org}</span>}
+                  <span className="ckaart-chips">
+                    {c.gecontroleerd && <span className="chip vrij">✓ Gecontroleerd</span>}
+                    {org && <span className="chip verkoper">{org}</span>}
+                  </span>
                 </span>
               </Link>
             );

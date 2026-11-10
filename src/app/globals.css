@@ -621,3 +621,15 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .ckaart-tekst .chip { align-self: flex-start; margin-top: 8px; }
 .overzicht-links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
 @media (prefers-reduced-motion: reduce) { .ckaart { transition: none; } }
+
+/* ─── Cattery gecontroleerd (uitbreiding 32) ─── */
+.ctl-cattery { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 14px; background: var(--bg); }
+.ctl-cattery > div:first-child { display: flex; flex-direction: column; }
+.ctl-cattery span { font-size: 14px; color: var(--muted); }
+.ctl-zoek { display: flex; flex-wrap: wrap; gap: 6px; }
+.ctl-zoek .chipknop { text-decoration: none; font-size: 14px; }
+.ctl-cattery form .btn { align-self: flex-start; }
+.stamboom-ok { color: var(--free); font-weight: 600; font-size: 15px; margin: 4px 0 0; }
+.ckaart-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ckaart-tekst .ckaart-chips .chip { margin-top: 0; }
+.cat-vink { align-self: center; margin: 0; }

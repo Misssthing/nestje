@@ -52,3 +52,18 @@ export async function keurAf(f: FormData) {
   }
   revalidatePath('/beheer/controle');
 }
+
+/** Cattery nagekeken (of weer intrekken). Geldt voor deze verkoper met deze catterynaam. */
+export async function zetCattery(f: FormData) {
+  const owner = String(f.get('owner_id') ?? '');
+  const cattery = String(f.get('cattery') ?? '').trim();
+  const aan = f.get('aan') === '1';
+  if (!isUuid(owner) || !cattery || !(await magControleren())) return;
+  const db = adminClient();
+  if (aan) {
+    await db.from('catteries_gecontroleerd').upsert({ owner_id: owner, cattery, gecontroleerd_op: new Date().toISOString() });
+  } else {
+    await db.from('catteries_gecontroleerd').delete().eq('owner_id', owner);
+  }
+  revalidatePath('/beheer/controle');
+}

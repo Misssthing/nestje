@@ -16,6 +16,7 @@ import { ALLE_VELDEN, GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } fr
 
 type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
   stamboomnrs_bekend?: boolean;
+  cattery_gecontroleerd?: boolean;
   verkoper?: { naam: string; slug: string; intro: string | null; sinds_jaar: number | null; rassen: string | null; vereniging: string | null } | null;
 };
 
@@ -23,7 +24,7 @@ type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
 async function haalExtra(slug: string, profielSlug: string | null): Promise<Extra | null> {
   const db = createPublicClient();
   const [{ data: n }, p, x] = await Promise.all([
-    db.from('openbare_nesten').select([...ALLE_VELDEN, 'stamboomnrs_bekend'].join(', ')).eq('slug', slug).maybeSingle(),
+    db.from('openbare_nesten').select([...ALLE_VELDEN, 'stamboomnrs_bekend', 'cattery_gecontroleerd'].join(', ')).eq('slug', slug).maybeSingle(),
     profielSlug
       ? db.from('openbare_profielen').select('slug, naam, intro').eq('slug', profielSlug).maybeSingle()
       : Promise.resolve({ data: null }),
@@ -352,6 +353,13 @@ export default async function NestjesPagina({ params }: Props) {
               <p className="ouderfeit">
                 {stamboomRegel}
                 {extra?.stamboomnrs_bekend ? ' Stamboomnummers van beide ouders zijn bekend bij Nestje.' : ''}
+              </p>
+            )}
+            {stamboomRegel && (
+              <p className={extra?.cattery_gecontroleerd ? 'stamboom-ok' : 'hint'}>
+                {extra?.cattery_gecontroleerd
+                  ? '✓ Cattery gecontroleerd door Nestje. Vraag bij je bezoek ook naar de stamboompapieren van beide ouders.'
+                  : 'Stamboom opgegeven door de verkoper. Vraag bij je bezoek naar de stamboompapieren van beide ouders.'}
               </p>
             )}
             {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
