@@ -353,7 +353,25 @@ export default async function NestjesPagina({ params }: Props) {
                 </div>
               )}
             </div>
-            {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
+            {!gestructureerd && nest.ouders_getest === true ? (
+              // Oude manier: één regel tekst voor beide ouders. Zelfde nette kaart als de nieuwe testen.
+              <div className="testkaart">
+                <p className="testkaart-kop">Gezondheidstesten ouders</p>
+                <ul className="oudertesten">
+                  <li>
+                    <div className="test-info">
+                      <span className="t">{testInfo ? `Getest op: ${testInfo}` : 'Getest op erfelijke aandoeningen'}</span>
+                      <span className="u">Uitslagen per ouder zijn niet ingevuld. Vraag de verkoper gerust om de uitslagen.</span>
+                    </div>
+                    <div className="testlabels">
+                      <span className="testlabel">Opgegeven</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            ) : (
+              ouderTest && <p className="ouderfeit">{ouderTest}</p>
+            )}
             {gestructureerd && (
               <p className="hint testhint">
                 {ietsBekeken
