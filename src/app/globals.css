@@ -643,3 +643,19 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 /* Checklist: afgevinkte stappen licht en leesbaar (niet de donkere stijl van "Klaar voor je kitten?") */
 .cl-lijst li.cl-klaar { background: none; color: var(--ink); border-radius: 0; padding: 10px 0; }
 .cl-lijst li.cl-klaar strong { color: var(--muted); font-weight: 500; }
+.ctl-let-op { color: var(--opt) !important; }
+.ctl-cattery button[disabled] { opacity: .45; }
+
+/* ─── Blok "De fokker" op de nestjespagina (uitbreiding 37) ─── */
+.verkoper-blok { display: flex; flex-direction: column; gap: 6px; }
+.verkoper-blok .vk-kop { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.verkoper-blok .vk-naam { margin: 0; font-size: 24px; font-weight: 800; line-height: 1.15; }
+.verkoper-blok .vk-naam a { text-decoration: none; }
+.verkoper-blok .vk-naam a:hover { text-decoration: underline; }
+.vk-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 4px; }
+.vk-chips .chip { font-size: 13px; }
+.chip.vk-opgegeven { background: var(--sold-bg); color: var(--sold); }
+.vk-intro { margin: 4px 0 6px; font-style: italic; }
+.vk-feiten { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 6px 0 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: 15px; }
+.vk-feiten dt { color: var(--muted); }
+.vk-feiten dd { margin: 0; min-width: 0; }

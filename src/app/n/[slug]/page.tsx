@@ -349,43 +349,63 @@ export default async function NestjesPagina({ params }: Props) {
                 </div>
               )}
             </div>
-            {stamboomRegel && (
-              <p className="ouderfeit">
-                {stamboomRegel}
-                {extra?.stamboomnrs_bekend ? ' Stamboomnummers van beide ouders zijn bekend bij Nestje.' : ''}
-              </p>
-            )}
-            {stamboomRegel && (
-              <p className={extra?.cattery_gecontroleerd ? 'stamboom-ok' : 'hint'}>
-                {extra?.cattery_gecontroleerd
-                  ? '✓ Cattery gecontroleerd door Nestje. Vraag bij je bezoek ook naar de stamboompapieren van beide ouders.'
-                  : 'Stamboom opgegeven door de verkoper. Vraag bij je bezoek naar de stamboompapieren van beide ouders.'}
-              </p>
-            )}
             {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
             {gestructureerd && (
               <p className="hint">Testuitslagen zijn ingevuld door de verkoper. Vraag gerust om de uitslagen te zien.</p>
             )}
           </section>
 
-          {extra?.verkoper && (extra.verkoper.intro || extra.verkoper.sinds_jaar || extra.verkoper.rassen) && (
+          {(stamboomRegel || (extra?.verkoper && (extra.verkoper.intro || extra.verkoper.sinds_jaar || extra.verkoper.rassen))) && (
             <section className="panel verkoper-blok" aria-labelledby="verkoper-kop">
-              <h2 id="verkoper-kop">Over de verkoper</h2>
-              <p className="vk-naam">
-                <Link href={`/van/${extra.verkoper.slug}`}>{extra.verkoper.naam}</Link>
-              </p>
-              {(extra.verkoper.sinds_jaar || extra.verkoper.rassen || extra.verkoper.vereniging) && (
-                <p className="hint" style={{ margin: '2px 0 8px' }}>
-                  {[
-                    extra.verkoper.sinds_jaar ? `Fokt sinds ${extra.verkoper.sinds_jaar}` : '',
-                    extra.verkoper.rassen ?? '',
-                    extra.verkoper.vereniging && extra.verkoper.vereniging !== 'Anders'
-                      ? `aangesloten bij ${extra.verkoper.vereniging.replace(/ \(.*\)$/, '')}`
-                      : '',
-                  ].filter(Boolean).join(' · ')}
+              <p className="vk-kop" id="verkoper-kop">{stamboomRegel ? 'De fokker' : 'Over de verkoper'}</p>
+              <h2 className="vk-naam">
+                {(() => {
+                  const naam = nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam ?? '';
+                  return extra?.verkoper ? <Link href={`/van/${extra.verkoper.slug}`}>{naam}</Link> : naam;
+                })()}
+              </h2>
+              {stamboomRegel && (
+                <div className="vk-chips">
+                  <span className="chip verkoper">Fokker · met stamboom</span>
+                  {extra?.cattery_gecontroleerd ? (
+                    <span className="chip vrij">✓ Gecontroleerd door Nestje</span>
+                  ) : (
+                    <span className="chip vk-opgegeven">Opgegeven door de verkoper</span>
+                  )}
+                </div>
+              )}
+              {extra?.verkoper?.intro && <p className="vk-intro">{extra.verkoper.intro}</p>}
+              <dl className="vk-feiten">
+                {organisatie && organisatie !== 'Anders' && nest.stamboom === true && (
+                  <>
+                    <dt>Vereniging</dt>
+                    <dd>{organisatie}</dd>
+                  </>
+                )}
+                {extra?.verkoper?.sinds_jaar && (
+                  <>
+                    <dt>Fokt sinds</dt>
+                    <dd>{extra.verkoper.sinds_jaar}</dd>
+                  </>
+                )}
+                {extra?.verkoper?.rassen && (
+                  <>
+                    <dt>Rassen</dt>
+                    <dd>{extra.verkoper.rassen}</dd>
+                  </>
+                )}
+                {stamboomRegel && (
+                  <>
+                    <dt>Stamboomnummers</dt>
+                    <dd>{extra?.stamboomnrs_bekend ? '✓ Van beide ouders bekend bij Nestje' : 'Niet doorgegeven aan Nestje'}</dd>
+                  </>
+                )}
+              </dl>
+              {stamboomRegel && (
+                <p className="hint" style={{ margin: '10px 0 0' }}>
+                  Vraag bij je bezoek naar de stamboompapieren van beide ouders, en wanneer je de stamboom van je kitten krijgt.
                 </p>
               )}
-              {extra.verkoper.intro && <p style={{ margin: 0 }}>{extra.verkoper.intro}</p>}
             </section>
           )}
 
