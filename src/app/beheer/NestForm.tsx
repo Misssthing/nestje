@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  MAX_DAGEN_VOORUIT, nestjeMelding, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, toonNummer,
+  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, toonNummer,
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
@@ -96,6 +96,13 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     const rassen = `${v.moeder_ras} ${v.vader_ras}`;
     if (VERBODEN_RAS.test(rassen))
       return stop('Met dit ras mag in Nederland niet worden gefokt. Naaktkatten en katten met vouworen kunnen daarom niet op Nestje.');
+    const onbekend = [...rasDelen(v.moeder_ras), ...rasDelen(v.vader_ras)].find(
+      (r) => !RASSEN.some((x) => x.toLowerCase() === r.toLowerCase()),
+    );
+    if (onbekend)
+      return stop(
+        `“${onbekend}” staat niet in onze lijst met rassen. Kies een ras uit de lijst. Een vachtkleur (zoals black tabby) vul je bij de kittens in, bij Vacht.`,
+      );
     if ((vraagtStamboom(v.moeder_ras) || vraagtStamboom(v.vader_ras)) && stamboom !== true)
       return stop(
         soort === 'vondeling'
@@ -168,7 +175,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
         !patch.vader_naam && 'naam van de vader',
       ].filter(Boolean);
       if (mist.length)
-        punten.push(`Nog niet compleet voor het label “Fokker · met stamboom”: ${mist.join(', ')}. Tot dan sta je als “Particulier”.`);
+        punten.push(`Nog niet compleet voor het label “Fokker · met stamboom”: ${mist.join(', ')}. Tot dan sta je als “Particulier” en tonen we geen rasnaam op je pagina.`);
     }
     if (nestRef.current.in_overzicht && soort !== 'vondeling' && !nestRef.current.moeder_foto)
       punten.push('Je nestje verschijnt pas in het overzicht als er een foto van de moeder op staat.');

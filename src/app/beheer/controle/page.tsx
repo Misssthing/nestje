@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { fotoUrl } from '@/lib/config';
 import { isAdmin } from '@/lib/controle';
-import { aftelling, datumNL, maandJaarNL, rasTekst } from '@/lib/nest';
+import { aftelling, datumNL, maandJaarNL, rasDelen, RASSEN, rasTekst, vraagtStamboom } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, verkoperEmail } from '@/lib/wachtlijst/server';
 import { beoordeelUitslag, keurAf, keurGoed, zetCattery } from './acties';
@@ -184,12 +184,19 @@ function Kaart({ r, i, gc: gcNaam, d }: {
   const a = aftelling(r.geboortedatum, r.verhuisleeftijd_weken);
   const ras = rasTekst(r.moeder_ras, r.vader_ras) || 'Geen ras ingevuld';
   const compleet = Boolean(r.stamboom && r.stamboom_organisatie && r.cattery?.trim() && r.vader_naam?.trim());
+  const rasDelenAlle = [...rasDelen(r.moeder_ras), ...rasDelen(r.vader_ras)];
+  const onbekendRas = rasDelenAlle.filter((x) => !RASSEN.some((y) => y.toLowerCase() === x.toLowerCase()));
+  const rasZonderStamboom = !compleet && (vraagtStamboom(r.moeder_ras ?? '') || vraagtStamboom(r.vader_ras ?? ''));
   const label = r.soort === 'vondeling'
     ? 'Vondelingen'
     : compleet
       ? `Fokker · met stamboom${gc ? ' · cattery gecontroleerd' : ' (opgegeven door verkoper)'}`
-      : 'Particulier, zonder stamboomlabel';
+      : `Particulier, zonder stamboomlabel${rasZonderStamboom ? (r.stamboom ? ', zonder rasnaam' : ', ras getoond als Huiskat') : ''}`;
   const signalen = [
+    rasZonderStamboom
+      ? `Rasnaam zonder volledige stamboom: kopers zien ${r.stamboom ? 'geen ras' : '“Huiskat”'} tot de stamboomgegevens compleet zijn`
+      : '',
+    onbekendRas.length ? `Onbekend ras ingevuld: ${onbekendRas.join(', ')} (misschien een vachtkleur?)` : '',
     r.soort !== 'vondeling' && !r.moeder_foto ? 'Geen foto van de moeder' : '',
     r.verhuisleeftijd_weken < 12 ? `Verhuisleeftijd ${r.verhuisleeftijd_weken} weken` : '',
     i.nestjes > 4 ? `${i.nestjes} nestjes in 12 maanden bij deze verkoper` : '',
