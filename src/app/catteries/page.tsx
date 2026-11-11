@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 type Props = { searchParams: Promise<{ ras?: string; provincie?: string; gecontroleerd?: string }> };
 
 type Cattery = {
-  slug: string; naam: string; intro: string | null; sinds_jaar: number | null; rassen_tekst: string | null;
+  slug: string | null; link: string; profiel: boolean; naam: string | null; intro: string | null; sinds_jaar: number | null; rassen_tekst: string | null;
   vereniging: string | null; cattery: string; organisatie: string | null; provincie: string | null; woonplaats: string | null;
   rassen: string[] | null; foto: string | null; lopend: number; lid_sinds: string | null; gecontroleerd: boolean;
 };
@@ -26,6 +26,9 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     robots: ras || provincie || gecontroleerd ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
+
+/** "Cattery Mistinguett" blijft zo; "Mistinguett" wordt "Cattery Mistinguett". */
+const catteryNaam = (c: string) => (/^cattery\b/i.test(c.trim()) ? c.trim() : `Cattery ${c.trim()}`);
 
 const organisatieKort = (o: string | null) => (o && o !== 'Anders' ? o.replace(/ \(.*\)$/, '') : null);
 
@@ -100,16 +103,16 @@ export default async function Catteries({ searchParams }: Props) {
             const org = organisatieKort(c.organisatie ?? c.vereniging);
             const rassen = c.rassen_tekst?.trim() || c.rassenNetjes.join(', ');
             return (
-              <Link key={c.slug} href={`/van/${c.slug}`} className="ckaart">
+              <Link key={c.link} href={c.link} className="ckaart">
                 {c.foto ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={fotoUrl(c.foto)} alt={`Een kat van cattery ${c.cattery}`} loading="lazy" />
+                  <img src={fotoUrl(c.foto)} alt={`Een kat van ${catteryNaam(c.cattery)}`} loading="lazy" />
                 ) : (
                   <span className="ckaart-geenfoto" aria-hidden="true" />
                 )}
                 <span className="ckaart-tekst">
                   <span className="nkaart-label vrij">{c.lopend > 0 ? `${c.lopend} ${c.lopend === 1 ? 'nestje' : 'nestjes'} nu` : 'Geen nestje op dit moment'}</span>
-                  <strong>Cattery {c.cattery}</strong>
+                  <strong>{catteryNaam(c.cattery)}</strong>
                   {rassen && <span>{rassen}</span>}
                   <span>
                     {[c.woonplaats, c.provincie].filter(Boolean).join(', ')}
@@ -131,7 +134,7 @@ export default async function Catteries({ searchParams }: Props) {
       <section className="panel" style={{ marginTop: 28 }}>
         <h2>Ben je zelf fokker?</h2>
         <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
-          Maak gratis je nestjespagina. Met stamboomgegevens en een profielpagina kom je vanzelf op deze lijst.
+          Maak gratis je nestjespagina. Met volledige stamboomgegevens kom je vanzelf op deze lijst. Met een profielpagina vertel je kopers ook wie je bent.
         </p>
         <Link className="btn primary" href="/verkopen">Zo werkt Nestje voor verkopers</Link>
       </section>
