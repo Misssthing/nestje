@@ -259,18 +259,25 @@ details.panel[open] summary { margin-bottom: 12px; }
 .chipknop:hover { border-color: var(--free); color: var(--free); }
 .aandacht { margin: 8px 0 0; padding: 10px 14px 10px 30px; border-radius: 12px; background: var(--opt-bg); color: var(--opt); font-size: 14px; }
 .aandacht li + li { margin-top: 4px; }
-.oudertesten { list-style: none; padding: 0; margin: 8px 0 0; font-size: 14px; }
-.oudertesten li { margin-top: 6px; }
-.oudertesten li .t { display: block; font-weight: 600; }
-.oudertesten li.goed .t { color: var(--free); }
-.oudertesten li .u { display: block; color: var(--muted); font-size: 13px; }
-.oudertesten li + li { margin-top: 10px; }
-.oudertesten li .d { font-weight: 400; color: var(--muted); }
-.testlabels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-.testlabel { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 4px 9px; border-radius: 999px; background: var(--bg); color: var(--muted); text-decoration: none; }
-.testlabel.bekeken { background: var(--free-bg); color: var(--free); }
-.testlabel.link { background: transparent; border: 1px solid currentColor; color: var(--free); }
+.testkaart { margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.testkaart .testkaart-kop { max-width: none; margin: 0; padding: 10px 14px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
+.oudertesten { list-style: none; padding: 0; margin: 0; font-size: 14px; }
+.oudertesten li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; }
+.oudertesten li + li { border-top: 1px solid var(--line); }
+.oudertesten .test-info { min-width: 0; }
+.oudertesten .t { display: block; font-weight: 700; color: var(--ink); }
+.oudertesten .uitslag { font-weight: 600; color: var(--muted); }
+.oudertesten .uitslag.goed { color: var(--free); }
+.oudertesten .u { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; line-height: 1.35; }
+.testlabels { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.testlabel { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); text-decoration: none; white-space: nowrap; }
+.testlabel.bekeken { background: var(--free-bg); border-color: transparent; color: var(--free); }
+.testlabel.link { border-color: currentColor; color: var(--free); }
 .testlabel.link:hover { background: var(--free-bg); }
+@media (max-width: 420px) {
+  .oudertesten li { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .testlabels { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+}
 .beide-getest { display: inline-block; margin: -6px 0 14px; padding: 6px 12px; border-radius: 999px; background: var(--free-bg); color: var(--free); font-weight: 700; font-size: 14px; }
 
 /* Beheer: testen met registerlink en uitslag */
@@ -686,3 +693,4 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .vk-feiten { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 6px 0 0; padding-top: 10px; border-top: 1px solid var(--line); font-size: 15px; }
 .vk-feiten dt { color: var(--muted); }
 .vk-feiten dd { margin: 0; min-width: 0; }
+.mother .testhint { font-size: 13px; margin: 10px 0 0; }

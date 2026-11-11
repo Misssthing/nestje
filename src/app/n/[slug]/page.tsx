@@ -355,10 +355,10 @@ export default async function NestjesPagina({ params }: Props) {
             </div>
             {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
             {gestructureerd && (
-              <p className="hint">
+              <p className="hint testhint">
                 {ietsBekeken
                   ? '“Bekeken door Nestje”: wij hebben de uitslag gezien en hij klopt. “Opgegeven”: ingevuld door de verkoper, vraag gerust om de uitslag.'
-                  : 'Testuitslagen zijn opgegeven door de verkoper. Vraag gerust om de uitslagen te zien.'}
+                  : '“Opgegeven” betekent: ingevuld door de verkoper. Vraag gerust om de uitslagen.'}
               </p>
             )}
           </section>
@@ -462,30 +462,37 @@ export default async function NestjesPagina({ params }: Props) {
 function Testen({ testen }: { testen: TestMetBewijs[] }) {
   if (!testen.length) return null;
   return (
-    <ul className="oudertesten">
-      {testen.map((t) => {
-        const goed = GOEDE_UITSLAG.includes(t.uitslag);
-        const uitleg = TEST_UITLEG[t.test];
-        const link = veiligeLink(t.link);
-        const bekeken = t.status === 'bekeken';
-        return (
-          <li key={`${t.test}-${t.datum}`} className={goed ? 'goed' : ''}>
-            <span className="t">
-              {t.test}: {t.uitslag.toLowerCase()}
-              {t.datum ? <span className="d"> · {new Date(`${t.datum}T12:00:00`).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })}</span> : null}
-            </span>
-            {uitleg && <span className="u">{uitleg}</span>}
-            <span className="testlabels">
-              <span className={`testlabel${bekeken ? ' bekeken' : ''}`}>{bekeken ? '✓ Bekeken door Nestje' : 'Opgegeven'}</span>
-              {link && (
-                <a className="testlabel link" href={link} target="_blank" rel="noopener noreferrer nofollow">
-                  Bekijk in {registerNaam(link)} ↗
-                </a>
-              )}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="testkaart">
+      <p className="testkaart-kop">Gezondheidstesten</p>
+      <ul className="oudertesten">
+        {testen.map((t) => {
+          const goed = GOEDE_UITSLAG.includes(t.uitslag);
+          const uitleg = TEST_UITLEG[t.test];
+          const link = veiligeLink(t.link);
+          const bekeken = t.status === 'bekeken';
+          const datum = t.datum
+            ? new Date(`${t.datum}T12:00:00`).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })
+            : '';
+          return (
+            <li key={`${t.test}-${t.datum}`}>
+              <div className="test-info">
+                <span className="t">
+                  {t.test} <span className={`uitslag${goed ? ' goed' : ''}`}>{t.uitslag.toLowerCase()}</span>
+                </span>
+                {(uitleg || datum) && <span className="u">{[uitleg, datum && `getest ${datum}`].filter(Boolean).join(' · ')}</span>}
+              </div>
+              <div className="testlabels">
+                <span className={`testlabel${bekeken ? ' bekeken' : ''}`}>{bekeken ? '✓ Bekeken door Nestje' : 'Opgegeven'}</span>
+                {link && (
+                  <a className="testlabel link" href={link} target="_blank" rel="noopener noreferrer nofollow">
+                    Bekijk in {registerNaam(link)} ↗
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
