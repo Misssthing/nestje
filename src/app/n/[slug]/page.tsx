@@ -9,9 +9,10 @@ import EigenaarBalk from '@/components/EigenaarBalk';
 import Voet from '@/components/Voet';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG, type OuderTest } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
 import { haalNestje } from './data';
 import { createPublicClient } from '@/lib/supabase/public';
+import { heeftBekekenTest, registerNaam, veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import { ALLE_VELDEN, GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/vertrouwen';
 
 type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
@@ -97,8 +98,10 @@ export default async function NestjesPagina({ params }: Props) {
   const stamboom = nest.stamboom === true ? ' Met stamboom.' : nest.stamboom === false ? ' Zonder stamboom.' : '';
   const testInfo = nest.ouders_test_info?.trim();
   const vondeling = nest.soort === 'vondeling';
-  const mTesten: OuderTest[] = nest.moeder_testen ?? [];
-  const vTesten: OuderTest[] = nest.vader_testen ?? [];
+  const mTesten: TestMetBewijs[] = nest.moeder_testen ?? [];
+  const vTesten: TestMetBewijs[] = nest.vader_testen ?? [];
+  const beideGetest = heeftBekekenTest(mTesten) && heeftBekekenTest(vTesten);
+  const ietsBekeken = heeftBekekenTest(mTesten) || heeftBekekenTest(vTesten);
   const gestructureerd = mTesten.length + vTesten.length > 0;
   const stamboomRegel =
     nest.stamboom === true && (nest.stamboom_organisatie || nest.cattery)
@@ -327,6 +330,7 @@ export default async function NestjesPagina({ params }: Props) {
 
           <section className="mother">
             <h2>{heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}</h2>
+            {beideGetest && <p className="beide-getest">✓ Beide ouders getest · bekeken door Nestje</p>}
             <div className={`ouders${heeftVader ? ' twee' : ''}`}>
               <div className="ouder">
                 {nest.moeder_foto && (
@@ -351,7 +355,11 @@ export default async function NestjesPagina({ params }: Props) {
             </div>
             {ouderTest && <p className="ouderfeit">{ouderTest}</p>}
             {gestructureerd && (
-              <p className="hint">Testuitslagen zijn ingevuld door de verkoper. Vraag gerust om de uitslagen te zien.</p>
+              <p className="hint">
+                {ietsBekeken
+                  ? '“Bekeken door Nestje”: wij hebben de uitslag gezien en hij klopt. “Opgegeven”: ingevuld door de verkoper, vraag gerust om de uitslag.'
+                  : 'Testuitslagen zijn opgegeven door de verkoper. Vraag gerust om de uitslagen te zien.'}
+              </p>
             )}
           </section>
 
@@ -451,21 +459,30 @@ export default async function NestjesPagina({ params }: Props) {
   );
 }
 
-function Testen({ testen }: { testen: OuderTest[] }) {
+function Testen({ testen }: { testen: TestMetBewijs[] }) {
   if (!testen.length) return null;
   return (
     <ul className="oudertesten">
       {testen.map((t) => {
         const goed = GOEDE_UITSLAG.includes(t.uitslag);
         const uitleg = TEST_UITLEG[t.test];
+        const link = veiligeLink(t.link);
+        const bekeken = t.status === 'bekeken';
         return (
           <li key={`${t.test}-${t.datum}`} className={goed ? 'goed' : ''}>
             <span className="t">
-              {goed ? '✓ ' : ''}
               {t.test}: {t.uitslag.toLowerCase()}
-              {t.datum ? ` (${new Date(`${t.datum}T12:00:00`).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })})` : ''}
+              {t.datum ? <span className="d"> · {new Date(`${t.datum}T12:00:00`).toLocaleDateString('nl-NL', { month: 'short', year: 'numeric' })}</span> : null}
             </span>
             {uitleg && <span className="u">{uitleg}</span>}
+            <span className="testlabels">
+              <span className={`testlabel${bekeken ? ' bekeken' : ''}`}>{bekeken ? '✓ Bekeken door Nestje' : 'Opgegeven'}</span>
+              {link && (
+                <a className="testlabel link" href={link} target="_blank" rel="noopener noreferrer nofollow">
+                  Bekijk in {registerNaam(link)} ↗
+                </a>
+              )}
+            </span>
           </li>
         );
       })}

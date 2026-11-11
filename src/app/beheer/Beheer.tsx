@@ -104,6 +104,11 @@ export default function Beheer({
       ...kittens.flatMap((k) => k.kitten_photos.map((f) => f.storage_path)),
     ];
     if (paden.length) await supabase.storage.from(CONFIG.fotoBucket).remove(paden);
+    // Uitslagen van gezondheidstesten die nog op controle wachten
+    const uitslagen = [...(nest.moeder_testen ?? []), ...(nest.vader_testen ?? [])]
+      .map((t) => t.bewijs)
+      .filter((p): p is string => Boolean(p));
+    if (uitslagen.length) await supabase.storage.from('testuitslagen').remove(uitslagen);
     const { error } = await supabase.from('nests').delete().eq('id', nest.id);
     if (error) return toast('Verwijderen lukte niet');
     router.push('/beheer');

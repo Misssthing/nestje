@@ -264,6 +264,33 @@ details.panel[open] summary { margin-bottom: 12px; }
 .oudertesten li .t { display: block; font-weight: 600; }
 .oudertesten li.goed .t { color: var(--free); }
 .oudertesten li .u { display: block; color: var(--muted); font-size: 13px; }
+.oudertesten li + li { margin-top: 10px; }
+.oudertesten li .d { font-weight: 400; color: var(--muted); }
+.testlabels { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.testlabel { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.2; padding: 4px 9px; border-radius: 999px; background: var(--bg); color: var(--muted); text-decoration: none; }
+.testlabel.bekeken { background: var(--free-bg); color: var(--free); }
+.testlabel.link { background: transparent; border: 1px solid currentColor; color: var(--free); }
+.testlabel.link:hover { background: var(--free-bg); }
+.beide-getest { display: inline-block; margin: -6px 0 14px; padding: 6px 12px; border-radius: 999px; background: var(--free-bg); color: var(--free); font-weight: 700; font-size: 14px; }
+
+/* Beheer: testen met registerlink en uitslag */
+.testblok { padding: 10px 0 12px; border-bottom: 1px solid var(--line, #E8E4DA); }
+.testblok:last-of-type { border-bottom: 0; }
+.testextra { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+.testextra input[type='url'] { flex: 1; min-width: 0; }
+.uploadknop { white-space: nowrap; cursor: pointer; }
+.uploadknop.bezig { opacity: .6; pointer-events: none; }
+.teststand { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+.teststand.bekeken { color: var(--free); font-weight: 600; }
+.teststand.wacht { color: var(--opt); }
+.teststand.afgekeurd { color: #A33A2B; }
+@media (max-width: 520px) { .testextra { flex-direction: column; align-items: stretch; } .uploadknop { text-align: center; } }
+
+/* Controle: testuitslagen */
+.ctl-uitslag { border-top: 1px solid var(--line, #E8E4DA); margin-top: 14px; padding-top: 12px; }
+.ctl-uitslag-wat { margin: 0 0 8px; }
+.ctl-uitslag-foto { display: block; max-width: 100%; max-height: 420px; border-radius: 10px; border: 1px solid var(--line, #E8E4DA); }
+.ctl-uitslag textarea { width: 100%; margin: 8px 0; }
 .letop ul { margin: 0 0 10px; padding-left: 20px; }
 .letop li + li { margin-top: 6px; }
 .labelchip { display: inline-block; margin-bottom: 8px; }

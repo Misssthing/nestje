@@ -3,10 +3,11 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { fotoUrl } from '@/lib/config';
 import { isAdmin } from '@/lib/controle';
-import { aftelling, datumNL, rasTekst } from '@/lib/nest';
+import { aftelling, datumNL, maandJaarNL, rasTekst } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, verkoperEmail } from '@/lib/wachtlijst/server';
-import { keurAf, keurGoed, zetCattery } from './acties';
+import { beoordeelUitslag, keurAf, keurGoed, zetCattery } from './acties';
+import type { TestMetBewijs } from '@/lib/testen';
 import RedenVeld from './RedenVeld';
 
 export const metadata: Metadata = { title: 'Controle', robots: { index: false } };
@@ -122,6 +123,7 @@ export default async function Controle() {
     };
   };
   const { data: gc } = await db.from('catteries_gecontroleerd').select('owner_id, cattery');
+  const uitslagen = await haalUitslagen();
   const gecontroleerd = (r: Rij) =>
     Boolean(r.cattery && (gc ?? []).some((g) => g.owner_id === r.owner_id && g.cattery.trim().toLowerCase() === r.cattery!.trim().toLowerCase()));
 
@@ -136,6 +138,19 @@ export default async function Controle() {
           Nestjes die in het overzicht willen. Keur goed of vraag om een aanpassing; de verkoper krijgt in beide gevallen een mail.
         </p>
       </section>
+
+      {uitslagen.length > 0 && (
+        <section id="testuitslagen" style={{ marginBottom: 28 }}>
+          <h2 className="kop2">Testuitslagen om te bekijken ({uitslagen.reduce((n, u) => n + u.testen.length, 0)})</h2>
+          <p className="hint">
+            Kijk of de uitslag hoort bij de juiste kat en klopt met wat de verkoper invulde. Na Klopt of Klopt niet wordt het bestand
+            meteen verwijderd. Bij Klopt niet krijgt de verkoper een mail.
+          </p>
+          <div className="lijst">
+            {uitslagen.map((u) => <UitslagKaart key={u.id} u={u} />)}
+          </div>
+        </section>
+      )}
 
       <h2 className="kop2">Wacht op controle ({wachtend.length})</h2>
       {wachtend.length === 0 && <p className="hint">Er wacht niets. Mooi zo.</p>}
@@ -295,6 +310,104 @@ function Kaart({ r, i, gc: gcNaam, d }: {
           <button className="btn ghost klein" type="submit">Verstuur naar verkoper</button>
         </form>
       </details>
+    </article>
+  );
+}
+
+type UitslagTest = TestMetBewijs & { ouder: 'moeder' | 'vader'; url: string | null; pdf: boolean };
+type Uitslagen = {
+  id: string; slug: string; moeder_naam: string; vader_naam: string | null; email: string | null;
+  moeder_stamboomnr: string | null; vader_stamboomnr: string | null; testen: UitslagTest[];
+};
+
+/** Nestjes met geüploade uitslagen die nog bekeken moeten worden, met een tijdelijke link naar elk bestand. */
+async function haalUitslagen(): Promise<Uitslagen[]> {
+  const db = adminClient();
+  const wacht = [{ status: 'wacht' }];
+  const kolommen = 'id, slug, owner_id, moeder_naam, vader_naam, moeder_stamboomnr, vader_stamboomnr, moeder_testen, vader_testen';
+  type R = Omit<Uitslagen, 'testen' | 'email'> & { owner_id: string; moeder_testen: TestMetBewijs[] | null; vader_testen: TestMetBewijs[] | null };
+  const [m, v] = await Promise.all([
+    db.from('nests').select(kolommen).contains('moeder_testen', wacht).returns<R[]>(),
+    db.from('nests').select(kolommen).contains('vader_testen', wacht).returns<R[]>(),
+  ]);
+  const rijen = [...(m.data ?? []), ...(v.data ?? [])].filter((r, i, a) => a.findIndex((x) => x.id === r.id) === i);
+  return Promise.all(
+    rijen.map(async (r) => {
+      const open = [
+        ...(r.moeder_testen ?? []).map((t) => ({ ...t, ouder: 'moeder' as const })),
+        ...(r.vader_testen ?? []).map((t) => ({ ...t, ouder: 'vader' as const })),
+      ].filter((t) => t.status === 'wacht' && t.bewijs);
+      const testen = await Promise.all(
+        open.map(async (t) => {
+          const { data } = await db.storage.from('testuitslagen').createSignedUrl(t.bewijs!, 3600);
+          return { ...t, url: data?.signedUrl ?? null, pdf: /\.pdf$/i.test(t.bewijs!) };
+        }),
+      );
+      return {
+        id: r.id, slug: r.slug, moeder_naam: r.moeder_naam, vader_naam: r.vader_naam,
+        moeder_stamboomnr: r.moeder_stamboomnr, vader_stamboomnr: r.vader_stamboomnr,
+        email: await verkoperEmail(r.owner_id), testen,
+      };
+    }),
+  );
+}
+
+function UitslagKaart({ u }: { u: Uitslagen }) {
+  return (
+    <article className="panel ctl-kaart">
+      <h3 style={{ margin: 0 }}>Het nestje van {u.moeder_naam}</h3>
+      <p className="hint" style={{ margin: '2px 0 0' }}>
+        {u.email ?? 'onbekend'} · <a href={`/n/${u.slug}`} target="_blank" rel="noopener">bekijk pagina ↗</a>
+      </p>
+      {u.testen.map((t) => {
+        const kat = t.ouder === 'moeder' ? `Moeder ${u.moeder_naam}` : `Vader${u.vader_naam ? ` ${u.vader_naam}` : ''}`;
+        const nr = t.ouder === 'moeder' ? u.moeder_stamboomnr : u.vader_stamboomnr;
+        return (
+          <div className="ctl-uitslag" key={t.bewijs}>
+            <p className="ctl-uitslag-wat">
+              <strong>{kat}</strong>{nr ? ` · ${nr}` : ''}<br />
+              {t.test}: {t.uitslag.toLowerCase()}{t.datum ? ` · ${maandJaarNL(t.datum)}` : ''}
+            </p>
+            {t.url ? (
+              t.pdf ? (
+                <a className="btn ghost klein" href={t.url} target="_blank" rel="noopener noreferrer">Open pdf ↗</a>
+              ) : (
+                <a href={t.url} target="_blank" rel="noopener noreferrer">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.url} alt={`Uitslag ${t.test}`} className="ctl-uitslag-foto" />
+                </a>
+              )
+            ) : (
+              <p className="ctl-let-op">Bestand niet gevonden. Kies Klopt niet, dan kan de verkoper het opnieuw proberen.</p>
+            )}
+            {t.link && (
+              <p className="hint" style={{ margin: 0 }}>
+                Registerlink: <a href={t.link} target="_blank" rel="noopener noreferrer">{t.link} ↗</a>
+              </p>
+            )}
+            <div className="actions">
+              <form action={beoordeelUitslag}>
+                <input type="hidden" name="id" value={u.id} />
+                <input type="hidden" name="ouder" value={t.ouder} />
+                <input type="hidden" name="pad" value={t.bewijs} />
+                <input type="hidden" name="oordeel" value="klopt" />
+                <button className="btn primary klein" type="submit">✓ Klopt</button>
+              </form>
+            </div>
+            <details className="ctl-afkeur">
+              <summary>Klopt niet</summary>
+              <form action={beoordeelUitslag}>
+                <input type="hidden" name="id" value={u.id} />
+                <input type="hidden" name="ouder" value={t.ouder} />
+                <input type="hidden" name="pad" value={t.bewijs} />
+                <input type="hidden" name="oordeel" value="klopt_niet" />
+                <textarea name="reden" rows={2} maxLength={500} placeholder="Wat klopte er niet? (komt in de mail aan de verkoper, mag leeg)" />
+                <button className="btn ghost klein" type="submit">Klopt niet, mail verkoper</button>
+              </form>
+            </details>
+          </div>
+        );
+      })}
     </article>
   );
 }

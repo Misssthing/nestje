@@ -1,3 +1,4 @@
+import type { TestMetBewijs } from '@/lib/testen';
 export type Status = 'vrij' | 'optie' | 'gereserveerd' | 'verhuisd';
 export type Geslacht = 'kater' | 'poes';
 
@@ -33,8 +34,8 @@ export interface Nest {
   moeder_stamboomnr: string | null;
   vader_stamboomnr: string | null;
   moeder_chip?: string | null;
-  moeder_testen: { test: string; uitslag: string; datum: string }[];
-  vader_testen: { test: string; uitslag: string; datum: string }[];
+  moeder_testen: TestMetBewijs[];
+  vader_testen: TestMetBewijs[];
   /** Gezondheid en vertrouwen, per nestje (uitbreiding 28) */
   dierenarts?: boolean;
   enting1?: boolean;

@@ -360,3 +360,35 @@ export function mailAdminNieuwNestje(o: {
     ),
   };
 }
+
+export function mailAdminUitslag(o: { moeder: string; slug: string; aantal: number; verkoper: string }) {
+  return {
+    onderwerp: `Testuitslag om te bekijken: het nestje van ${o.moeder}`,
+    html: opmaak(
+      'Nieuwe testuitslag',
+      [
+        `Bij <strong>het nestje van ${esc(o.moeder)}</strong> ${o.aantal === 1 ? 'wacht 1 testuitslag' : `wachten ${o.aantal} testuitslagen`} op je controle.<br>Verkoper: ${esc(o.verkoper)}`,
+        `<a href="${url(`/n/${o.slug}`)}" style="color:#1F2A24;font-weight:600">Bekijk de pagina →</a>`,
+      ],
+      { tekst: 'Naar de controle', href: url('/beheer/controle#testuitslagen') },
+    ),
+  };
+}
+
+export function mailUitslagKloptNiet(o: { moeder: string; nestId: string; test: string; ouder: string; reden: string }) {
+  return {
+    onderwerp: `Over de testuitslag ${o.test} (${o.ouder})`,
+    html: opmaak(
+      'De uitslag klopte niet helemaal',
+      [
+        `We hebben de uitslag van <strong>${esc(o.test)}</strong> van de ${esc(o.ouder)} bij het nestje van ${esc(o.moeder)} bekeken. Hij klopte niet met wat je had ingevuld.`,
+        o.reden
+          ? `<span style="display:block;background:#FBE9CF;border-radius:12px;padding:12px 14px">${esc(o.reden).replace(/\n/g, '<br>')}</span>`
+          : '',
+        'Het bestand hebben we verwijderd. Pas de test aan of voeg een andere uitslag toe, dan kijken we opnieuw.',
+      ].filter(Boolean),
+      { tekst: 'Naar je beheer', href: url(`/beheer/${o.nestId}`) },
+      'Vragen? Beantwoord deze mail.',
+    ),
+  };
+}

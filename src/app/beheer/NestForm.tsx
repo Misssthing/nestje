@@ -4,9 +4,10 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   MAX_DAGEN_VOORUIT, nestjeMelding, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, toonNummer,
-  stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom, type OuderTest,
+  stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
+import { veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import type { Nest } from '@/lib/types';
 
 type Props = {
@@ -42,8 +43,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   const [getest] = useState<boolean | null>(nest.ouders_getest);
   const [geschat, setGeschat] = useState<boolean>(nest.geboortedatum_geschat ?? false);
   const [soort, setSoort] = useState<'eigen' | 'vondeling'>(nest.soort ?? 'eigen');
-  const [mTesten, setMTesten] = useState<OuderTest[]>(nest.moeder_testen ?? []);
-  const [vTesten, setVTesten] = useState<OuderTest[]>(nest.vader_testen ?? []);
+  const [mTesten, setMTesten] = useState<TestMetBewijs[]>(nest.moeder_testen ?? []);
+  const [vTesten, setVTesten] = useState<TestMetBewijs[]>(nest.vader_testen ?? []);
   const [aandacht, setAandacht] = useState<string[]>([]);
   const [fout, setFout] = useState('');
   const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
@@ -111,8 +112,13 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       if (m && va && m.replace(/\s/g, '').toLowerCase() === va.replace(/\s/g, '').toLowerCase())
         return stop('De stamboomnummers van moeder en vader zijn hetzelfde. Elke kat heeft een eigen nummer.');
     }
-    const schoon = (t: OuderTest[]) =>
-      t.filter((x) => x.test.trim()).map((x) => ({ test: x.test.trim(), uitslag: x.uitslag, datum: x.datum }));
+    // Registerlink, uitslag en de controle door Nestje blijven bewaard (de database bewaakt wie wat mag zetten)
+    const schoon = (t: TestMetBewijs[]) =>
+      t.filter((x) => x.test.trim()).map((x) => {
+        const { link, ...rest } = x;
+        const goed = veiligeLink(link);
+        return { ...rest, test: x.test.trim(), ...(goed ? { link: goed } : {}) };
+      });
     const mT = schoon(mTesten);
     const vT = schoon(vTesten);
 
@@ -431,9 +437,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 </details>
               </div>
             )}
-            <TestenLijst titel="Testen moeder (optioneel)" ras={v.moeder_ras} testen={mTesten} onChange={setMTesten} />
+            <TestenLijst titel="Testen moeder (optioneel)" ras={v.moeder_ras} testen={mTesten} onChange={setMTesten} nestId={nest.id} supabase={supabase} />
             {(v.vader_naam.trim() || stamboom === true) && (
-              <TestenLijst titel="Testen vader (optioneel)" ras={v.vader_ras || v.moeder_ras} testen={vTesten} onChange={setVTesten} />
+              <TestenLijst titel="Testen vader (optioneel)" ras={v.vader_ras || v.moeder_ras} testen={vTesten} onChange={setVTesten} nestId={nest.id} supabase={supabase} />
             )}
             {mTesten.length + vTesten.length === 0 && getest && v.ouders_test_info && (
               <p className="hint">Eerder ingevuld: getest op {v.ouders_test_info}. Zet de testen hierboven per ouder, dan zien kopers ook de uitslag.</p>

@@ -22,6 +22,17 @@ function overzichtLabel(n: NestRij) {
   return { tekst: '✓ In het overzicht', aan: true };
 }
 
+/** Aantal geüploade testuitslagen dat nog op de beheerder wacht. */
+async function aantalUitslagen() {
+  const db = adminClient();
+  const wacht = [{ status: 'wacht' }];
+  const [m, v] = await Promise.all([
+    db.from('nests').select('id', { count: 'exact', head: true }).contains('moeder_testen', wacht),
+    db.from('nests').select('id', { count: 'exact', head: true }).contains('vader_testen', wacht),
+  ]);
+  return (m.count ?? 0) + (v.count ?? 0);
+}
+
 export default async function Overzicht() {
   const supabase = await createClient();
   const {
@@ -48,6 +59,7 @@ export default async function Overzicht() {
         .from('nests').select('id', { count: 'exact', head: true })
         .eq('controle_status', 'wacht').eq('in_overzicht', true).eq('afgerond', false)
     : { count: 0 };
+  const uitslagen = admin ? await aantalUitslagen() : 0;
 
   if (!nesten.length && !admin) return <NieuwNestje eerste />;
 
@@ -68,8 +80,11 @@ export default async function Overzicht() {
         <Link href="/beheer/controle" className="ctl-melding">
           <strong>Controle</strong>
           <span>
-            {teControleren
-              ? `${teControleren} ${teControleren === 1 ? 'nestje wacht' : 'nestjes wachten'} op controle →`
+            {teControleren || uitslagen
+              ? `${[
+                  teControleren ? `${teControleren} ${teControleren === 1 ? 'nestje' : 'nestjes'}` : '',
+                  uitslagen ? `${uitslagen} ${uitslagen === 1 ? 'testuitslag' : 'testuitslagen'}` : '',
+                ].filter(Boolean).join(' en ')} te bekijken →`
               : 'Niets te controleren →'}
           </span>
         </Link>
