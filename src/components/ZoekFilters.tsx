@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PROVINCIES, RASSEN, rasDelen } from '@/lib/nest';
+import { PROVINCIES, RASSEN, RASSEN_ALGEMEEN, rasDelen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 
 export const SOORTEN: Record<string, string> = {
@@ -54,6 +54,9 @@ export default async function ZoekFilters({
   }
   const metNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) > 0);
   const zonderNestjes = rassenFilter.filter((r) => (aantalPerRas.get(r) ?? 0) === 0);
+  const algemeen = new Set(RASSEN_ALGEMEEN.map((r) => r.toLowerCase()));
+  const zonderStamboom = zonderNestjes.filter((r) => algemeen.has(r.toLowerCase()));
+  const andereRassen = zonderNestjes.filter((r) => !algemeen.has(r.toLowerCase()));
 
   const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier);
 
@@ -75,8 +78,13 @@ export default async function ZoekFilters({
               ))}
             </optgroup>
           )}
-          <optgroup label="Andere rassen">
-            {zonderNestjes.map((r) => <option key={r} value={r}>{r}</option>)}
+          {zonderStamboom.length > 0 && (
+            <optgroup label="Zonder stamboom">
+              {zonderStamboom.map((r) => <option key={r} value={r}>{r}</option>)}
+            </optgroup>
+          )}
+          <optgroup label="Rassen met stamboom">
+            {andereRassen.map((r) => <option key={r} value={r}>{r}</option>)}
           </optgroup>
         </select>
       </label>

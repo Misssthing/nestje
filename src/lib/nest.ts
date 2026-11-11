@@ -79,14 +79,21 @@ export const PROVINCIES = [
   'Noord-Brabant', 'Noord-Holland', 'Overijssel', 'Utrecht', 'Zeeland', 'Zuid-Holland', 'België',
 ] as const;
 
-export const RASSEN = [
-  'Huiskat', 'Kruising', 'Europese korthaar', 'Brits korthaar', 'Brits langhaar', 'Maine Coon', 'Ragdoll',
-  'Noorse boskat', 'Siberische kat', 'Bengaal', 'Perzisch', 'Exotic', 'Siamees', 'Oosterse korthaar',
-  'Abessijn', 'Somali', 'Heilige Birmaan', 'Russisch blauw', 'Devon rex', 'Burmees',
-  'Savannah', 'Cornish rex', 'Selkirk rex', 'Ocicat', 'Turkse angora', 'Turkse van', 'Neva Masquerade',
-  'Tonkinees', 'Balinees', 'Oosterse langhaar', 'Chartreux', 'Korat', 'Egyptische mau', 'Burmilla',
-  'Ragamuffin', 'Amerikaanse korthaar', 'Singapura', 'LaPerm',
+/** Zonder stamboom: deze drie mag iedereen kiezen. */
+export const RASSEN_ALGEMEEN = ['Huiskat', 'Kruising', 'Europese korthaar'];
+
+/** Rassen met stamboom, op alfabet. Naaktkatten en katten met vouworen staan er bewust niet in (fokverbod). */
+export const RASSEN_STAMBOOM = [
+  'Abessijn', 'Amerikaanse korthaar', 'Asian', 'Australian Mist', 'Balinees', 'Bengaal', 'Bombay',
+  'Brits korthaar', 'Brits langhaar', 'Burmees', 'Burmilla', 'Chartreux', 'Cornish rex', 'Devon rex',
+  'Egyptische mau', 'Exotic', 'Havana', 'Heilige Birmaan', 'Japanse bobtail', 'Khao Manee', 'Korat',
+  'Kurilen bobtail', 'LaPerm', 'Maine Coon', 'Nebelung', 'Neva Masquerade', 'Noorse boskat', 'Ocicat',
+  'Oosterse korthaar', 'Oosterse langhaar', 'Perzisch', 'Ragamuffin', 'Ragdoll', 'Russisch blauw', 'Savannah',
+  'Selkirk rex', 'Seychellois', 'Siamees', 'Siberische kat', 'Singapura', 'Snowshoe', 'Sokoke', 'Somali', 'Thai',
+  'Tiffanie', 'Tonkinees', 'Toyger', 'Turkse angora', 'Turkse van',
 ];
+
+export const RASSEN = [...RASSEN_ALGEMEEN, ...RASSEN_STAMBOOM];
 
 /** Afkortingen en andere schrijfwijzen die verkopers vaak intypen, met de nette rasnaam. Kleine letters. */
 export const RAS_ALIASSEN: Record<string, string> = {
@@ -98,6 +105,10 @@ export const RAS_ALIASSEN: Record<string, string> = {
   pers: 'Perzisch', perzer: 'Perzisch', perser: 'Perzisch', 'perzische kat': 'Perzisch',
   sib: 'Siberische kat', siberian: 'Siberische kat', 'siberische boskat': 'Siberische kat', siberiër: 'Siberische kat',
   ragdol: 'Ragdoll', bengal: 'Bengaal', bengaalse: 'Bengaal', birmaan: 'Heilige Birmaan', 'sacred birman': 'Heilige Birmaan',
+  aziatische: 'Asian', 'aziatische korthaar': 'Asian', 'havana brown': 'Havana', 'japanese bobtail': 'Japanse bobtail',
+  'kurilian bobtail': 'Kurilen bobtail', 'khao manee': 'Khao Manee', siamese: 'Siamees', abyssinian: 'Abessijn',
+  'russian blue': 'Russisch blauw', 'turkish angora': 'Turkse angora', 'turkish van': 'Turkse van', burmese: 'Burmees',
+  'egyptian mau': 'Egyptische mau', 'american shorthair': 'Amerikaanse korthaar', 'neva masquarade': 'Neva Masquerade',
   'huis kat': 'Huiskat', 'gewone huiskat': 'Huiskat', 'russisch blauwe': 'Russisch blauw', okh: 'Oosterse korthaar',
 };
 
