@@ -11,6 +11,7 @@ import Artikelen from '@/components/Artikelen';
 import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
 import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
+import { RAS_ARTIKEL_URL, rasUitleg } from '@/lib/rasuitleg';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,6 +68,9 @@ export default async function Overzicht({ searchParams }: Props) {
     return !a.verwacht && a.wekenTeGaan <= 4;
   });
   const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier);
+  const uitleg = ras ? rasUitleg(ras) : null;
+  const artikel = metUtm(RAS_ARTIKEL_URL, 'ras-uitleg');
+  const artikelLink = uitleg?.anker ? `${artikel}#${uitleg.anker}` : artikel;
 
   return (
     <main className="wrap breed">
@@ -109,9 +113,25 @@ export default async function Overzicht({ searchParams }: Props) {
             <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
             <span className="overzicht-links">
               <Link className="overzicht-tip" href="/catteries">Alle catteries →</Link>
-              <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
+              {uitleg ? (
+                <a className="overzicht-tip" href={artikelLink}>Waar let je op bij een raskitten? →</a>
+              ) : (
+                <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
+              )}
             </span>
           </div>
+      {uitleg && (
+        <section className="ras-uitleg" aria-labelledby="ras-uitleg-kop">
+          <h2 id="ras-uitleg-kop">Waarom alleen {ras}-kittens met stamboom?</h2>
+          <p>{uitleg.tekst}</p>
+          <div className="ras-uitleg-knoppen">
+            <a className="btn primary klein" href={artikelLink}>Lees waarom dit belangrijk is →</a>
+            <Link className="btn ghost klein" href={provincie ? `/kittens?provincie=${encodeURIComponent(provincie)}` : '/kittens'}>
+              {provincie ? `Alle kittens in ${provincie}` : 'Alle kittens'}
+            </Link>
+          </div>
+        </section>
+      )}
       {nesten.length ? (
         <div className="kaart-grid">
           {nesten.map((n) => (

@@ -694,3 +694,9 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .vk-feiten dt { color: var(--muted); }
 .vk-feiten dd { margin: 0; min-width: 0; }
 .mother .testhint { font-size: 13px; margin: 10px 0 0; }
+
+/* Overzicht: uitleg bij een gekozen ras */
+.ras-uitleg { background: var(--free-bg); border-radius: 16px; padding: 16px 18px; margin: 0 0 18px; }
+.ras-uitleg h2 { font-size: 18px; margin: 0 0 6px; color: var(--ink); }
+.ras-uitleg p { margin: 0 0 12px; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.ras-uitleg-knoppen { display: flex; flex-wrap: wrap; gap: 8px; }
