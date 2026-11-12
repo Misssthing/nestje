@@ -171,6 +171,19 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         </p>
       )}
 
+      <section className="panel wl-raspaneel" style={{ marginTop: 26 }}>
+        <h2>Niet gevonden wat je zoekt?</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
+          Krijg een mail zodra er een nieuw nestje met stamboom van jouw ras bij komt. Met één klik zet je je dan op de wachtlijst.
+        </p>
+        <Link
+          className="btn primary"
+          href={ras && RASLIJST_RASSEN.includes(ras) ? `/wachtlijst/ras?ras=${encodeURIComponent(ras)}` : '/wachtlijst/ras'}
+        >
+          {ras && RASLIJST_RASSEN.includes(ras) ? `Mail me bij een nieuw nestje ${ras}` : 'Mail me bij een nieuw nestje'}
+        </Link>
+      </section>
+
 
       {rasTekst && (
         <section className="rastekst" aria-labelledby="rastekst-kop">
@@ -218,18 +231,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
 
       <Artikelen titel="Over katten en kittens" plek="overzicht-artikelen" />
 
-      <section className="panel wl-raspaneel" style={{ marginTop: 26 }}>
-        <h2>Niet gevonden wat je zoekt?</h2>
-        <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
-          Krijg een mail zodra er een nieuw nestje met stamboom van jouw ras bij komt. Met één klik zet je je dan op de wachtlijst.
-        </p>
-        <Link
-          className="btn primary"
-          href={ras && RASLIJST_RASSEN.includes(ras) ? `/wachtlijst/ras?ras=${encodeURIComponent(ras)}` : '/wachtlijst/ras'}
-        >
-          {ras && RASLIJST_RASSEN.includes(ras) ? `Mail me bij een nieuw nestje ${ras}` : 'Mail me bij een nieuw nestje'}
-        </Link>
-      </section>
+
 
       <section className="panel" style={{ marginTop: 16 }}>
         <h2>Heb je zelf een nestje?</h2>
