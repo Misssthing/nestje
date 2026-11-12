@@ -14,6 +14,7 @@ import { RAS_ARTIKEL_URL, rasUitleg } from '@/lib/rasuitleg';
 import { Suspense } from 'react';
 import { OnthoudOverzicht } from '@/components/Overzichtgeheugen';
 import { LANDINGS, landingVoor, type Landing } from '@/lib/landing';
+import { ALGEMENE_VRAGEN, rasTekstVoor } from '@/lib/rasteksten';
 
 
 export type Zoek = { q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string; geslacht?: string };
@@ -63,6 +64,34 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
   const artikel = metUtm(RAS_ARTIKEL_URL, 'ras-uitleg');
   const artikelLink = uitleg?.anker ? `${artikel}#${uitleg.anker}` : artikel;
 
+  const rasTekst = landing?.soort === 'ras' ? rasTekstVoor(landing.naam) : null;
+  const siteUrl = CONFIG.siteUrl;
+  const structuur = landing
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Kittens', item: `${siteUrl}/kittens` },
+            { '@type': 'ListItem', position: 2, name: landing.naam, item: `${siteUrl}/kittens/${landing.slug}` },
+          ],
+        },
+        ...(rasTekst
+          ? [
+              {
+                '@context': 'https://schema.org',
+                '@type': 'FAQPage',
+                mainEntity: [...rasTekst.vragen, ...ALGEMENE_VRAGEN].map((q) => ({
+                  '@type': 'Question',
+                  name: q.v,
+                  acceptedAnswer: { '@type': 'Answer', text: q.a },
+                })),
+              },
+            ]
+          : []),
+      ]
+    : null;
+
   return (
     <main className="wrap breed">
       <Suspense fallback={null}>
@@ -73,6 +102,11 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         <AccountKnop metNieuw />
       </div>
 
+      {landing && (
+        <nav className="kruimel" aria-label="Kruimelpad">
+          <Link href="/kittens">Kittens</Link> <span aria-hidden="true">›</span> <span>{landing.naam}</span>
+        </nav>
+      )}
       <section className="kop-hero">
         <picture>
           <source media="(max-width: 700px)" srcSet="/kittens-header-800.jpg" />
@@ -141,6 +175,34 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         </p>
       )}
 
+
+      {rasTekst && (
+        <section className="rastekst" aria-labelledby="rastekst-kop">
+          <h2 id="rastekst-kop">{rasTekst.kop}</h2>
+          {rasTekst.over.map((p) => <p key={p}>{p}</p>)}
+          <h3>{rasTekst.prijsKop}</h3>
+          <p>{rasTekst.prijs}</p>
+          <h3>{rasTekst.vragenKop}</h3>
+          <dl className="rastekst-vragen">
+            {rasTekst.vragen.map((q) => (
+              <div key={q.v}><dt>{q.v}</dt><dd>{q.a}</dd></div>
+            ))}
+          </dl>
+          <h3>Veelgestelde vragen</h3>
+          <dl className="rastekst-vragen">
+            {ALGEMENE_VRAGEN.map((q) => (
+              <div key={q.v}><dt>{q.v}</dt><dd>{q.a}</dd></div>
+            ))}
+          </dl>
+        </section>
+      )}
+      {landing && (
+        <script
+          type="application/ld+json"
+          // Voor Google: kruimelpad en veelgestelde vragen
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuur).replace(/</g, '\\u003c') }}
+        />
+      )}
 
       <section className="zoeklinks" aria-labelledby="zoeklinks-kop">
         <h2 id="zoeklinks-kop">Kittens zoeken per ras of provincie</h2>
