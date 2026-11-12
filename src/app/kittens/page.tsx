@@ -16,13 +16,13 @@ import { RAS_ARTIKEL_URL, rasUitleg } from '@/lib/rasuitleg';
 export const dynamic = 'force-dynamic';
 
 type Props = {
-  searchParams: Promise<{ q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string }>;
+  searchParams: Promise<{ q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string; geslacht?: string }>;
 };
 
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { q, ras, provincie, soort, vrij, binnen4 } = await searchParams;
-  const gefilterd = Boolean(q || ras || provincie || soort || vrij || binnen4);
+  const { q, ras, provincie, soort, vrij, binnen4, geslacht } = await searchParams;
+  const gefilterd = Boolean(q || ras || provincie || soort || vrij || binnen4 || geslacht);
   return {
     title: 'Kittens te koop',
     description:
@@ -41,6 +41,7 @@ export default async function Overzicht({ searchParams }: Props) {
   const zoekterm = (sp.q ?? '').replace(/[%,()*:]/g, ' ').trim().slice(0, 40);
   const alleenVrij = sp.vrij === '1';
   const binnenVier = sp.binnen4 === '1';
+  const geslacht = sp.geslacht === 'kater' || sp.geslacht === 'poes' ? sp.geslacht : '';
   const soort = soortParam && soortParam in SOORTEN ? soortParam : '';
   const ras = rasParam && rasParam.length <= 60 ? rasParam : '';
   const provincie = provParam && (PROVINCIES as readonly string[]).includes(provParam) ? provParam : '';
@@ -57,6 +58,9 @@ export default async function Overzicht({ searchParams }: Props) {
     );
   }
   if (alleenVrij) query = query.gt('vrij', 0);
+  // Kater of poes: alleen nestjes met een vrije kater of poes
+  if (geslacht === 'kater') query = query.gt('vrij_katers', 0);
+  if (geslacht === 'poes') query = query.gt('vrij_poezen', 0);
   const { data } = await query.returns<OverzichtNest[]>();
   const rasGezocht = ras.toLowerCase();
   const nesten = (data ?? []).filter((n) => {
@@ -67,7 +71,7 @@ export default async function Overzicht({ searchParams }: Props) {
     const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
     return !a.verwacht && a.wekenTeGaan <= 4;
   });
-  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier);
+  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || geslacht);
   const uitleg = ras ? rasUitleg(ras) : null;
   const artikel = metUtm(RAS_ARTIKEL_URL, 'ras-uitleg');
   const artikelLink = uitleg?.anker ? `${artikel}#${uitleg.anker}` : artikel;
@@ -105,6 +109,7 @@ export default async function Overzicht({ searchParams }: Props) {
             soort={soort}
             alleenVrij={alleenVrij}
             binnenVier={binnenVier}
+            geslacht={geslacht}
           />
         </aside>
 

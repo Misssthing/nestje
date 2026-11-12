@@ -15,6 +15,7 @@ type Props = {
   soort?: string;
   alleenVrij?: boolean;
   binnenVier?: boolean;
+  geslacht?: string;
 };
 
 /** Zoek- en filterformulier voor het overzicht. Verstuurt altijd naar /kittens. */
@@ -25,6 +26,7 @@ export default async function ZoekFilters({
   soort = '',
   alleenVrij = false,
   binnenVier = false,
+  geslacht = '',
 }: Props) {
   const supabase = createPublicClient();
   // Rassen voor het filter: de vaste lijst, aangevuld met wat verkopers zelf hebben ingetypt.
@@ -58,7 +60,7 @@ export default async function ZoekFilters({
   const zonderStamboom = zonderNestjes.filter((r) => algemeen.has(r.toLowerCase()));
   const andereRassen = zonderNestjes.filter((r) => !algemeen.has(r.toLowerCase()));
 
-  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier);
+  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || geslacht);
 
   return (
     <form className="zoekfilters" method="get" action="/kittens">
@@ -86,6 +88,14 @@ export default async function ZoekFilters({
           <optgroup label="Rassen met stamboom">
             {andereRassen.map((r) => <option key={r} value={r}>{r}</option>)}
           </optgroup>
+        </select>
+      </label>
+      <label className="veld">
+        <span>Kater of poes</span>
+        <select name="geslacht" defaultValue={geslacht}>
+          <option value="">Maakt niet uit</option>
+          <option value="kater">♂ Kater (nog vrij)</option>
+          <option value="poes">♀ Poes (nog vrij)</option>
         </select>
       </label>
       <label className="veld">
