@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { landingVoor } from '@/lib/landing';
 import OverzichtPagina, { type Zoek } from './OverzichtPagina';
 
@@ -29,5 +30,17 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 
 export default async function Overzicht({ searchParams }: Props) {
-  return OverzichtPagina({ sp: await searchParams });
+  const sp = await searchParams;
+  // Alleen een ras of alleen een provincie gekozen? Dan naar de vaste pagina, bijv. /kittens/brits-korthaar
+  const leeg = (v?: string) => !v || !v.trim();
+  const rest = leeg(sp.q) && leeg(sp.soort) && leeg(sp.vrij) && leeg(sp.binnen4) && leeg(sp.geslacht);
+  if (rest && !leeg(sp.ras) && leeg(sp.provincie)) {
+    const l = landingVoor('ras', sp.ras!.trim());
+    if (l) redirect(`/kittens/${l.slug}`);
+  }
+  if (rest && !leeg(sp.provincie) && leeg(sp.ras)) {
+    const l = landingVoor('provincie', sp.provincie!.trim());
+    if (l) redirect(`/kittens/${l.slug}`);
+  }
+  return OverzichtPagina({ sp });
 }

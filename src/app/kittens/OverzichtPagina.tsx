@@ -64,7 +64,8 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
   const artikel = metUtm(RAS_ARTIKEL_URL, 'ras-uitleg');
   const artikelLink = uitleg?.anker ? `${artikel}#${uitleg.anker}` : artikel;
 
-  const rasTekst = landing?.soort === 'ras' ? rasTekstVoor(landing.naam) : null;
+  // Tekst over het ras: op de vaste raspagina én als je via het filter op een ras zoekt (met nog andere filters erbij)
+  const rasTekst = landing?.soort === 'ras' ? rasTekstVoor(landing.naam) : ras ? rasTekstVoor(ras) : null;
   const siteUrl = CONFIG.siteUrl;
   const structuur = landing
     ? [
