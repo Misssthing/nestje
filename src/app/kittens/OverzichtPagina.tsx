@@ -144,11 +144,13 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
 
       <section className="zoeklinks" aria-labelledby="zoeklinks-kop">
         <h2 id="zoeklinks-kop">Kittens zoeken per ras of provincie</h2>
+        <h3>Per ras</h3>
         <div className="zoeklinks-rij">
           {RAS_LINKS.map((r) => landingVoor('ras', r)).filter((l): l is Landing => Boolean(l)).map((l) => (
             <Link key={l.slug} href={`/kittens/${l.slug}`} className="chipknop">{l.naam}</Link>
           ))}
         </div>
+        <h3>Per provincie</h3>
         <div className="zoeklinks-rij">
           {LANDINGS.filter((l) => l.soort === 'provincie').map((l) => (
             <Link key={l.slug} href={`/kittens/${l.slug}`} className="chipknop">{l.naam}</Link>
