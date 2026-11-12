@@ -438,12 +438,13 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 @media (hover: hover) and (pointer: fine) {
   .nkaart:hover { box-shadow: 0 10px 28px rgb(31 42 36 / .10); transform: translateY(-2px); }
 }
-.nkaart-media { position: relative; aspect-ratio: 1 / 1; background: var(--bg); }
-.nkaart-strook { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.nkaart-media { position: relative; aspect-ratio: 1 / 1; min-height: 0; overflow: hidden; background: var(--bg); flex: none; }
+.nkaart-strook { position: absolute; inset: 0; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
 .nkaart-strook::-webkit-scrollbar { display: none; }
-.nkaart-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; display: block; }
+.nkaart-slide { flex: 0 0 100%; height: 100%; min-width: 0; overflow: hidden; scroll-snap-align: start; display: block; }
+.nkaart-media > .nkaart-slide.leeg { position: absolute; inset: 0; }
 .nkaart-slide.leeg { background: linear-gradient(135deg, var(--free-bg), var(--opt-bg)); }
-.nkaart-slide img { width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.nkaart-slide img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
 .nkaart-pijl { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgb(255 255 255 / .92); color: #1F2A24; font-size: 24px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 8px rgb(0 0 0 / .18); opacity: 0; transition: opacity .15s; }
 .nkaart-pijl.links { left: 10px; }
 .nkaart-pijl.rechts { right: 10px; }
