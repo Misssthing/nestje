@@ -12,6 +12,8 @@ import { createPublicClient } from '@/lib/supabase/public';
 import type { OverzichtNest } from '@/lib/types';
 import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
 import { RAS_ARTIKEL_URL, rasUitleg } from '@/lib/rasuitleg';
+import { Suspense } from 'react';
+import { OnthoudOverzicht } from '@/components/Overzichtgeheugen';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,6 +80,9 @@ export default async function Overzicht({ searchParams }: Props) {
 
   return (
     <main className="wrap breed">
+      <Suspense fallback={null}>
+        <OnthoudOverzicht />
+      </Suspense>
       <div className="bar">
         <span className="brand" aria-hidden="true" />
         <AccountKnop metNieuw />

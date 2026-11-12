@@ -7,6 +7,7 @@ import KopieerLink from '@/components/KopieerLink';
 import AccountKnop from '@/components/AccountKnop';
 import EigenaarBalk from '@/components/EigenaarBalk';
 import Voet from '@/components/Voet';
+import { TerugNaarOverzicht } from '@/components/Overzichtgeheugen';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
@@ -156,9 +157,7 @@ export default async function NestjesPagina({ params }: Props) {
     <main className={inOverzicht ? 'wrap breed' : 'wrap'}>
       <div className="bar">
         {inOverzicht ? (
-          <Link href="/kittens" className="brand">
-            ← Alle kittens
-          </Link>
+          <TerugNaarOverzicht className="brand" />
         ) : (
           <Link href="/" className="brand">
             Nestje
