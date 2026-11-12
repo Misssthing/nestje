@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import KopieerLink from '@/components/KopieerLink';
 import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
-import { ORGANISATIES, schoonLink } from '@/lib/nest';
+import { schoonLink } from '@/lib/nest';
 import SocialIcoon from '@/components/SocialIcoon';
 import { createClient } from '@/lib/supabase/browser';
 import type { Profiel } from '@/lib/types';
@@ -62,7 +62,6 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const [instagram, setInstagram] = useState(profiel?.instagram ?? '');
   const [sinds, setSinds] = useState(profiel?.sinds_jaar ? String(profiel.sinds_jaar) : '');
   const [rassen, setRassen] = useState(profiel?.rassen ?? '');
-  const [vereniging, setVereniging] = useState(profiel?.vereniging ?? '');
   const [open, setOpen] = useState(Boolean(profiel?.zichtbaar));
   // Via de checklist (#profiel): openklappen en ernaartoe scrollen
   useEffect(() => {
@@ -114,7 +113,6 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
           instagram: i.url,
           sinds_jaar: jaar,
           rassen: rassen.trim() || null,
-          vereniging: vereniging || null,
         },
         { onConflict: 'owner_id' },
       )
@@ -201,24 +199,15 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
         <div className="paneelkop">
           <h3>Fokker of cattery <small className="opt">optioneel</small></h3>
           <p className="hint">
-            Fok je met stamboom? Dan helpt dit kopers om je te leren kennen. Je catterynaam en vereniging verschijnen vanzelf op je
-            profielpagina, met het label “Fokker · met stamboom”, zodra een van je nestjes de stamboomgegevens compleet heeft. Staat je
-            profielpagina aan en is dat nestje goedgekeurd, dan sta je ook op de pagina <a href="/catteries">Catteries</a>.
+            Fok je met stamboom? Je catterynaam en vereniging vul je in bij de stamboomgegevens van je nestje. Zijn die compleet en is
+            je nestje goedgekeurd, dan krijg je het label “Fokker · met stamboom” en sta je op de pagina{' '}
+            <a href="/catteries">Catteries</a>. Hieronder vertel je kopers nog iets meer over jezelf.
           </p>
         </div>
-        <div className="row stapel">
-          <label className="veld">
-            <span>Fokt sinds (jaar)</span>
-            <input inputMode="numeric" value={sinds} onChange={(e) => setSinds(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="Bijv. 2018" />
-          </label>
-          <label className="veld">
-            <span>Aangesloten bij</span>
-            <select value={vereniging} onChange={(e) => setVereniging(e.target.value)}>
-              <option value="">Geen of niet vermelden</option>
-              {ORGANISATIES.map((o) => <option key={o} value={o}>{o}</option>)}
-            </select>
-          </label>
-        </div>
+        <label className="veld">
+          <span>Fokt sinds (jaar)</span>
+          <input inputMode="numeric" value={sinds} onChange={(e) => setSinds(e.target.value.replace(/\D/g, '').slice(0, 4))} placeholder="Bijv. 2018" />
+        </label>
         <label className="veld">
           <span>Rassen</span>
           <input value={rassen} onChange={(e) => setRassen(e.target.value)} maxLength={120} placeholder="Bijv. Maine Coon, Noorse boskat" />
