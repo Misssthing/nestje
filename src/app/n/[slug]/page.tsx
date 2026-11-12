@@ -12,6 +12,7 @@ import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
 import { haalNestje } from './data';
+import { rasVan } from '@/lib/kaart';
 import { createPublicClient } from '@/lib/supabase/public';
 import { heeftBekekenTest, registerNaam, veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import { ALLE_VELDEN, GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/vertrouwen';
@@ -58,17 +59,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const titel = `Het nestje van ${nest.moeder_naam}`;
+  // Voor Google: waar mensen op zoeken, zoals "Brits korthaar kittens te koop in Zeist"
+  const rasNaam = rasVan(nest);
+  const plaats = nest.woonplaats ? ` in ${nest.woonplaats}` : '';
+  const zoekTitel =
+    nest.soort === 'vondeling'
+      ? `Kittens zoeken een thuis${plaats} · ${titel}`
+      : `${rasNaam ? `${rasNaam} kittens` : 'Kittens'} te koop${plaats} · ${titel}`;
   const beschrijving = a.verwacht
     ? `De kittens worden verwacht rond ${datumNL(a.geboren)}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. ` +
       `Nog ${dagen(a.dagenTotGeboorte)} te gaan.`
-    : `${aantalKittens(kittens.length)}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}, ` +
+    : `${aantalKittens(kittens.length)}${rasNaam ? ` (${rasNaam})` : ''}${nest.woonplaats ? ` in ${nest.woonplaats}` : ''}, ` +
       `${vrij} nog vrij. ` +
       (a.wekenTeGaan > 0
         ? `Over ${a.wekenTeGaan} ${a.wekenTeGaan === 1 ? 'week' : 'weken'} mogen ze verhuizen.`
         : 'Ze mogen nu verhuizen.');
 
   return {
-    title: titel,
+    title: zoekTitel,
     description: beschrijving,
     // Alleen in Google als de verkoper zelf koos voor het openbare overzicht (en het nestje nog loopt).
     robots: data.inOverzicht ? { index: true, follow: true } : { index: false, follow: true },
