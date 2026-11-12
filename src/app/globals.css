@@ -722,3 +722,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .rastekst-vragen > div:first-child { border-top: 0; padding-top: 4px; }
 .rastekst-vragen dt { font-weight: 700; margin-bottom: 4px; }
 .rastekst-vragen dd { margin: 0; color: var(--muted); line-height: 1.55; }
+
+/* Overzicht: link naar kopen-artikel in de kop en catteries in het zoekvak */
+.kop-hero-klein a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.zoek-catteries { justify-self: start; margin-top: 4px; text-decoration: none; }

@@ -451,7 +451,7 @@ export default async function NestjesPagina({ params }: Props) {
               <li>Betaal nooit vooruit aan iemand die je niet hebt ontmoet.</li>
             </ul>
             <p className="hint" style={{ marginBottom: 0 }}>
-              Meer tips: <a href={metUtm(CONFIG.kopenArtikelUrl, 'waar-let-je-op', nest.slug)}>een kitten kopen, hier let je op</a>.
+              Meer tips: <a href={metUtm(CONFIG.kopenArtikelUrl, 'waar-let-je-op', nest.slug)} target="_blank" rel="noopener">een kitten kopen, hier let je op ↗</a>.
               Lees ook de <Link href="/huisregels">huisregels van Nestje</Link>.
             </p>
           </section>
@@ -459,8 +459,8 @@ export default async function NestjesPagina({ params }: Props) {
           <section className="klaar">
             <h2>Klaar voor je kitten?</h2>
             <p>Van kattenbak tot krabpaal: lees wat je in huis wilt hebben voordat je kitten komt.</p>
-            <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)}>
-              Wat heb je nodig voor een kitten?
+            <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)} target="_blank" rel="noopener">
+              Wat heb je nodig voor een kitten? ↗
             </a>
           </section>
 

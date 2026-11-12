@@ -120,7 +120,10 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
             {landing?.intro ??
               'Vind jouw kitten bij hobbyverkopers en fokkers in Nederland en België. Je ziet meteen welke kittens nog vrij zijn en wanneer ze mogen verhuizen.'}
           </p>
-          <p className="kop-hero-klein">Kom altijd eerst kijken, bij de kittens én hun moeder.</p>
+          <p className="kop-hero-klein">
+            Kom altijd eerst kijken, bij de kittens én hun moeder.{' '}
+            <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')} target="_blank" rel="noopener">Waar let je op bij het kopen? ↗</a>
+          </p>
         </div>
       </section>
 
@@ -141,21 +144,13 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         <div className="overzicht-lijst">
           <div className="overzicht-kop">
             <p className="aantal">{nesten.length === 1 ? '1 nestje' : `${nesten.length} nestjes`}</p>
-            <span className="overzicht-links">
-              <Link className="overzicht-tip" href="/catteries">Alle catteries →</Link>
-              {uitleg ? (
-                <a className="overzicht-tip" href={artikelLink}>Waar let je op bij een raskitten? →</a>
-              ) : (
-                <a className="overzicht-tip" href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')}>Waar let je op bij het kopen? →</a>
-              )}
-            </span>
           </div>
       {uitleg && (
         <section className="ras-uitleg" aria-labelledby="ras-uitleg-kop">
           <h2 id="ras-uitleg-kop">Waarom alleen {ras}-kittens met stamboom?</h2>
           <p>{uitleg.tekst}</p>
           <div className="ras-uitleg-knoppen">
-            <a className="btn primary klein" href={artikelLink}>Lees waarom dit belangrijk is →</a>
+            <a className="btn primary klein" href={artikelLink} target="_blank" rel="noopener">Lees waarom dit belangrijk is ↗</a>
             <Link className="btn ghost klein" href={provincie ? `/kittens?provincie=${encodeURIComponent(provincie)}` : '/kittens'}>
               {provincie ? `Alle kittens in ${provincie}` : 'Alle kittens'}
             </Link>
@@ -243,7 +238,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         </p>
         <div className="actions">
           <Link className="btn primary" href="/login">Maak je nestjespagina</Link>
-          <a className="btn ghost" href={metUtm(CONFIG.starterslijstUrl, 'overzicht')}>Wat heb je nodig voor een kitten?</a>
+          <a className="btn ghost" href={metUtm(CONFIG.starterslijstUrl, 'overzicht')} target="_blank" rel="noopener">Wat heb je nodig voor een kitten? ↗</a>
         </div>
       </section>
 

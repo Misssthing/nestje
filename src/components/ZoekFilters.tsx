@@ -124,6 +124,7 @@ export default async function ZoekFilters({
         <button className="btn primary">Toon</button>
         {filtersActief && <Link href="/kittens" className="wisfilters">Wis filters</Link>}
       </div>
+      <Link href="/catteries" className="btn ghost klein breedveld zoek-catteries">Bekijk alle catteries →</Link>
     </form>
   );
 }
