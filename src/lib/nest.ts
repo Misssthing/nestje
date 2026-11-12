@@ -272,17 +272,18 @@ export function ouderLabel(naam: string | null | undefined, ras?: string | null,
 export type Verkoper = 'fokker' | 'particulier';
 
 /**
- * Fokker of particulier, afgeleid van wat de verkoper invult: een nestje met stamboom, catterynaam en
- * stamboomorganisatie is van een fokker. Vondelingen krijgen geen van beide (die hebben hun eigen label).
+ * Fokker of particulier, afgeleid van wat de verkoper invult: een nestje met stamboom, catterynaam,
+ * stamboomorganisatie en de naam van de vader is van een fokker (zelfde regel als het overzicht). Vondelingen krijgen geen van beide (die hebben hun eigen label).
  */
 export function verkoperVan(n: {
   soort?: string | null;
   stamboom?: boolean | null;
   cattery?: string | null;
   stamboom_organisatie?: string | null;
+  vader_naam?: string | null;
 }): Verkoper | null {
   if (n.soort === 'vondeling') return null;
-    if (n.stamboom === true && n.cattery?.trim() && n.stamboom_organisatie?.trim()) return 'fokker';
+  if (n.stamboom === true && n.cattery?.trim() && n.stamboom_organisatie?.trim() && n.vader_naam?.trim()) return 'fokker';
   if (n.stamboom === true) return null;
   return 'particulier';
 }

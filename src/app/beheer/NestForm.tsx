@@ -444,9 +444,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 </details>
               </div>
             )}
-            <TestenLijst titel="Testen moeder (optioneel)" ras={v.moeder_ras} testen={mTesten} onChange={setMTesten} nestId={nest.id} supabase={supabase} />
+            <TestenLijst titel="Testen moeder (optioneel)" ras={v.moeder_ras} testen={mTesten} onChange={setMTesten} />
             {(v.vader_naam.trim() || stamboom === true) && (
-              <TestenLijst titel="Testen vader (optioneel)" ras={v.vader_ras || v.moeder_ras} testen={vTesten} onChange={setVTesten} nestId={nest.id} supabase={supabase} />
+              <TestenLijst titel="Testen vader (optioneel)" ras={v.vader_ras || v.moeder_ras} testen={vTesten} onChange={setVTesten} />
             )}
             {mTesten.length + vTesten.length === 0 && getest && v.ouders_test_info && (
               <p className="hint">Eerder ingevuld: getest op {v.ouders_test_info}. Zet de testen hierboven per ouder met de uitslag. Voeg je ook een foto of pdf van de uitslag toe, dan krijg je het groene vinkje “Bekeken door Nestje”.</p>

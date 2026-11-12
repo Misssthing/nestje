@@ -153,4 +153,9 @@ export interface OverzichtNest {
   /** Nestfoto's en de eerste foto van elk kitten, maximaal 6 (om doorheen te swipen) */
   fotos?: string[] | null;
   cattery_gecontroleerd?: boolean;
+  /** Aantal vrije katers en poezen, en alle katers en poezen (kittens zonder geslacht tellen niet mee) */
+  vrij_katers?: number;
+  vrij_poezen?: number;
+  katers?: number;
+  poezen?: number;
 }

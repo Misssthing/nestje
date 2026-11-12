@@ -9,6 +9,13 @@ export function rasVan(n: Pick<OverzichtNest, 'moeder_ras' | 'vader_ras'>) {
   return delen.length ? delen.join(' × ') : null;
 }
 
+/** "♂ 1 ♀ 3": bij vrije kittens alleen de vrije, anders alle kittens. Leeg als geen geslacht bekend is. */
+export function geslachtTekst(n: Pick<OverzichtNest, 'vrij' | 'vrij_katers' | 'vrij_poezen' | 'katers' | 'poezen'>) {
+  const k = n.vrij > 0 ? n.vrij_katers ?? 0 : n.katers ?? 0;
+  const p = n.vrij > 0 ? n.vrij_poezen ?? 0 : n.poezen ?? 0;
+  return k + p > 0 ? `♂ ${k} ♀ ${p}` : '';
+}
+
 /** Van een rij uit het openbare overzicht naar de gegevens voor een fotokaart. */
 export function naarKaart(n: OverzichtNest): NestKaartData {
   const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
@@ -21,7 +28,8 @@ export function naarKaart(n: OverzichtNest): NestKaartData {
     label = `Verwacht over ${dagen(a.dagenTotGeboorte)}`;
     labelSoort = 'optie';
   } else if (n.vrij > 0) {
-    label = `${n.vrij} vrij · ${a.wekenTeGaan > 0 ? `nog ${a.wekenTeGaan} wk` : 'mag verhuizen'}`;
+    const g = geslachtTekst(n);
+    label = `${n.vrij} vrij${g ? ` (${g})` : ''} · ${a.wekenTeGaan > 0 ? `nog ${a.wekenTeGaan} wk` : 'mag verhuizen'}`;
   } else {
     label = `${n.optie} onder optie`;
     labelSoort = 'optie';
@@ -33,7 +41,12 @@ export function naarKaart(n: OverzichtNest): NestKaartData {
     label,
     labelSoort,
     regels: [
-      [a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens), ras, n.stamboom ? 'met stamboom' : ''].filter(Boolean).join(' · '),
+      [
+        a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens),
+        !a.verwacht && n.vrij === 0 ? geslachtTekst(n) : '',
+        ras,
+        n.stamboom ? 'met stamboom' : '',
+      ].filter(Boolean).join(' · '),
       [n.woonplaats, n.provincie].filter(Boolean).join(', '),
     ],
     prijs: n.prijs ? prijsNL(Number(n.prijs)) : null,
