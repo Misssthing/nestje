@@ -32,7 +32,6 @@ const HUISKAT: RasTekst = {
   over: [
     'Een huiskat heeft geen stamboom en is niet van één ras. Juist daardoor is elke huiskat anders: in kleur, vacht en karakter. Huiskatten zijn vaak sterk en gezond, en net zo lief als een raskat.',
     'Een kitten van een huiskat is meestal ook goedkoper. Let wel op dezelfde dingen als bij een raskitten: een gezonde moeder, een chip, de eerste enting en een verhuisleeftijd van minstens 12 weken.',
-    'De Europese korthaar lijkt veel op een gewone huiskat, maar is wel een erkend ras. Met een stamboom weet je welke ouders hij heeft. Zonder stamboom is het gewoon een lieve huiskat.',
   ],
   prijsKop: 'Wat kost een kitten van een huiskat?',
   prijs: 'Vaak tussen de €100 en €300. Daar zitten meestal de chip en de eerste enting bij.',
@@ -183,7 +182,21 @@ export const RASTEKSTEN: Record<string, RasTekst> = {
     ],
   },
   huiskat: HUISKAT,
-  'europese korthaar': HUISKAT,
+  'europese korthaar': {
+    kop: 'Over de Europese korthaar',
+    over: [
+      'De Europese korthaar lijkt veel op een gewone huiskat, maar is wel een erkend ras. Hij is stevig, middelgroot en heeft een korte, dichte vacht. Er zijn veel kleuren, zoals cyperse, rode, zwarte en blauwe katten.',
+      'Hij is sterk, slim en makkelijk in de omgang. Hij past zich goed aan, binnen én buiten. De vacht is makkelijk te verzorgen: af en toe borstelen is genoeg.',
+      'Met een stamboom weet je welke ouders en grootouders hij heeft. Zonder stamboom is het gewoon een lieve huiskat. Op Nestje mag je de naam Europese korthaar ook zonder stamboom gebruiken, omdat hij zo dicht bij de huiskat staat.',
+    ],
+    prijsKop: 'Wat kost een Europese korthaar kitten?',
+    prijs: 'Zonder stamboom vaak tussen de €100 en €300, net als een huiskat. Met stamboom is hij duurder, maar meestal goedkoper dan veel andere rassen.',
+    vragenKop: 'Vragen over de Europese korthaar',
+    vragen: [
+      { v: 'Wat is het verschil met een huiskat?', a: 'Aan de buitenkant vaak weinig. Een Europese korthaar met stamboom komt uit ouders die van hetzelfde ras zijn, en dat kun je nagaan.' },
+      { v: 'Is een Europese korthaar een gezonde kat?', a: 'Meestal wel. Het is een sterk ras met weinig erfelijke ziektes. Vraag wel altijd naar de chip, de entingen en de gezondheid van de moeder.' },
+    ],
+  },
 };
 
 export function rasTekstVoor(ras: string) {
