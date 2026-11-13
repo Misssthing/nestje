@@ -261,6 +261,22 @@ export function mailRasHerinnering(o: { naam: string; ras: string; token: string
 /** Rechtstreeks naar de wachtlijst van dit nestje in het beheer (klapt vanzelf open). */
 const beheerLink = (nestId: string) => url(`/beheer/${nestId}#wachtlijst`);
 
+export function mailVerkoperWachtlijstHerinnering(o: {
+  nestId: string; moeder: string; aantal: number; oudsteDagen: number;
+}) {
+  return {
+    onderwerp: `${o.aantal === 1 ? 'Iemand wacht' : `${o.aantal} mensen wachten`} op een reactie voor het nestje van ${o.moeder}`,
+    html: opmaak(
+      'Mensen wachten op je reactie',
+      [
+        `${o.aantal === 1 ? 'Er staat iemand' : `Er staan ${o.aantal} mensen`} op de wachtlijst voor het nestje van ${esc(o.moeder)}, en de oudste aanmelding is al ${o.oudsteDagen} dagen geleden.`,
+        'Niemand hoeft meteen een kitten aangeboden te krijgen, maar een kort teken van leven kan veel schelen. Kies in je beheer iemand uit de wachtlijst en bied een kitten aan, of laat gewoon weten hoe het ervoor staat.',
+      ],
+      { tekst: 'Naar de wachtlijst', href: url(`/beheer/${o.nestId}`) },
+    ),
+  };
+}
+
 export function mailVerkoperNieuweAanmelding(o: {
   nestId: string; moeder: string; naam: string; woonplaats: string;
   voorkeur_geslacht: string; voorkeur_vacht: string | null; motivatie: string | null;

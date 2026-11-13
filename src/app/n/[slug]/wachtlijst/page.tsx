@@ -36,6 +36,7 @@ export default async function WachtlijstNest({ params }: Props) {
       {open ? (
         <>
           <ul className="wl-uitleg">
+            <li>De verkoper kiest zelf wie een kitten krijgt aangeboden; dat kan dus even duren.</li>
             <li>Krijg je een kitten aangeboden, dan krijg je een mail en heb je 72 uur om ja of nee te zeggen.</li>
             <li>Zeg je nee, dan blijf je gewoon op de wachtlijst staan.</li>
             <li>In elke mail staat een link om je gegevens te wijzigen of je af te melden.</li>
