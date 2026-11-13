@@ -206,7 +206,7 @@ export function mailNestVol(o: {
 
 // ─── Mails aan kopers: raslijst ────────────────────────────────
 
-export function mailRasBevestigen(o: { naam: string; ras: string; token: string }) {
+export function mailRasBevestigen(o: { naam: string; ras: string; token: string; nieuwsbrief?: boolean }) {
   return {
     onderwerp: `Bevestig je aanmelding voor de raslijst ${o.ras}`,
     html: opmaak(
@@ -214,6 +214,7 @@ export function mailRasBevestigen(o: { naam: string; ras: string; token: string 
       [
         `Hoi ${esc(o.naam)},`,
         `Je wilt een mail krijgen als er een nieuw nestje ${esc(o.ras)} met stamboom op Nestje komt. Bevestig eerst dat dit jouw e-mailadres is.`,
+        ...(o.nieuwsbrief ? ['Je hebt ook aangegeven dat je de Nestje-nieuwsbrief wilt ontvangen. Met dezelfde knop bevestig je die aanmelding.'] : []),
       ],
       { tekst: 'Bevestig mijn aanmelding', href: url(`/wachtlijst/ras/${o.token}`) },
       'Heb je je niet aangemeld? Dan kun je deze mail negeren. Zonder bevestiging sturen we je niets meer.',
@@ -389,6 +390,23 @@ export function mailUitslagKloptNiet(o: { moeder: string; nestId: string; test: 
       ].filter(Boolean),
       { tekst: 'Naar je beheer', href: url(`/beheer/${o.nestId}`) },
       'Vragen? Beantwoord deze mail.',
+    ),
+  };
+}
+
+// ─── Nieuwsbrief ───────────────────────────────────────────────
+
+export function mailNieuwsbriefBevestigen(o: { naam: string | null; token: string }) {
+  return {
+    onderwerp: 'Bevestig je aanmelding voor de Nestje-nieuwsbrief',
+    html: opmaak(
+      'Wil je de nieuwsbrief ontvangen?',
+      [
+        o.naam ? `Hoi ${esc(o.naam)},` : 'Hoi,',
+        'Je hebt aangegeven dat je de nieuwsbrief van Nestje wilt ontvangen, met tips over kittens, zoals verzorging en tam maken. Bevestig dat even met de knop hieronder.',
+      ],
+      { tekst: 'Ja, stuur mij de nieuwsbrief', href: url(`/nieuwsbrief/${o.token}`) },
+      'Heb je dit niet aangevraagd? Dan kun je deze mail negeren. Zonder bevestiging sturen we je geen nieuwsbrief.',
     ),
   };
 }

@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import type { FormStaat } from './acties';
+import { NIEUWSBRIEF_VINKTEKST } from '@/lib/nieuwsbrief-tekst';
 
 type Waarden = {
   naam?: string; email?: string; woonplaats?: string;
@@ -19,9 +20,11 @@ type Props = {
   /** E-mailadres niet wijzigbaar (bij wijzigen van een bestaande aanmelding) */
   emailVast?: boolean;
   uitleg?: string;
+  /** Toon het vinkje voor de nieuwsbrief (alleen bij een nieuwe aanmelding) */
+  nieuwsbrief?: boolean;
 };
 
-export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, waarden = {}, emailVast, uitleg }: Props) {
+export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, waarden = {}, emailVast, uitleg, nieuwsbrief }: Props) {
   const [staat, verstuur, bezig] = useActionState(actie, {});
   const w = { ...waarden, ...(staat.waarden ?? {}) };
 
@@ -99,6 +102,14 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
           placeholder="Bijvoorbeeld: hoe je woont, of je andere huisdieren hebt, en of de kat naar buiten mag."
         />
       </label>
+
+      {nieuwsbrief && (
+        <label className="vink wl-nieuwsbrief">
+          {/* Staat bewust standaard uit: toestemming moet de koper zelf geven */}
+          <input type="checkbox" name="nieuwsbrief" value="ja" defaultChecked={staat.waarden?.nieuwsbrief === 'ja'} />
+          <span>{NIEUWSBRIEF_VINKTEKST}</span>
+        </label>
+      )}
 
       {uitleg && <p className="hint">{uitleg}</p>}
       {staat.fout && <p className="fout" role="alert">{staat.fout}</p>}

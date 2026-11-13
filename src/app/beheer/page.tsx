@@ -60,6 +60,11 @@ export default async function Overzicht() {
         .eq('controle_status', 'wacht').eq('in_overzicht', true).eq('afgerond', false)
     : { count: 0 };
   const uitslagen = admin ? await aantalUitslagen() : 0;
+  const { count: nieuwsbriefAantal } = admin
+    ? await adminClient()
+        .from('nieuwsbrief').select('id', { count: 'exact', head: true })
+        .not('bevestigd_op', 'is', null).is('afgemeld_op', null)
+    : { count: 0 };
 
   if (!nesten.length && !admin) return <NieuwNestje eerste />;
 
@@ -86,6 +91,17 @@ export default async function Overzicht() {
                   uitslagen ? `${uitslagen} ${uitslagen === 1 ? 'testuitslag' : 'testuitslagen'}` : '',
                 ].filter(Boolean).join(' en ')} te bekijken →`
               : 'Niets te controleren →'}
+          </span>
+        </Link>
+      )}
+
+      {admin && (
+        <Link href="/beheer/nieuwsbrief" className="ctl-melding">
+          <strong>Nieuwsbrief</strong>
+          <span>
+            {nieuwsbriefAantal
+              ? `${nieuwsbriefAantal} ${nieuwsbriefAantal === 1 ? 'aanmelding' : 'aanmeldingen'} →`
+              : 'Nog geen aanmeldingen →'}
           </span>
         </Link>
       )}

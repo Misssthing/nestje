@@ -49,6 +49,20 @@ export default function Privacy() {
         van WhatsApp.
       </p>
 
+      <p>
+        <strong>Van kopers op een wachtlijst:</strong> je naam, e-mailadres, woonplaats, je voorkeur en wat je over jezelf
+        invult. Meld je je aan voor de wachtlijst van een nestje, dan ziet die verkoper deze gegevens. Op de raslijst ziet geen
+        verkoper je gegevens, totdat je je zelf voor een nestje aanmeldt. We gebruiken je e-mailadres om je mails over de
+        wachtlijst te sturen. In elke mail staat een link om je gegevens te wijzigen of je af te melden.
+      </p>
+      <p>
+        <strong>Nieuwsbrief:</strong> alleen als je bij je aanmelding het vinkje voor de nieuwsbrief aanzet en dat daarna
+        bevestigt via de mail die je van ons krijgt, sturen we je de Nestje-nieuwsbrief met tips over kittens. We bewaren
+        daarvoor je e-mailadres, je naam, wanneer en met welke tekst je toestemming gaf, en wanneer je bevestigde. Je wachtlijst
+        en de nieuwsbrief staan los van elkaar: je kunt het ene hebben zonder het andere. Afmelden kan altijd, via de link
+        onderaan elke nieuwsbrief. Daarna bewaren we alleen je e-mailadres en de datum van afmelden, zodat we je niet opnieuw mailen.
+      </p>
+
       <h2>Wat openbaar is</h2>
       <p>
         Alles wat je op je nestjespagina zet, is te zien voor iedereen die de link heeft: woonplaats, geboortedatum, prijs, de
@@ -62,7 +76,8 @@ export default function Privacy() {
       <h2>Waarom we dit doen</h2>
       <p>
         We verwerken je gegevens om de dienst te leveren die je zelf aanvraagt (uitvoering van de overeenkomst, artikel 6 lid 1
-        sub b AVG) en om de dienst veilig en werkend te houden (gerechtvaardigd belang, artikel 6 lid 1 sub f AVG).
+        sub b AVG) en om de dienst veilig en werkend te houden (gerechtvaardigd belang, artikel 6 lid 1 sub f AVG). Voor de
+        nieuwsbrief vragen we je toestemming (artikel 6 lid 1 sub a AVG). Die kun je op elk moment intrekken.
       </p>
 
       <h2>Met wie we gegevens delen</h2>
@@ -78,7 +93,7 @@ export default function Privacy() {
           zonder cookies). Vercel kan gegevens verwerken in de Verenigde Staten; doorgifte
           gebeurt op basis van het EU-VS Data Privacy Framework en/of standaardcontractbepalingen.
         </li>
-        <li><strong>Brevo</strong>, een Frans bedrijf, voor het versturen van de inlogmails vanuit de Europese Unie.</li>
+        <li><strong>Brevo</strong>, een Frans bedrijf, voor het versturen van de inlogmails, de wachtlijstmails en de nieuwsbrief, vanuit de Europese Unie.</li>
       </ul>
       <p>Met deze partijen gelden verwerkersafspraken. We verkopen je gegevens niet en gebruiken ze niet voor advertenties.</p>
 

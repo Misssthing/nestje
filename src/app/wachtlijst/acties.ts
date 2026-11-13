@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { aanmeldenVoorNest, haalNestOpSlug, reageerOpAanbod, type WachtRij } from '@/lib/wachtlijst/acties';
 import { mailRasBevestigen, stuurMail } from '@/lib/wachtlijst/mail';
 import { adminClient, isBot, isUuid, leesAanmelding, RASLIJST_RASSEN } from '@/lib/wachtlijst/server';
+import { bevestigNieuwsbriefVoorEmail, nieuwsbriefAanvragen } from '@/lib/nieuwsbrief';
 
 export type FormStaat = {
   fout?: string;
@@ -19,7 +20,7 @@ const zonderEmail = (g: { naam: string; woonplaats: string; voorkeur_geslacht: s
 const terug = (f: FormData, fout: string): FormStaat => ({
   fout,
   waarden: Object.fromEntries(
-    ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'ras'].map((k) => [k, String(f.get(k) ?? '')]),
+    ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'ras', 'nieuwsbrief'].map((k) => [k, String(f.get(k) ?? '')]),
   ),
 });
 
@@ -33,6 +34,10 @@ export async function meldAanVoorNest(_: FormStaat, f: FormData): Promise<FormSt
   if (!nest) return terug(f, 'Dit nestje bestaat niet meer.');
   const r = await aanmeldenVoorNest(nest, gegevens);
   if (r.fout) return terug(f, r.fout);
+  // Nieuwsbrief: alleen met het vinkje aan. De koper krijgt een aparte mail om dit te bevestigen.
+  if (f.get('nieuwsbrief') === 'ja') {
+    await nieuwsbriefAanvragen({ email: gegevens.email, naam: gegevens.naam, bron: 'nestlijst' }, { stuurBevestiging: true });
+  }
   if (r.alBekend) return { klaar: `Je stond al op de wachtlijst voor het nestje van ${nest.moeder_naam}. Kijk in je mail voor de link naar je aanmelding.` };
   redirect(`/wachtlijst/${r.token}?nieuw=1`);
 }
@@ -85,7 +90,12 @@ export async function meldAanVoorRas(_: FormStaat, f: FormData): Promise<FormSta
   const { data: bestaand } = await db
     .from('wachtlijst_ras').select('id, token, bevestigd_op').eq('ras', ras).eq('email', gegevens.email)
     .maybeSingle<{ id: string; token: string; bevestigd_op: string | null }>();
+  const wilNieuwsbrief = f.get('nieuwsbrief') === 'ja';
   if (bestaand?.bevestigd_op) {
+    // E-mailadres is al bevestigd voor de raslijst; de nieuwsbrief krijgt dan een eigen bevestigingsmail.
+    if (wilNieuwsbrief) {
+      await nieuwsbriefAanvragen({ email: gegevens.email, naam: gegevens.naam, bron: 'raslijst' }, { stuurBevestiging: true });
+    }
     return { klaar: `Je staat al op de raslijst ${ras}. Je krijgt een mail zodra er een nieuw nestje bij komt.` };
   }
   let token = bestaand?.token;
@@ -96,7 +106,11 @@ export async function meldAanVoorRas(_: FormStaat, f: FormData): Promise<FormSta
     if (error || !data) return terug(f, 'Aanmelden lukte niet. Probeer het over een paar minuten opnieuw.');
     token = data.token;
   }
-  const m = mailRasBevestigen({ naam: gegevens.naam, ras, token: token! });
+  // Nieuwsbrief wordt meebevestigd zodra de koper de raslijst bevestigt: één mail, één klik.
+  if (wilNieuwsbrief) {
+    await nieuwsbriefAanvragen({ email: gegevens.email, naam: gegevens.naam, bron: 'raslijst' }, { stuurBevestiging: false });
+  }
+  const m = mailRasBevestigen({ naam: gegevens.naam, ras, token: token!, nieuwsbrief: wilNieuwsbrief });
   await stuurMail(gegevens.email, m.onderwerp, m.html);
   return { klaar };
 }
@@ -106,10 +120,14 @@ export async function bevestigOfVerlengRas(f: FormData) {
   const token = String(f.get('token') ?? '');
   if (!isUuid(token)) return;
   const nu = new Date();
-  await adminClient()
+  const { data: rij } = await adminClient()
     .from('wachtlijst_ras')
     .update({ bevestigd_op: nu.toISOString(), geldig_tot: new Date(nu.getTime() + 365 * 864e5).toISOString(), herinnerd_op: null })
-    .eq('token', token);
+    .eq('token', token)
+    .select('email')
+    .maybeSingle<{ email: string }>();
+  // Had de koper bij aanmelden ook de nieuwsbrief aangevinkt? Dan is die nu ook bevestigd.
+  if (rij?.email) await bevestigNieuwsbriefVoorEmail(rij.email);
   redirect(`/wachtlijst/ras/${token}?bevestigd=1`);
 }
 

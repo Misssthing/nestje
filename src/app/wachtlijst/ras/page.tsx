@@ -39,6 +39,7 @@ export default async function Raslijst({ searchParams }: Props) {
         rassen={RASLIJST_RASSEN}
         waarden={{ ras: gekozen }}
         knop="Aanmelden"
+        nieuwsbrief
         uitleg="Je krijgt eerst een mail om je e-mailadres te bevestigen. Wat je bij Voorkeur en Iets over jezelf invult, sturen we mee als je je voor een nestje aanmeldt."
       />
       <p className="hint"><Link href="/privacy">Privacyverklaring</Link></p>

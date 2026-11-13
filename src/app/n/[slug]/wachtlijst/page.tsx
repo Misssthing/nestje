@@ -44,7 +44,8 @@ export default async function WachtlijstNest({ params }: Props) {
             actie={meldAanVoorNest}
             verborgen={{ slug: nest.slug }}
             knop="Aanmelden"
-            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult. Lees ook onze privacyverklaring."
+            nieuwsbrief
+            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult, maar niet of je de nieuwsbrief wilt. Lees ook onze privacyverklaring."
           />
           <p className="hint">
             <Link href="/privacy">Privacyverklaring</Link> · <Link href="/huisregels">Huisregels</Link>

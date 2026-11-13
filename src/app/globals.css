@@ -393,6 +393,8 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 /* ─── Wachtlijst (uitbreiding 19) ─── */
 .wl-form { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
 .wl-form .btn { width: auto; align-self: flex-start; margin-top: 6px; padding-inline: 20px; }
+.wl-nieuwsbrief { align-items: flex-start; margin: 4px 0 10px; line-height: 1.4; }
+.wl-nieuwsbrief input[type="checkbox"] { margin-top: 1px; flex: none; }
 .wl-val { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .wl-voorkeur { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
 .wl-voorkeur legend { font-size: 13px; color: var(--muted); margin-bottom: 3px; padding: 0; }
