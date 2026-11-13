@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Bricolage_Grotesque } from 'next/font/google';
+import localFont from 'next/font/local';
 import { ToastProvider } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import Meting from '@/components/Meting';
@@ -7,9 +7,10 @@ import SiteKop from '@/components/SiteKop';
 import './globals.css';
 import './sitekop.css';
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ['latin'],
-  weight: ['400', '600', '800'],
+// Het lettertype staat in het project zelf (src/app/fonts), zodat de build niet afhangt van Google Fonts.
+const bricolage = localFont({
+  src: './fonts/bricolage-grotesque.woff2',
+  weight: '200 800',
   variable: '--font-bricolage',
   display: 'swap',
 });
