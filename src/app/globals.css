@@ -405,8 +405,18 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .wl-nieuwsbrief { align-items: flex-start; margin: 4px 0 10px; line-height: 1.4; }
 .wl-nieuwsbrief input[type="checkbox"] { margin-top: 1px; flex: none; }
 .wl-val { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.wl-voorkeur { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
-.wl-voorkeur legend { font-size: 13px; color: var(--muted); margin-bottom: 3px; padding: 0; }
+.wl-voorkeur { border: 0; padding: 0; margin: 0 0 10px; min-width: 0; }
+.wl-voorkeur legend { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 5px; padding: 0; }
+/* Wachtlijstformulier: witte velden op de lichte achtergrond, en een keuzelijst die er net zo uitziet als de andere velden */
+.wl-form .veld input, .wl-form .veld select, .wl-form .veld textarea { background-color: var(--surface); }
+.wl-form .veld input:focus, .wl-form .veld select:focus, .wl-form .veld textarea:focus { border-color: var(--ink); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent); }
+.wl-form .veld select {
+  -webkit-appearance: none; appearance: none; padding-right: 40px; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235E6B63' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+.wl-form .seg { background: var(--surface); }
+.wl-form .wl-keuze:has(input:checked) { background: var(--ink); color: var(--bg); box-shadow: none; }
 .wl-keuze { flex: 1; display: flex; align-items: center; justify-content: center; padding: 8px 6px; border-radius: 9px; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; min-height: 40px; }
 .wl-keuze:has(input:checked) { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
 .wl-keuze:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }

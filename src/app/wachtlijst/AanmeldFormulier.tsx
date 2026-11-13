@@ -92,7 +92,7 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
 
       <label className="veld">
         <span>Vacht of kleur (optioneel)</span>
-        <input id="wl-vacht" name="voorkeur_vacht" defaultValue={w.voorkeur_vacht ?? ''} maxLength={80} placeholder="Bijv. blauw, of maakt niet uit" />
+        <input id="wl-vacht" name="voorkeur_vacht" defaultValue={w.voorkeur_vacht ?? ''} maxLength={80} placeholder="Bijv. rood, cyperse of maakt niet uit" />
       </label>
 
       <label className="veld">
