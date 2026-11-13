@@ -4,4 +4,4 @@
  * de nieuwe tekst alleen voor nieuwe aanmeldingen.
  */
 export const NIEUWSBRIEF_VINKTEKST =
-  'Stuur mij ook de Nestje-nieuwsbrief met tips over kittens, zoals verzorging en tam maken. Afmelden kan altijd.';
+  'Ja, stuur mij de Nestje-nieuwsbrief met tips om mijn kitten een goede start te geven. Afmelden kan altijd.';

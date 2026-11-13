@@ -29,7 +29,7 @@ export default async function Nieuwsbrief({ params, searchParams }: Props) {
       <section className="hero">
         <h1>Nestje-nieuwsbrief</h1>
         {actief ? (
-          <p>Je bent aangemeld. Je ontvangt de nieuwsbrief op {r.email}, met tips over kittens, zoals verzorging en tam maken.</p>
+          <p>Je bent aangemeld. Je ontvangt de nieuwsbrief op {r.email}, met tips om je kitten een goede start te geven.</p>
         ) : r.afgemeld_op ? (
           <p>Je bent afgemeld. Je ontvangt geen nieuwsbrief meer op {r.email}.</p>
         ) : (

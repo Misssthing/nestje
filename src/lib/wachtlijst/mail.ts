@@ -404,7 +404,7 @@ export function mailNieuwsbriefBevestigen(o: { naam: string | null; token: strin
       'Wil je de nieuwsbrief ontvangen?',
       [
         o.naam ? `Hoi ${esc(o.naam)},` : 'Hoi,',
-        'Je hebt aangegeven dat je de nieuwsbrief van Nestje wilt ontvangen, met tips over kittens, zoals verzorging en tam maken. Bevestig dat even met de knop hieronder.',
+        'Je hebt aangegeven dat je de nieuwsbrief van Nestje wilt ontvangen, met tips om je kitten een goede start te geven. Bevestig dat even met de knop hieronder.',
       ],
       { tekst: 'Ja, stuur mij de nieuwsbrief', href: url(`/nieuwsbrief/${o.token}`) },
       'Heb je dit niet aangevraagd? Dan kun je deze mail negeren. Zonder bevestiging sturen we je geen nieuwsbrief.',
