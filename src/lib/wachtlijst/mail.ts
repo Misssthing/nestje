@@ -323,7 +323,7 @@ export function mailGoedgekeurd(o: { moeder: string; slug: string; nestId: strin
       'Je nestje staat in het overzicht',
       [
         `We hebben het nestje van ${esc(o.moeder)} bekeken. Het staat nu in het overzicht op Nestje, zodat kopers het ook zonder jouw link kunnen vinden.`,
-        'Tip: deel je link ook zelf, bijvoorbeeld in je WhatsApp-status of op Facebook. Daar komen de meeste kopers vandaan.',
+        'Tip: deel je link ook zelf, bijvoorbeeld in je WhatsApp-status, of stuur hem naar vrienden en familie die hem verder kunnen delen. Daar komen de meeste kopers vandaan.',
       ],
       { tekst: 'Bekijk je pagina', href: url(`/n/${o.slug}`) },
       `Iets aanpassen? <a href="${url(`/beheer/${o.nestId}`)}" style="color:#1F2A24">Ga naar je beheer</a>.`,
