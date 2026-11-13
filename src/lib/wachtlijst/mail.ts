@@ -132,6 +132,7 @@ export function mailGeaccepteerdKoper(o: { naam: string; moeder: string; kitten:
         o.verkoperEmail
           ? `Wil je zelf alvast contact? Beantwoord deze mail, dan komt je bericht bij de verkoper.`
           : '',
+        `Alvast voorbereiden? Lees <a href="${url('/eerste-dagen')}" style="color:#1F2A24;font-weight:600">hoe je een kitten de eerste dagen rustig laat wennen</a>.`,
       ].filter(Boolean),
       { tekst: 'Bekijk het nestje', href: url(`/n/${o.slug}`) },
       'Kom altijd eerst kijken bij het kitten en de moeder, en betaal nooit vooruit aan iemand die je niet hebt ontmoet.',

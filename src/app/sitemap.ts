@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: url('/kittens'), changeFrequency: 'daily', priority: 1 },
     { url: url('/catteries'), changeFrequency: 'weekly', priority: 0.7 },
+    { url: url('/eerste-dagen'), changeFrequency: 'monthly', priority: 0.6 },
     ...vast.map((l) => ({ url: url(`/kittens/${l.slug}`), changeFrequency: 'daily' as const, priority: 0.8 })),
     ...lijst.map((n) => ({ url: url(`/n/${n.slug}`), lastModified: n.aangemaakt_op, changeFrequency: 'daily' as const, priority: 0.6 })),
     ...(catteries ?? []).filter((c) => c.profiel).map((c) => ({ url: url(c.link), changeFrequency: 'weekly' as const, priority: 0.5 })),

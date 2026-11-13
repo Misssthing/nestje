@@ -124,6 +124,15 @@ img { max-width: 100%; display: block; }
 .klaar h2 { margin: 0 0 6px; font-size: 24px; line-height: 1.15; }
 .klaar p { margin: 0 0 14px; max-width: 46ch; color: color-mix(in srgb, var(--bg) 80%, transparent); }
 .klaar .btn { width: auto; }
+.klaar .actions { flex-wrap: wrap; }
+.klaar .btn.ghost-licht { background: transparent; color: var(--bg); border: 1px solid color-mix(in srgb, var(--bg) 55%, transparent); }
+.klaar .btn.ghost-licht:hover { border-color: var(--bg); }
+.eerste-dagen .ed-delen { margin: 18px 0 8px; }
+.eerste-dagen .ed-delen .actions { margin-top: 10px; }
+.eerste-dagen ul { padding-left: 20px; }
+.eerste-dagen li { margin-bottom: 6px; }
+.eerste-dagen .ed-tip { background: var(--bg); border-radius: 12px; padding: 12px 14px; }
+.eerste-dagen .ed-tip a { font-weight: 600; }
 
 .voet { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; gap: 8px 18px; flex-wrap: wrap; align-items: center; }
 .voet a { color: var(--muted); }

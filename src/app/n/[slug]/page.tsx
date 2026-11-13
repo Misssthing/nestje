@@ -459,9 +459,12 @@ export default async function NestjesPagina({ params }: Props) {
           <section className="klaar">
             <h2>Klaar voor je kitten?</h2>
             <p>Van kattenbak tot krabpaal: lees wat je in huis wilt hebben voordat je kitten komt.</p>
-            <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)} target="_blank" rel="noopener">
-              Wat heb je nodig voor een kitten? ↗
-            </a>
+            <div className="actions" style={{ marginTop: 0 }}>
+              <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)} target="_blank" rel="noopener">
+                Wat heb je nodig voor een kitten? ↗
+              </a>
+              <Link className="btn ghost-licht" href="/eerste-dagen">De eerste dagen thuis</Link>
+            </div>
           </section>
 
           {/* Andere nestjes alleen als de verkoper zelf in het openbare overzicht staat */}

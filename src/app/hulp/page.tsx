@@ -37,6 +37,12 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Kan ik kopers uitleg meegeven voor de eerste dagen?',
+    a: (
+      <p>Ja. Op <Link href="/eerste-dagen">De eerste dagen met je kitten</Link> staat hoe een kitten rustig went in zijn nieuwe huis. Stuur de link door, of download de PDF en print hem. Achterin staat een lijstje dat de koper bij jou navraagt, zoals het voer, de korrel en de volgende enting. Je kunt het ook alvast zelf invullen.</p>
+    ),
+  },
+  {
     v: 'Een kitten op optie of gereserveerd zetten',
     a: (
       <p>Tik bij het kitten op “Optie”, “Gereserveerd” of “Verhuisd”. Kopers zien dat direct op je pagina. Bij “Optie” staat er “Onder optie” en kunnen anderen nog naar het kitten vragen, bijvoorbeeld als reserve. Bij “Gereserveerd” en “Verhuisd” verdwijnt de knop “Vraag naar …”. Er verschijnt dan ook een notitieveld dat alleen jij ziet, bijvoorbeeld voor de naam van de koper.</p>
