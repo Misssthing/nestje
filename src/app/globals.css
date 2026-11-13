@@ -421,7 +421,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .wl-keuze:has(input:checked) { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
 .wl-keuze:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
 .wl-keuze input { position: absolute; opacity: 0; pointer-events: none; }
-.wl-uitleg { margin: 0 0 20px; padding-left: 20px; color: var(--muted); font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.wl-uitleg { margin: 22px 0 26px; padding-left: 20px; color: var(--muted); font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
 .wl-klaar { border-left: 4px solid var(--free); }
 .toast-melding { background: var(--free-bg); color: var(--ink); border-radius: 12px; padding: 10px 14px; margin: 0 0 16px; font-size: 15px; }
 .wl-aanbod { border: 2px solid var(--ginger); }
