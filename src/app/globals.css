@@ -403,6 +403,15 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .verkoper-info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font-size: 15px; color: var(--muted); }
 .verkoper-info .chip.verkoper { font-size: 14px; }
 
+/* Ras en stamboom als losse, nette tags onder de intro-zin (ipv in de lopende tekst gepropt) */
+.kenmerken { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.kenmerken .tag {
+  display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px;
+}
+.kenmerken .tag a { text-decoration: none; }
+.kenmerken .tag a:hover { text-decoration: underline; }
+
 /* ─── Wachtlijst (uitbreiding 19) ─── */
 .wl-form { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }
 .wl-form .btn { width: auto; align-self: flex-start; margin-top: 6px; padding-inline: 20px; }

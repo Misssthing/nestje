@@ -10,9 +10,10 @@ import Voet from '@/components/Voet';
 import { TerugNaarOverzicht } from '@/components/Overzichtgeheugen';
 import ZoekFilters from '@/components/ZoekFilters';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
-import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, rasTekst, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
+import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
 import { haalNestje } from './data';
 import { rasVan } from '@/lib/kaart';
+import { landingVoor } from '@/lib/landing';
 import { createPublicClient } from '@/lib/supabase/public';
 import { heeftBekekenTest, registerNaam, veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import { GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/vertrouwen';
@@ -103,8 +104,6 @@ export default async function NestjesPagina({ params }: Props) {
   const heeftVader = Boolean(
     nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim() || nest.vader_gewicht || nest.vader_foto,
   );
-  const ras = rasTekst(nest.moeder_ras, nest.vader_ras);
-  const stamboom = nest.stamboom === true ? ' Met stamboom.' : nest.stamboom === false ? ' Zonder stamboom.' : '';
   const testInfo = nest.ouders_test_info?.trim();
   const vondeling = nest.soort === 'vondeling';
   const mTesten: TestMetBewijs[] = nest.moeder_testen ?? [];
@@ -157,7 +156,10 @@ export default async function NestjesPagina({ params }: Props) {
           knop: 'Zet me op de wachtlijst',
           uitleg: 'Alle kittens staan onder optie. Komt er een kitten vrij, dan kan de verkoper het jou aanbieden.',
         };
-  const rassenNest = [...rasDelen(nest.moeder_ras), ...rasDelen(nest.vader_ras)];
+  // Zonder dubbele: moeder en vader van hetzelfde ras leveren één tag op, niet twee.
+  const rassenNest = [
+    ...new Map([...rasDelen(nest.moeder_ras), ...rasDelen(nest.vader_ras)].map((r) => [r.toLowerCase(), r])).values(),
+  ];
   const rasVoorLijst =
     nest.stamboom === true && rassenNest.length === 1 && RASLIJST_RASSEN.includes(rassenNest[0]) ? rassenNest[0] : null;
 
@@ -215,14 +217,28 @@ export default async function NestjesPagina({ params }: Props) {
             {a.verwacht ? (
               <p>
                 De kittens van {nest.moeder_naam} worden verwacht rond {datumNL(a.geboren)}
-                {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}.{ras ? ` ${ras}.` : ''}{stamboom}
+                {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}.
               </p>
             ) : (
               <p>
                 {aantalKittens(kittens.length)}, geboren {nest.geboortedatum_geschat ? 'rond' : 'op'} {datumNL(a.geboren)}
                 {nest.geboortedatum_geschat ? ' (geschat)' : ''}
                 {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {nest.geboortedatum_geschat ? 'ongeveer ' : ''}{a.leeftijdWeken}{' '}
-                {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.{ras ? ` ${ras}.` : ''}{stamboom}
+                {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.
+              </p>
+            )}
+            {(rassenNest.length > 0 || nest.stamboom !== null) && (
+              <p className="kenmerken">
+                {rassenNest.map((r) => {
+                  const l = landingVoor('ras', r);
+                  return (
+                    <span key={r} className="tag">
+                      {l ? <Link href={`/kittens/${l.slug}`}>{r}</Link> : r}
+                    </span>
+                  );
+                })}
+                {nest.stamboom === true && <span className="tag">Met stamboom</span>}
+                {nest.stamboom === false && <span className="tag">Zonder stamboom</span>}
               </p>
             )}
             <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
