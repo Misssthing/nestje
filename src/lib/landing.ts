@@ -46,6 +46,12 @@ function provincieLanding(naam: string): Landing {
 /** Alle vaste pagina's: één per ras en één per provincie. */
 export const LANDINGS: Landing[] = [...RASSEN.map(rasLanding), ...PROVINCIES.map(provincieLanding)];
 
+/** Populaire rassen die we altijd als link tonen (overzichtpagina en footer), voor Google en voor bezoekers. */
+export const POPULAIRE_RASSEN = [
+  'Huiskat', 'Europese korthaar', 'Brits korthaar', 'Brits langhaar', 'Maine Coon', 'Ragdoll',
+  'Noorse boskat', 'Siberische kat', 'Bengaal', 'Perzisch', 'Savannah',
+];
+
 export function vindLanding(slug: string) {
   return LANDINGS.find((l) => l.slug === slug) ?? null;
 }

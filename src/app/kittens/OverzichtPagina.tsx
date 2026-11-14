@@ -13,14 +13,11 @@ import { RASLIJST_RASSEN } from '@/lib/wachtlijst/rassen';
 import { RAS_ARTIKEL_URL, rasUitleg } from '@/lib/rasuitleg';
 import { Suspense } from 'react';
 import { OnthoudOverzicht } from '@/components/Overzichtgeheugen';
-import { LANDINGS, landingVoor, type Landing } from '@/lib/landing';
+import { LANDINGS, POPULAIRE_RASSEN, landingVoor, type Landing } from '@/lib/landing';
 import { ALGEMENE_VRAGEN, rasTekstVoor } from '@/lib/rasteksten';
 
 
 export type Zoek = { q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string; geslacht?: string };
-
-/** Populaire rassen die we altijd als link tonen (voor Google en voor bezoekers). */
-const RAS_LINKS = ['Huiskat', 'Europese korthaar', 'Brits korthaar', 'Brits langhaar', 'Maine Coon', 'Ragdoll', 'Noorse boskat', 'Siberische kat', 'Bengaal', 'Perzisch', 'Savannah'];
 
 
 /** Het overzicht. Wordt ook gebruikt door de vaste pagina's per ras en per provincie (/kittens/maine-coon). */
@@ -248,7 +245,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
         <h2 id="zoeklinks-kop">Kittens zoeken per ras of provincie</h2>
         <h3>Per ras</h3>
         <div className="zoeklinks-rij">
-          {RAS_LINKS.map((r) => landingVoor('ras', r)).filter((l): l is Landing => Boolean(l)).map((l) => (
+          {POPULAIRE_RASSEN.map((r) => landingVoor('ras', r)).filter((l): l is Landing => Boolean(l)).map((l) => (
             <Link key={l.slug} href={`/kittens/${l.slug}`} className="chipknop">{l.naam}</Link>
           ))}
         </div>

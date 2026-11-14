@@ -138,8 +138,24 @@ img { max-width: 100%; display: block; }
 .klaar p { margin: 0 0 14px; max-width: 46ch; color: color-mix(in srgb, var(--bg) 80%, transparent); }
 .klaar .btn { width: auto; }
 
-.voet { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; gap: 8px 18px; flex-wrap: wrap; align-items: center; }
-.voet a { color: var(--muted); }
+.voet { margin-top: 56px; padding-top: 32px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.voet a { color: var(--muted); text-decoration: none; }
+.voet a:hover { text-decoration: underline; }
+.voet-kolommen { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; }
+.voet-merk { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.voet-logo { font-family: var(--font-bricolage), inherit; font-weight: 800; font-size: 20px; color: var(--ink) !important; text-decoration: none; }
+.voet-merk p { margin: 0; max-width: 32ch; line-height: 1.5; }
+.voet-kolom h2 { font-size: 12.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); margin: 0 0 10px; }
+.voet-kolom ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.voet-alles { display: inline-block; margin-top: 10px; font-weight: 600; color: var(--free) !important; }
+.voet-onder { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); }
+@media (max-width: 760px) {
+  .voet-kolommen { grid-template-columns: 1fr 1fr; gap: 28px 20px; }
+  .voet-merk { grid-column: 1 / -1; }
+}
+@media (max-width: 460px) {
+  .voet-kolommen { grid-template-columns: 1fr; gap: 24px; }
+}
 
 /* Formulieren en beheer */
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; margin: 18px 0 14px; }
