@@ -14,6 +14,7 @@ export type NestKaartData = {
   prijs: string | null;
   verkoper: string | null;
   vondeling: boolean;
+  stamboom: boolean;
   fotos: string[];
 };
 
@@ -84,6 +85,15 @@ export default function NestKaart({ n, klein = false }: { n: NestKaartData; klei
           </>
         )}
         {n.vondeling && <span className="nkaart-badge">Vondelingen</span>}
+        {n.stamboom && (
+          <span className="nkaart-badge stamboom">
+            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6l7-3z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            Stamboom
+          </span>
+        )}
       </div>
 
       <Link href={href} className="nkaart-tekst">

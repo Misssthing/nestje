@@ -45,13 +45,13 @@ export function naarKaart(n: OverzichtNest): NestKaartData {
         a.verwacht ? 'Verwacht nestje' : aantalKittens(n.kittens),
         !a.verwacht && n.vrij === 0 ? geslachtTekst(n) : '',
         ras,
-        n.stamboom ? 'met stamboom' : '',
       ].filter(Boolean).join(' · '),
       [n.woonplaats, n.provincie].filter(Boolean).join(', '),
     ],
     prijs: n.prijs ? prijsNL(Number(n.prijs)) : null,
     verkoper: n.verkoper ? `${VERKOPER_LABEL[n.verkoper]}${n.verkoper === 'fokker' && n.cattery_gecontroleerd ? ' · gecontroleerd' : ''}` : null,
     vondeling: n.soort === 'vondeling',
+    stamboom: n.stamboom === true,
     fotos,
   };
 }

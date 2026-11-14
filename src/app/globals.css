@@ -477,6 +477,11 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .nkaart-stippen span { width: 6px; height: 6px; border-radius: 999px; background: rgb(255 255 255 / .6); box-shadow: 0 0 2px rgb(0 0 0 / .3); transition: width .2s, background .2s; }
 .nkaart-stippen span.aan { width: 18px; background: #fff; }
 .nkaart-badge { position: absolute; top: 10px; left: 10px; background: var(--opt-bg); color: var(--opt); font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+.nkaart-badge.stamboom {
+  left: auto; right: 10px; display: inline-flex; align-items: center; gap: 4px;
+  background: rgb(255 255 255 / .92); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .18);
+}
+@media (prefers-color-scheme: dark) { .nkaart-badge.stamboom { background: rgb(31 39 34 / .92); } }
 .nkaart-tekst { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 16px; text-decoration: none; color: var(--ink); flex: 1; }
 .nkaart-label { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
 .nkaart-label.vrij { color: var(--free); }
@@ -544,6 +549,17 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
   .kop-hero::after { background: linear-gradient(0deg, rgb(26 52 39 / .95) 0%, rgb(26 52 39 / .8) 42%, rgb(26 52 39 / 0) 75%); }
   .kop-hero-tekst { padding: 24px 20px 26px; }
   .kop-hero p { font-size: 16.5px; }
+}
+.vertrouwen-balk {
+  display: flex; flex-wrap: wrap; gap: 20px 28px; justify-content: space-between;
+  background: var(--free-bg); border-radius: 16px; padding: 18px 24px; margin: 0 0 24px;
+}
+.vertrouwen-item { display: flex; align-items: flex-start; gap: 12px; flex: 1 1 220px; }
+.vertrouwen-item svg { flex: none; color: var(--free); margin-top: 2px; }
+.vertrouwen-item strong { display: block; font-size: 15px; color: var(--ink); }
+.vertrouwen-item span { display: block; font-size: 13.5px; color: var(--muted); line-height: 1.35; margin-top: 1px; }
+@media (max-width: 700px) {
+  .vertrouwen-balk { margin-inline: -18px; border-radius: 0; padding: 16px 18px; }
 }
 .overzicht-kop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
 .overzicht-kop .aantal { margin: 0; }
