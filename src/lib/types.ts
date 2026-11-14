@@ -61,6 +61,8 @@ export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 
   lid_sinds?: string | null;
   /** Cattery nagekeken door Nestje (uitbreiding 32) */
   cattery_gecontroleerd?: boolean;
+  /** Of de stamboomnummers van beide ouders bekend zijn bij Nestje (berekende kolom op de view) */
+  stamboomnrs_bekend?: boolean;
 };
 
 /** Gemeenschappelijke vorm van kitten- en nestfoto's */

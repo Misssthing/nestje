@@ -15,7 +15,7 @@ import { haalNestje } from './data';
 import { rasVan } from '@/lib/kaart';
 import { createPublicClient } from '@/lib/supabase/public';
 import { heeftBekekenTest, registerNaam, veiligeLink, type TestMetBewijs } from '@/lib/testen';
-import { ALLE_VELDEN, GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/vertrouwen';
+import { GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/vertrouwen';
 
 type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
   stamboomnrs_bekend?: boolean;
@@ -23,22 +23,22 @@ type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
   verkoper?: { naam: string; slug: string; intro: string | null; sinds_jaar: number | null; rassen: string | null; vereniging: string | null } | null;
 };
 
-/** Vinkjes van het nestje en de gegevens van de verkoper (als die een profielpagina heeft). */
-async function haalExtra(slug: string, profielSlug: string | null): Promise<Extra | null> {
+/**
+ * Vinkjes van het nestje (staan al in `nest` zelf, via de view) plus de gegevens van de
+ * verkoper (als die een profielpagina heeft). Geen extra query meer naar openbare_nesten:
+ * die data is al opgehaald door haalNestje(), dat scheelde een onnodige round-trip per bezoek.
+ */
+async function haalExtra(nest: Extra, profielSlug: string | null): Promise<Extra> {
+  if (!profielSlug) return nest;
   const db = createPublicClient();
-  const [{ data: n }, p, x] = await Promise.all([
-    db.from('openbare_nesten').select([...ALLE_VELDEN, 'stamboomnrs_bekend', 'cattery_gecontroleerd'].join(', ')).eq('slug', slug).maybeSingle(),
-    profielSlug
-      ? db.from('openbare_profielen').select('slug, naam, intro').eq('slug', profielSlug).maybeSingle()
-      : Promise.resolve({ data: null }),
-    profielSlug
-      ? db.from('openbare_profiel_extra').select('sinds_jaar, rassen, vereniging').eq('slug', profielSlug).maybeSingle()
-      : Promise.resolve({ data: null }),
+  const [p, x] = await Promise.all([
+    db.from('openbare_profielen').select('slug, naam, intro').eq('slug', profielSlug).maybeSingle(),
+    db.from('openbare_profiel_extra').select('sinds_jaar, rassen, vereniging').eq('slug', profielSlug).maybeSingle(),
   ]);
   const prof = p.data as { slug: string; naam: string; intro: string | null } | null;
   const ext = x.data as { sinds_jaar: number | null; rassen: string | null; vereniging: string | null } | null;
   return {
-    ...((n as Extra | null) ?? {}),
+    ...nest,
     verkoper: prof ? { ...prof, sinds_jaar: ext?.sinds_jaar ?? null, rassen: ext?.rassen ?? null, vereniging: ext?.vereniging ?? null } : null,
   };
 }
@@ -124,7 +124,7 @@ export default async function NestjesPagina({ params }: Props) {
         ? 'Ouders niet getest op erfelijke aandoeningen.'
         : '';
   // Gezondheid en vertrouwen per nestje, plus het blokje over de verkoper
-  const extra = await haalExtra(nest.slug, profiel?.profiel_slug ?? null);
+  const extra = await haalExtra(nest, profiel?.profiel_slug ?? null);
   const gezondheid = GEZONDHEID_NEST.filter(([v]) => extra?.[v]);
   const vertrouwen = VERTROUWEN_NEST.filter(([v]) => extra?.[v] && !(v === 'stamboom_papieren' && nest.stamboom !== true));
   const moederLabel = ouderLabel(nest.moeder_naam, nest.moeder_ras, nest.moeder_gewicht);
@@ -459,12 +459,9 @@ export default async function NestjesPagina({ params }: Props) {
           <section className="klaar">
             <h2>Klaar voor je kitten?</h2>
             <p>Van kattenbak tot krabpaal: lees wat je in huis wilt hebben voordat je kitten komt.</p>
-            <div className="actions" style={{ marginTop: 0 }}>
-              <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)} target="_blank" rel="noopener">
-                Wat heb je nodig voor een kitten? ↗
-              </a>
-              <Link className="btn ghost-licht" href="/eerste-dagen">De eerste dagen thuis</Link>
-            </div>
+            <a className="btn accent" href={metUtm(CONFIG.starterslijstUrl, 'starterslijst', nest.slug)} target="_blank" rel="noopener">
+              Wat heb je nodig voor een kitten? ↗
+            </a>
           </section>
 
           {/* Andere nestjes alleen als de verkoper zelf in het openbare overzicht staat */}
