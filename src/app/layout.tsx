@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(CONFIG.siteUrl),
   title: { default: 'Nestje: één pagina voor je nestje kittens', template: '%s | Nestje' },
   description: 'Maak in een paar minuten een deelbare pagina voor je nestje kittens. Gratis, op je telefoon.',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: { capable: true, statusBarStyle: 'default', title: 'Nestje' },
 };
 
 export const viewport: Viewport = {
