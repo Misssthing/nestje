@@ -31,6 +31,17 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    v: 'Nestje als app-icoon op mijn telefoon',
+    a: (
+      <>
+        <p>Dat kan, zonder dat je iets installeert uit een app store. Nestje opent dan voortaan vanuit een eigen icoontje, zonder adresbalk, rechtstreeks op je beheerscherm.</p>
+        <p><strong>iPhone (Safari):</strong> open nestje.kattenverzorging.com in Safari, tik op het deelicoontje (vierkantje met pijltje omhoog) en kies “Zet op beginscherm”. Dit werkt alleen in Safari, niet in Chrome op de iPhone.</p>
+        <p><strong>Android (Chrome):</strong> open de site in Chrome, tik rechtsboven op de drie puntjes en kies “App installeren” of “Zet op startscherm”.</p>
+        <p><strong>Computer (Chrome):</strong> klik op het install-icoontje rechts in de adresbalk, of via de drie puntjes op “Nestje installeren”.</p>
+      </>
+    ),
+  },
+  {
     v: "Foto's toevoegen of wijzigen",
     a: (
       <p>Tik bij een kitten op het vakje met het plusje. Je kunt per kitten 5 foto’s toevoegen en voor het hele nestje 3 nestfoto’s. De eerste foto is de omslag; met de knop “Omslag” zet je een andere foto vooraan. Foto’s worden automatisch verkleind, dus je kunt ze gewoon uit je fotoalbum kiezen.</p>

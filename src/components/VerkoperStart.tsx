@@ -99,6 +99,12 @@ export default function VerkoperStart({ ingelogd = false, fout = false }: { inge
               <dd>Nee. Kopers tikken op een knop en WhatsApp opent; je nummer staat nergens als tekst.</dd>
               <dt>Moet mijn kat een stamboom hebben?</dt>
               <dd>Nee. Ook huiskatten en kruisingen zijn welkom. Een rasnaam zoals Maine Coon gebruik je alleen met stamboom.</dd>
+              <dt>Kan ik Nestje als app-icoon op mijn telefoon zetten?</dt>
+              <dd>
+                Ja. Open nestje.kattenverzorging.com en kies in je browser &ldquo;Zet op beginscherm&rdquo; of &ldquo;App
+                installeren&rdquo;. Je krijgt dan een icoontje dat rechtstreeks je nestjes opent, zonder adresbalk. Zie{' '}
+                <Link href="/hulp">Hulp</Link> voor de stappen per toestel.
+              </dd>
             </dl>
             <p className="hint">
               <Link href="/kittens">Bekijk nestjes van anderen in het overzicht</Link> · <a href="/hulp">Alle hulp</a>
