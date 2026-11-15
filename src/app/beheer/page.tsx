@@ -6,6 +6,7 @@ import { aantalKittens, aftelling, dagen, datumNL } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
 import type { Nest, Profiel } from '@/lib/types';
 import { adminClient } from '@/lib/wachtlijst/server';
+import AppIcoonTip from '@/components/AppIcoonTip';
 import NieuwNestje from './NieuwNestje';
 import ProfielPaneel from './ProfielPaneel';
 
@@ -109,6 +110,8 @@ export default async function Overzicht() {
       <section className="hero">
         <h1>Je nestjes</h1>
       </section>
+
+      <AppIcoonTip />
 
       <div className="lijst" style={{ marginTop: 22 }}>
         {nesten.map((n) => {

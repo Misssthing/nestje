@@ -160,6 +160,12 @@ img { max-width: 100%; display: block; }
 /* Formulieren en beheer */
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; margin: 18px 0 14px; }
 .panel h2 { margin: 0 0 10px; font-size: 20px; }
+.apptip { position: relative; padding-right: 40px; }
+.apptip-sluit {
+  position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; cursor: pointer;
+}
+.apptip-sluit:hover { background: var(--bg); }
 .veld { display: block; margin-bottom: 10px; }
 .veld > span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 3px; }
 .veld input, .veld select, .veld textarea, .invoer {
