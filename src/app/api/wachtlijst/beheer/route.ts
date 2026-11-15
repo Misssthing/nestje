@@ -30,7 +30,7 @@ export async function GET(req: Request) {
       .select('id, naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, motivatie, aangemeld_op, status, kitten_id, aanbod_verloopt_op, geweigerd_aantal, via_ras_id')
       .eq('nest_id', nest.id).neq('status', 'afgemeld').order('aangemeld_op'),
     db.from('kittens').select('id, naam, geslacht, status').eq('nest_id', nest.id).order('volgorde'),
-    db.from('nests').select('id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, owner_id, moeder_ras, vader_ras, stamboom')
+    db.from('nests').select('id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, owner_id, moeder_ras, vader_ras, stamboom, whatsapp_nummer')
       .eq('owner_id', user.id).neq('id', nest.id).eq('afgerond', false),
   ]);
   const anderen = [];

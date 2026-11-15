@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Voet from '@/components/Voet';
 import { aftelling, datumNL } from '@/lib/nest';
-import { haalNestOpSlug, nestIsOpen } from '@/lib/wachtlijst/acties';
+import { haalNestOpSlug, nestIsOpen, telVrijeKittens } from '@/lib/wachtlijst/acties';
 import AanmeldFormulier from '@/app/wachtlijst/AanmeldFormulier';
 import { meldAanVoorNest } from '@/app/wachtlijst/acties';
 
@@ -18,6 +18,11 @@ export default async function WachtlijstNest({ params }: Props) {
   if (!nest || nest.verborgen) notFound();
   const open = await nestIsOpen(nest);
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
+  // Zijn er al kittens vrij (niet alleen onder optie) en heeft de verkoper WhatsApp, dan is rechtstreeks
+  // contact sneller dan de wachtlijst — net als op de nestjespagina zelf. We blokkeren de wachtlijst niet
+  // (iemand kan hier bewust voor kiezen), maar wijzen wel eerst op de snellere weg.
+  const vrijeKittens = open && !a.verwacht ? await telVrijeKittens(nest.id) : 0;
+  const whatsappBeter = vrijeKittens > 0 && Boolean(nest.whatsapp_nummer);
 
   return (
     <main className="wrap">
@@ -35,8 +40,16 @@ export default async function WachtlijstNest({ params }: Props) {
 
       {open ? (
         <>
+          {whatsappBeter && (
+            <div className="panel" style={{ marginBottom: 20 }}>
+              <p style={{ marginTop: 0 }}>
+                Er {vrijeKittens === 1 ? 'is nog 1 kitten' : `zijn nog ${vrijeKittens} kittens`} vrij bij dit nestje.
+                Dat gaat meestal sneller via WhatsApp dan via de wachtlijst hieronder.
+              </p>
+              <Link className="btn primary" href={`/n/${nest.slug}`}>Bekijk de vrije kittens</Link>
+            </div>
+          )}
           <ul className="wl-uitleg">
-            <li>De verkoper kiest zelf wie een kitten krijgt aangeboden; dat kan dus even duren.</li>
             <li>Krijg je een kitten aangeboden, dan krijg je een mail en heb je 72 uur om ja of nee te zeggen.</li>
             <li>Zeg je nee, dan blijf je gewoon op de wachtlijst staan.</li>
             <li>In elke mail staat een link om je gegevens te wijzigen of je af te melden.</li>
@@ -45,8 +58,7 @@ export default async function WachtlijstNest({ params }: Props) {
             actie={meldAanVoorNest}
             verborgen={{ slug: nest.slug }}
             knop="Aanmelden"
-            nieuwsbrief
-            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult, maar niet of je de nieuwsbrief wilt. Lees ook onze privacyverklaring."
+            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult. Lees ook onze privacyverklaring."
           />
           <p className="hint">
             <Link href="/privacy">Privacyverklaring</Link> · <Link href="/huisregels">Huisregels</Link>

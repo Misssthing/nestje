@@ -2,8 +2,7 @@ import { fotoUrl } from '@/lib/config';
 import { aftelling, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
 import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
-  mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding,
-  mailVerkoperReactie, mailVerkoperWachtlijstHerinnering, stuurMail,
+  mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding, mailVerkoperReactie, stuurMail,
 } from './mail';
 import { AANBOD_UREN, adminClient, type Aanmelding, verkoperEmail } from './server';
 
@@ -11,7 +10,7 @@ type NestRij = {
   id: string; owner_id: string; slug: string; moeder_naam: string; geboortedatum: string;
   verhuisleeftijd_weken: number; afgerond: boolean; verborgen?: boolean | null;
   moeder_ras: string | null; vader_ras: string | null; stamboom: boolean | null;
-  wachtlijst_herinnerd_op?: string | null;
+  whatsapp_nummer: string | null;
 };
 type KittenRij = { id: string; nest_id: string; naam: string; geslacht: 'kater' | 'poes'; vacht: string | null; status: string };
 export type WachtRij = {
@@ -22,8 +21,7 @@ export type WachtRij = {
   geboren_mail_op: string | null;
 };
 
-const NEST_VELDEN =
-  'id, owner_id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, moeder_ras, vader_ras, stamboom, wachtlijst_herinnerd_op';
+const NEST_VELDEN = 'id, owner_id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, moeder_ras, vader_ras, stamboom, whatsapp_nummer';
 const db = () => adminClient();
 
 const kittenOmschrijving = (k: KittenRij) => `${k.geslacht === 'kater' ? 'kater' : 'poes'}${k.vacht ? `, ${k.vacht}` : ''}`;
@@ -46,6 +44,17 @@ export async function nestIsOpen(nest: NestRij) {
     .from('kittens').select('id', { count: 'exact', head: true })
     .eq('nest_id', nest.id).in('status', ['vrij', 'optie']);
   return (count ?? 0) > 0;
+}
+
+/**
+ * Hoeveel kittens van dit nestje nu vrij zijn (niet onder optie, niet verhuisd). Gebruikt om te bepalen of
+ * rechtstreeks WhatsApp-contact sneller is dan de wachtlijst (zie /n/[slug]/wachtlijst).
+ */
+export async function telVrijeKittens(nestId: string) {
+  const { count } = await db()
+    .from('kittens').select('id', { count: 'exact', head: true })
+    .eq('nest_id', nestId).eq('status', 'vrij');
+  return count ?? 0;
 }
 
 /** Eerste foto van een kitten als volledige link, of null. */
@@ -351,42 +360,6 @@ export async function volMails() {
       n++;
     }
     await db().from('nests').update({ vol_mail_op: new Date().toISOString() }).eq('id', id);
-  }
-  return n;
-}
-
-/** Na hoeveel dagen zonder reactie de verkoper een herinnering krijgt over wachtende kopers. */
-const WACHTLIJST_HERINNERING_NA_DAGEN = 5;
-
-/**
- * Herinnert een verkoper als er al een tijdje kopers op de wachtlijst van een nestje staan
- * zonder dat er een aanbod is gedaan. Stuurt per nestje hooguit één keer per
- * WACHTLIJST_HERINNERING_NA_DAGEN dagen, zolang de situatie niet verandert.
- */
-export async function wachtlijstHerinneringen() {
-  const nu = Date.now();
-  const drempel = new Date(nu - WACHTLIJST_HERINNERING_NA_DAGEN * 864e5).toISOString();
-  const { data: wachtend } = await db()
-    .from('wachtlijst').select('nest_id, aangemeld_op').eq('status', 'wachtend').lt('aangemeld_op', drempel);
-  const per = new Map<string, { aantal: number; oudste: string }>();
-  for (const r of wachtend ?? []) {
-    const huidig = per.get(r.nest_id);
-    if (!huidig || r.aangemeld_op < huidig.oudste) per.set(r.nest_id, { aantal: (huidig?.aantal ?? 0) + 1, oudste: r.aangemeld_op });
-    else huidig.aantal += 1;
-  }
-  let n = 0;
-  for (const [nestId, { aantal, oudste }] of per) {
-    const nest = await haalNest(nestId);
-    if (!nest || nest.afgerond) continue;
-    if (nest.wachtlijst_herinnerd_op && nest.wachtlijst_herinnerd_op > drempel) continue;
-    const ve = await verkoperEmail(nest.owner_id);
-    if (ve) {
-      const oudsteDagen = Math.max(1, Math.round((nu - new Date(oudste).getTime()) / 864e5));
-      const m = mailVerkoperWachtlijstHerinnering({ nestId: nest.id, moeder: nest.moeder_naam, aantal, oudsteDagen });
-      await stuurMail(ve, m.onderwerp, m.html);
-      n++;
-    }
-    await db().from('nests').update({ wachtlijst_herinnerd_op: new Date(nu).toISOString() }).eq('id', nest.id);
   }
   return n;
 }
