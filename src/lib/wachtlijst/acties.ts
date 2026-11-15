@@ -15,7 +15,7 @@ type NestRij = {
   wachtlijst_herinnerd_op?: string | null;
   whatsapp_nummer: string | null;
 };
-type KittenRij = { id: string; nest_id: string; naam: string; geslacht: 'kater' | 'poes'; vacht: string | null; status: string };
+type KittenRij = { id: string; nest_id: string; naam: string; geslacht: 'kater' | 'poes'; vacht: string | null; status: string; notitie?: string | null };
 export type WachtRij = {
   id: string; nest_id: string; naam: string; email: string; woonplaats: string;
   voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null; motivatie: string | null;
@@ -230,7 +230,7 @@ export async function reageerOpAanbod(token: string, ja: boolean) {
   if (!rij || rij.status !== 'aangeboden' || !rij.kitten_id) return { fout: 'Dit aanbod staat niet meer open.' };
   const nest = await haalNest(rij.nest_id);
   const { data: kitten } = await db()
-    .from('kittens').select('id, nest_id, naam, geslacht, vacht, status').eq('id', rij.kitten_id).maybeSingle<KittenRij>();
+    .from('kittens').select('id, nest_id, naam, geslacht, vacht, status, notitie').eq('id', rij.kitten_id).maybeSingle<KittenRij>();
   if (!nest || !kitten) return { fout: 'Dit aanbod staat niet meer open.' };
 
   if (rij.aanbod_verloopt_op && new Date(rij.aanbod_verloopt_op) < new Date()) {
@@ -247,6 +247,11 @@ export async function reageerOpAanbod(token: string, ja: boolean) {
       return { fout: 'De verkoper heeft dit kitten intussen anders ingedeeld. Je staat nog wel op de wachtlijst.' };
     }
     await db().from('wachtlijst').update({ status: 'geaccepteerd', aanbod_verloopt_op: null }).eq('id', rij.id);
+    // Notitie (alleen voor de verkoper zichtbaar) vullen met de gegevens van de koper, maar alleen als er nog niets in stond.
+    if (!kitten.notitie) {
+      const notitie = `Via wachtlijst: ${rij.naam}, ${rij.woonplaats}, ${rij.email}`;
+      await db().from('kittens').update({ notitie }).eq('id', kitten.id);
+    }
     const mk = mailGeaccepteerdKoper({ naam: rij.naam, moeder: nest.moeder_naam, kitten: kitten.naam, slug: nest.slug, verkoperEmail: ve });
     await stuurMail(rij.email, mk.onderwerp, mk.html, ve ?? undefined);
     if (ve) {
