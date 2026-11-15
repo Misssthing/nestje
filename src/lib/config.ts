@@ -19,6 +19,7 @@ export const CONFIG = {
   maxNestFotos: 3,
   maxOmschrijving: 300,
   maxFotoPx: 1600,
+  maxFotoKleinPx: 480,
   fotoKwaliteit: 0.85,
   standaardVerhuisleeftijd: 13,
 } as const;
@@ -38,4 +39,18 @@ export function metUtm(url: string, campagne: string, inhoud?: string) {
 
 export function fotoUrl(pad: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/${CONFIG.fotoBucket}/${pad}`;
+}
+
+/** Pad van de kleine duimnagel-versie naast het pad van de grote foto (zelfde naam, "-klein" erbij). */
+export function fotoKleinPad(pad: string) {
+  return pad.replace(/(\.[a-zA-Z0-9]+)$/, '-klein$1');
+}
+
+/**
+ * URL van de kleine duimnagel-versie van een foto (zie CONFIG.maxFotoKleinPx), voor gebruik op
+ * kaartjes en overzichten. Bestaat die duimnagel niet (oudere foto, van vóór deze functie), dan
+ * vangt SlimmeFoto dat automatisch op door terug te vallen op fotoUrl(pad).
+ */
+export function fotoThumbUrl(pad: string) {
+  return fotoUrl(fotoKleinPad(pad));
 }

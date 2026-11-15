@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRef, useState } from 'react';
+import SlimmeFoto from '@/components/SlimmeFoto';
 
 export type NestKaartData = {
   slug: string;
@@ -48,8 +49,7 @@ export default function NestKaart({ n, klein = false }: { n: NestKaartData; klei
           >
             {fotos.map((f, i) => (
               <Link key={f} href={href} className="nkaart-slide" tabIndex={i === 0 ? 0 : -1} aria-label={i === 0 ? n.titel : undefined}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={f} alt={i === 0 ? n.titel : ''} loading="lazy" draggable={false} />
+                <SlimmeFoto src={f} alt={i === 0 ? n.titel : ''} loading="lazy" draggable={false} />
               </Link>
             ))}
           </div>

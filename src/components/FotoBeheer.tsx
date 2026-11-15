@@ -3,9 +3,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useState } from 'react';
 import { useToast } from '@/components/Toast';
-import { CONFIG, fotoUrl } from '@/lib/config';
+import { CONFIG, fotoKleinPad, fotoThumbUrl } from '@/lib/config';
 import { verkleinFoto } from '@/lib/foto';
 import type { FotoRij } from '@/lib/types';
+import SlimmeFoto from '@/components/SlimmeFoto';
 
 type Props<T extends FotoRij> = {
   supabase: SupabaseClient;
@@ -19,7 +20,10 @@ type Props<T extends FotoRij> = {
   onFotos: (fn: (f: T[]) => T[]) => void;
 };
 
-/** Uploaden (verkleind tot 1600px), verwijderen en omslag kiezen voor kitten- of nestfoto's. */
+/**
+ * Uploaden (verkleind tot 1600px, plus een kleine duimnagel voor kaartjes en overzichten),
+ * verwijderen en omslag kiezen voor kitten- of nestfoto's.
+ */
 export default function FotoBeheer<T extends FotoRij>({ supabase, fotos, max, tabel, ouder, map, naam, onFotos }: Props<T>) {
   const toast = useToast();
   const [uploads, setUploads] = useState(0);
@@ -37,12 +41,20 @@ export default function FotoBeheer<T extends FotoRij>({ supabase, fotos, max, ta
 
     for (const bestand of lijst) {
       try {
-        const blob = await verkleinFoto(bestand);
+        const [blob, kleinBlob] = await Promise.all([
+          verkleinFoto(bestand),
+          verkleinFoto(bestand, CONFIG.maxFotoKleinPx),
+        ]);
         const pad = `${map}/${crypto.randomUUID()}.jpg`;
         const { error: upErr } = await supabase.storage
           .from(CONFIG.fotoBucket)
           .upload(pad, blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
         if (upErr) throw upErr;
+        // Duimnagel is alleen voor snelheid op kaartjes; lukt die upload niet, dan valt de kaart
+        // gewoon terug op de grote foto (zie SlimmeFoto), dus we laten de hele upload daar niet op stuklopen.
+        await supabase.storage
+          .from(CONFIG.fotoBucket)
+          .upload(fotoKleinPad(pad), kleinBlob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
 
         const { data, error } = await supabase
           .from(tabel)
@@ -70,7 +82,7 @@ export default function FotoBeheer<T extends FotoRij>({ supabase, fotos, max, ta
       onFotos((l) => [...l, f].sort((a, b) => a.volgorde - b.volgorde));
       return toast('Verwijderen lukte niet');
     }
-    await supabase.storage.from(CONFIG.fotoBucket).remove([f.storage_path]);
+    await supabase.storage.from(CONFIG.fotoBucket).remove([f.storage_path, fotoKleinPad(f.storage_path)]);
   }
 
   async function maakOmslag(f: T) {
@@ -84,8 +96,7 @@ export default function FotoBeheer<T extends FotoRij>({ supabase, fotos, max, ta
     <div className="thumbs" style={{ gridTemplateColumns: `repeat(${max}, 1fr)` }}>
       {fotos.map((f, i) => (
         <div key={f.id} className={`thumb${i === 0 ? ' eerste' : ''}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={fotoUrl(f.storage_path)} alt={`Foto ${i + 1} van ${naam}`} loading="lazy" />
+          <SlimmeFoto src={fotoThumbUrl(f.storage_path)} alt={`Foto ${i + 1} van ${naam}`} loading="lazy" />
           <button className="x" onClick={() => verwijder(f)} aria-label={`Foto ${i + 1} verwijderen`}>×</button>
           {i > 0 && <button className="omslag" onClick={() => maakOmslag(f)}>Omslag</button>}
         </div>

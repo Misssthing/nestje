@@ -1,4 +1,4 @@
-import { fotoUrl } from '@/lib/config';
+import { fotoThumbUrl } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, prijsNL, rasDelen, VERKOPER_LABEL } from '@/lib/nest';
 import type { OverzichtNest } from '@/lib/types';
 import type { NestKaartData } from '@/components/NestKaart';
@@ -20,7 +20,8 @@ export function geslachtTekst(n: Pick<OverzichtNest, 'vrij' | 'vrij_katers' | 'v
 export function naarKaart(n: OverzichtNest): NestKaartData {
   const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
   const ras = rasVan(n);
-  const fotos = (n.fotos?.length ? n.fotos : n.foto ? [n.foto] : []).map(fotoUrl);
+  // Duimnagels op kaartjes, niet de grote 1600px-foto's — scheelt flink wat dataverkeer op een overzicht met veel kaarten.
+  const fotos = (n.fotos?.length ? n.fotos : n.foto ? [n.foto] : []).map(fotoThumbUrl);
 
   let label: string;
   let labelSoort: NestKaartData['labelSoort'] = 'vrij';

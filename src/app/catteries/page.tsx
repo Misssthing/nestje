@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import AccountKnop from '@/components/AccountKnop';
 import Voet from '@/components/Voet';
-import { fotoUrl } from '@/lib/config';
+import { fotoThumbUrl } from '@/lib/config';
+import SlimmeFoto from '@/components/SlimmeFoto';
 import { PROVINCIES, rasDelen } from '@/lib/nest';
 import { createPublicClient } from '@/lib/supabase/public';
 
@@ -105,8 +106,7 @@ export default async function Catteries({ searchParams }: Props) {
             return (
               <Link key={c.link} href={c.link} className="ckaart">
                 {c.foto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={fotoUrl(c.foto)} alt={`Een kat van ${catteryNaam(c.cattery)}`} loading="lazy" />
+                  <SlimmeFoto src={fotoThumbUrl(c.foto)} alt={`Een kat van ${catteryNaam(c.cattery)}`} loading="lazy" />
                 ) : (
                   <span className="ckaart-geenfoto" aria-hidden="true" />
                 )}
