@@ -50,6 +50,7 @@ export default async function WachtlijstNest({ params }: Props) {
             </div>
           )}
           <ul className="wl-uitleg">
+            <li>De verkoper kiest zelf wie een kitten krijgt aangeboden; dat kan dus even duren.</li>
             <li>Krijg je een kitten aangeboden, dan krijg je een mail en heb je 72 uur om ja of nee te zeggen.</li>
             <li>Zeg je nee, dan blijf je gewoon op de wachtlijst staan.</li>
             <li>In elke mail staat een link om je gegevens te wijzigen of je af te melden.</li>
@@ -58,7 +59,8 @@ export default async function WachtlijstNest({ params }: Props) {
             actie={meldAanVoorNest}
             verborgen={{ slug: nest.slug }}
             knop="Aanmelden"
-            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult. Lees ook onze privacyverklaring."
+            nieuwsbrief
+            uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult, maar niet of je de nieuwsbrief wilt. Lees ook onze privacyverklaring."
           />
           <p className="hint">
             <Link href="/privacy">Privacyverklaring</Link> · <Link href="/huisregels">Huisregels</Link>
