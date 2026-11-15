@@ -277,6 +277,20 @@ export function mailVerkoperWachtlijstHerinnering(o: {
   };
 }
 
+export function mailVerkoperOnafgemaakteNestje(o: { nestId: string; moeder: string }) {
+  return {
+    onderwerp: `Je bent er bijna! Maak de pagina van ${o.moeder} af`,
+    html: opmaak(
+      'Je bent er bijna',
+      [
+        `Je begon een nestjespagina voor ${esc(o.moeder)}, maar die staat nog niet in het overzicht — er ontbreken nog kittens of foto's.`,
+        'Het kost meestal maar een paar minuten om af te maken. Heb je hulp nodig, of lukt het niet meer? Laat het gerust weten via nestje@kattenverzorging.com.',
+      ],
+      { tekst: 'Nestje afmaken', href: url(`/beheer/${o.nestId}`) },
+    ),
+  };
+}
+
 export function mailVerkoperNieuweAanmelding(o: {
   nestId: string; moeder: string; naam: string; woonplaats: string;
   voorkeur_geslacht: string; voorkeur_vacht: string | null; motivatie: string | null;

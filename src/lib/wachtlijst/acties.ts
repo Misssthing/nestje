@@ -3,6 +3,7 @@ import { aftelling, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
 import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
   mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding,
+  mailVerkoperOnafgemaakteNestje,
   mailVerkoperReactie, mailVerkoperWachtlijstHerinnering, stuurMail,
 } from './mail';
 import { AANBOD_UREN, adminClient, type Aanmelding, verkoperEmail } from './server';
@@ -369,6 +370,43 @@ export async function volMails() {
 
 /** Na hoeveel dagen zonder reactie de verkoper een herinnering krijgt over wachtende kopers. */
 const WACHTLIJST_HERINNERING_NA_DAGEN = 5;
+const ONAFGEMAAKT_HERINNERING_NA_UUR = 24;
+
+/**
+ * Nestjes waar de verkoper mee is begonnen maar halverwege is gestopt: nog geen kitten toegevoegd,
+ * of kittens zonder foto's, en nooit ter controle ingediend. 24 uur na aanmaken krijgt de verkoper
+ * daar één keer een vriendelijke herinnering over (nooit vaker).
+ */
+export async function onafgemaakteNestjes() {
+  const drempel = new Date(Date.now() - ONAFGEMAAKT_HERINNERING_NA_UUR * 36e5).toISOString();
+  const { data: kandidaten } = await db()
+    .from('nests')
+    .select('id, owner_id, slug, moeder_naam')
+    .lt('aangemaakt_op', drempel)
+    .is('ter_controle_op', null)
+    .eq('afgerond', false)
+    .is('onafgemaakt_herinnerd_op', null)
+    .returns<{ id: string; owner_id: string; slug: string; moeder_naam: string }[]>();
+
+  let n = 0;
+  for (const nest of kandidaten ?? []) {
+    const { data: kittens } = await db()
+      .from('kittens').select('id, kitten_photos(id)').eq('nest_id', nest.id)
+      .returns<{ id: string; kitten_photos: { id: string }[] }[]>();
+    const rij = kittens ?? [];
+    const compleetGenoeg = rij.length > 0 && rij.every((k) => k.kitten_photos.length > 0);
+    if (compleetGenoeg) continue; // verder dan "halverwege gestopt"; geen herinnering en niet markeren
+
+    const ve = await verkoperEmail(nest.owner_id);
+    if (ve) {
+      const m = mailVerkoperOnafgemaakteNestje({ nestId: nest.id, moeder: nest.moeder_naam });
+      await stuurMail(ve, m.onderwerp, m.html);
+      n++;
+    }
+    await db().from('nests').update({ onafgemaakt_herinnerd_op: new Date().toISOString() }).eq('id', nest.id);
+  }
+  return n;
+}
 
 /**
  * Herinnert een verkoper als er al een tijdje kopers op de wachtlijst van een nestje staan
