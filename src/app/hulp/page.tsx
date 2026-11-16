@@ -77,7 +77,7 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
   {
     v: 'Meerdere nestjes beheren',
     a: (
-      <p>Na het inloggen zie je al je nestjes onder elkaar. Met “Nieuw nestje” maak je er een bij, elk met een eigen link. Zijn alle kittens verhuisd, kies dan onderaan je nestje voor “Nestje afronden”. De pagina blijft bestaan en laat zien dat alle kittens een thuis hebben.</p>
+      <p>Na het inloggen zie je al je nestjes onder elkaar. Met “Nieuw nestje” maak je er een bij, elk met een eigen link. Zijn alle kittens verhuisd, kies dan onderaan je nestje voor “Nestje afsluiten”. De pagina blijft bestaan en laat zien dat alle kittens een thuis hebben.</p>
     ),
   },
   {
@@ -113,7 +113,7 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
   {
     v: 'Mijn nestje verwijderen',
     a: (
-      <p>Open je nestje en scroll naar het blok “Nestje afronden of verwijderen”, onderaan. Zijn al je kittens verhuisd, kies dan liever “Nestje afronden”: je pagina blijft bewaard. Met “Nestje verwijderen” zijn je pagina en alle foto’s direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>
+      <p>Open je nestje en scroll naar het blok “Nestje afsluiten of verwijderen”, onderaan. Zijn al je kittens verhuisd, kies dan liever “Nestje afsluiten”: je pagina blijft bewaard. Met “Nestje verwijderen” zijn je pagina en alle foto’s direct weg. Wil je ook je account laten verwijderen, mail ons dan.</p>
     ),
   },
 ];

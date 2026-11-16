@@ -122,14 +122,14 @@ export default function Beheer({
       const vraag = nogOpen.length
         ? `Let op: ${nogOpen.length === 1 ? 'kitten' : 'deze kittens staan'} nog op “vrij” of “onder optie”: ${nogOpen
             .map((k) => k.naam)
-            .join(', ')}. Als je toch afrondt, toont je pagina dat alle kittens een thuis hebben, ook al klopt dat nog niet. Toch afronden?`
-        : 'Nestje afronden? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.';
+            .join(', ')}. Als je toch afsluit, toont je pagina dat alle kittens een thuis hebben, ook al klopt dat nog niet. Toch afsluiten?`
+        : 'Nestje afsluiten? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.';
       if (!confirm(vraag)) return;
     }
     const { error } = await supabase.from('nests').update({ afgerond }).eq('id', nest.id);
     if (error) return toast('Opslaan lukte niet');
     setNest((n) => ({ ...n, afgerond }));
-    toast(afgerond ? 'Nestje afgerond' : 'Nestje weer geopend');
+    toast(afgerond ? 'Nestje afgesloten' : 'Nestje weer geopend');
   }
 
   /** Na het opslaan kan de controle-status in de database zijn veranderd (bijv. ras of moederfoto gewijzigd). */
@@ -271,14 +271,14 @@ export default function Beheer({
       </div>
 
       <section className="panel" aria-labelledby="afronden-kop">
-        <h2 id="afronden-kop">Nestje afronden of verwijderen</h2>
+        <h2 id="afronden-kop">Nestje afsluiten of verwijderen</h2>
 
         <div className="afrondblok">
-          <h3>{nest.afgerond ? 'Dit nestje is afgerond' : 'Alle kittens verhuisd?'}</h3>
+          <h3>{nest.afgerond ? 'Dit nestje is afgesloten' : 'Alle kittens verhuisd?'}</h3>
           <p className="hint">
             {nest.afgerond
               ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
-              : 'Rond je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden. Het nestje verdwijnt uit het overzicht.'}
+              : 'Sluit je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden. Het nestje verdwijnt uit het overzicht.'}
           </p>
           {!nest.afgerond && nogNietGeplaatst.length > 0 && (
             <p className="hint" style={{ color: '#b3421f' }}>
@@ -289,8 +289,8 @@ export default function Beheer({
             {nest.afgerond
               ? 'Nestje weer openen'
               : nogNietGeplaatst.length > 0
-                ? 'Toch zetten op: alle kittens weg'
-                : 'Zet nestje op: alle kittens weg'}
+                ? 'Toch afsluiten'
+                : 'Nestje afsluiten'}
           </button>
         </div>
 
