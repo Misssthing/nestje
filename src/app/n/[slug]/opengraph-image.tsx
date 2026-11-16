@@ -1,11 +1,13 @@
 import { ImageResponse } from 'next/og';
-import { fotoUrl } from '@/lib/config';
+import { fotoThumbUrl } from '@/lib/config';
 import { aantalKittens, aftelling, datumNL } from '@/lib/nest';
 import { haalNestje } from './data';
 
 export const alt = 'Het nestje';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
+// Niet bij elke aanvraag opnieuw opbouwen (foto + lettertype ophalen): een uur cachen is ruim genoeg voor een deelafbeelding.
+export const revalidate = 3600;
 
 async function laadLettertype(gewicht: number, tekst: string): Promise<ArrayBuffer | null> {
   try {
@@ -45,7 +47,7 @@ export default async function OgAfbeelding({ params }: { params: Promise<{ slug:
   const fotoKitten =
     data?.kittens.find((k) => k.status === 'vrij' && k.fotos.length) ?? data?.kittens.find((k) => k.fotos.length);
   const fotoPad = data?.nestFotos[0] ?? fotoKitten?.fotos[0];
-  const foto = fotoPad ? fotoUrl(fotoPad) : null;
+  const foto = fotoPad ? fotoThumbUrl(fotoPad) : null;
 
   const alleTekst = `${titel}${groot}${onder}${regel}Nestje`;
   const [zwaar, normaal] = await Promise.all([laadLettertype(800, alleTekst), laadLettertype(400, alleTekst)]);
