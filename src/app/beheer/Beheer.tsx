@@ -117,7 +117,15 @@ export default function Beheer({
 
   async function wisselAfgerond() {
     const afgerond = !nest.afgerond;
-    if (afgerond && !confirm('Nestje afronden? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.')) return;
+    if (afgerond) {
+      const nogOpen = kittens.filter((k) => k.status === 'vrij' || k.status === 'optie');
+      const vraag = nogOpen.length
+        ? `Let op: ${nogOpen.length === 1 ? 'kitten' : 'deze kittens staan'} nog op “vrij” of “onder optie”: ${nogOpen
+            .map((k) => k.naam)
+            .join(', ')}. Als je toch afrondt, toont je pagina dat alle kittens een thuis hebben, ook al klopt dat nog niet. Toch afronden?`
+        : 'Nestje afronden? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.';
+      if (!confirm(vraag)) return;
+    }
     const { error } = await supabase.from('nests').update({ afgerond }).eq('id', nest.id);
     if (error) return toast('Opslaan lukte niet');
     setNest((n) => ({ ...n, afgerond }));
@@ -145,6 +153,7 @@ export default function Beheer({
   }, []);
 
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
+  const nogNietGeplaatst = kittens.filter((k) => k.status === 'vrij' || k.status === 'optie');
 
   return (
     <main className="wrap">
@@ -271,8 +280,17 @@ export default function Beheer({
               ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
               : 'Rond je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden. Het nestje verdwijnt uit het overzicht.'}
           </p>
+          {!nest.afgerond && nogNietGeplaatst.length > 0 && (
+            <p className="hint" style={{ color: '#b3421f' }}>
+              Let op: {nogNietGeplaatst.map((k) => k.naam).join(', ')} staat nog op “vrij” of “onder optie”.
+            </p>
+          )}
           <button className="btn ghost" onClick={wisselAfgerond}>
-            {nest.afgerond ? 'Nestje weer openen' : 'Nestje afronden'}
+            {nest.afgerond
+              ? 'Nestje weer openen'
+              : nogNietGeplaatst.length > 0
+                ? 'Toch zetten op: alle kittens weg'
+                : 'Zet nestje op: alle kittens weg'}
           </button>
         </div>
 
