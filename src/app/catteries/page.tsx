@@ -65,36 +65,38 @@ export default async function Catteries({ searchParams }: Props) {
         <AccountKnop />
       </div>
 
-      <section className="hero">
-        <h1>Catteries</h1>
-        <p>
-          Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Gecontroleerd” hebben we de cattery zelf
-          nagekeken; bij de andere zijn de gegevens opgegeven door de fokker. Kom altijd eerst kijken, bij de kittens én hun
-          moeder, en vraag naar de stamboompapieren.
-        </p>
-      </section>
+      <div className="cat-kop">
+        <section className="hero">
+          <h1>Catteries</h1>
+          <p>
+            Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Gecontroleerd” hebben we de cattery zelf
+            nagekeken; bij de andere zijn de gegevens opgegeven door de fokker. Kom altijd eerst kijken, bij de kittens én hun
+            moeder, en vraag naar de stamboompapieren.
+          </p>
+        </section>
 
-      <form className="cat-filters" method="get" action="/catteries">
-        <label className="veld">
-          <span>Ras</span>
-          <select name="ras" defaultValue={rasGekozen}>
-            <option value="">Alle rassen</option>
-            {rassenKeuze.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
-        </label>
-        <label className="veld">
-          <span>Provincie</span>
-          <select name="provincie" defaultValue={provincie}>
-            <option value="">Heel Nederland en België</option>
-            {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
-          </select>
-        </label>
-        <label className="vink cat-vink">
-          <input type="checkbox" name="gecontroleerd" value="1" defaultChecked={alleenGecontroleerd} />
-          <span>Alleen gecontroleerd door Nestje</span>
-        </label>
-        <button className="btn primary klein" type="submit">Toon</button>
-      </form>
+        <form className="cat-filters panel" method="get" action="/catteries">
+          <label className="veld">
+            <span>Ras</span>
+            <select name="ras" defaultValue={rasGekozen}>
+              <option value="">Alle rassen</option>
+              {rassenKeuze.map((r) => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </label>
+          <label className="veld">
+            <span>Provincie</span>
+            <select name="provincie" defaultValue={provincie}>
+              <option value="">Heel Nederland en België</option>
+              {PROVINCIES.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </label>
+          <label className="vink cat-vink">
+            <input type="checkbox" name="gecontroleerd" value="1" defaultChecked={alleenGecontroleerd} />
+            <span>Alleen gecontroleerd door Nestje</span>
+          </label>
+          <button className="btn primary klein" type="submit">Toon</button>
+        </form>
+      </div>
 
       <p className="aantal">{lijst.length === 1 ? '1 cattery' : `${lijst.length} catteries`}</p>
 

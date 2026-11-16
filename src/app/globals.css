@@ -704,9 +704,13 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .cattery-kaart span:not(.chip) { color: var(--muted); font-size: 15px; }
 
 /* ─── Overzicht catteries (uitbreiding 31) ─── */
-.cat-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 6px 0 14px; }
-.cat-filters .veld { margin: 0; flex: 0 1 220px; }
-.cat-filters .btn { flex: none; min-height: 46px; }
+.cat-kop { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 20px 32px; margin-bottom: 8px; }
+.cat-kop .hero { flex: 1 1 380px; margin: 0; }
+.cat-kop .hero p { text-wrap: pretty; }
+.cat-filters { display: flex; flex-direction: column; gap: 10px; margin: 0; flex: 0 1 300px; width: 100%; max-width: 300px; }
+.cat-filters .veld { margin: 0; }
+.cat-filters .btn { width: 100%; min-height: 46px; }
+@media (max-width: 760px) { .cat-filters { max-width: none; } }
 .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 18px; }
 .ckaart { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); transition: box-shadow .2s, transform .2s; }
 @media (hover: hover) and (pointer: fine) { .ckaart:hover { box-shadow: 0 10px 28px rgb(31 42 36 / .10); transform: translateY(-2px); } }
@@ -728,7 +732,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .stamboom-ok { color: var(--free); font-weight: 600; font-size: 15px; margin: 4px 0 0; }
 .ckaart-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .ckaart-tekst .ckaart-chips .chip { margin-top: 0; }
-.cat-vink { align-self: center; margin: 0; }
+.cat-vink { align-self: flex-start; margin: 4px 0 0; }
 
 /* ─── Stamboomnummers stimuleren (uitbreiding 33) ─── */
 .labelcheck .labelcheck-extra { background: var(--free-bg); color: var(--ink); border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
