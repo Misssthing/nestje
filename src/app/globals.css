@@ -705,7 +705,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 
 /* ─── Overzicht catteries (uitbreiding 31) ─── */
 .cat-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 6px 0 14px; }
-.cat-filters .veld { margin: 0; min-width: 200px; flex: 1 1 200px; }
+.cat-filters .veld { margin: 0; flex: 0 1 220px; }
 .cat-filters .btn { flex: none; min-height: 46px; }
 .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 18px; }
 .ckaart { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; text-decoration: none; color: var(--ink); transition: box-shadow .2s, transform .2s; }
