@@ -379,8 +379,8 @@ const ONAFGEMAAKT_HERINNERING_NA_UUR = 24;
 
 /**
  * Nestjes waar de verkoper mee is begonnen maar halverwege is gestopt: nog geen kitten toegevoegd,
- * of kittens zonder foto's, en nooit ter controle ingediend. 24 uur na aanmaken krijgt de verkoper
- * daar één keer een vriendelijke herinnering over (nooit vaker).
+ * of kittens zonder foto's. 24 uur na aanmaken krijgt de verkoper daar één keer een vriendelijke
+ * herinnering over (nooit vaker).
  */
 export async function onafgemaakteNestjes() {
   const drempel = new Date(Date.now() - ONAFGEMAAKT_HERINNERING_NA_UUR * 36e5).toISOString();
@@ -388,7 +388,6 @@ export async function onafgemaakteNestjes() {
     .from('nests')
     .select('id, owner_id, slug, moeder_naam')
     .lt('aangemaakt_op', drempel)
-    .is('ter_controle_op', null)
     .eq('afgerond', false)
     .is('onafgemaakt_herinnerd_op', null)
     .returns<{ id: string; owner_id: string; slug: string; moeder_naam: string }[]>();
