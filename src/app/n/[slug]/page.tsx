@@ -466,6 +466,7 @@ export default async function NestjesPagina({ params }: Props) {
             <h2>Waar let je op?</h2>
             <ul>
               <li>Kom altijd eerst kijken{vondeling ? '' : ', bij de kittens én hun moeder'}.</li>
+              <li>Kan dat nog niet? Vraag dan om een video-oproep met de kittens{vondeling ? '' : ' én de moeder'}, zodat je zeker weet dat het klopt.</li>
               <li>Een kitten verhuist op zijn vroegst na 12 weken, gechipt en ingeënt. Vraag naar het vaccinatieboekje.</li>
               {nest.stamboom === true && <li>Vraag naar de stamboompapieren van beide ouders, en wanneer je de stamboom van je kitten krijgt.</li>}
               <li>Betaal nooit vooruit aan iemand die je niet hebt ontmoet.</li>
