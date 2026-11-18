@@ -9,7 +9,7 @@ import { createPublicClient } from '@/lib/supabase/public';
 
 export const dynamic = 'force-dynamic';
 
-type Props = { searchParams: Promise<{ ras?: string; provincie?: string; gecontroleerd?: string }> };
+type Props = { searchParams: Promise<{ zoek?: string; ras?: string; provincie?: string; gecontroleerd?: string }> };
 
 type Cattery = {
   slug: string | null; link: string; profiel: boolean; naam: string | null; intro: string | null; sinds_jaar: number | null; rassen_tekst: string | null;
@@ -18,13 +18,13 @@ type Cattery = {
 };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { ras, provincie, gecontroleerd } = await searchParams;
+  const { zoek, ras, provincie, gecontroleerd } = await searchParams;
   return {
     title: 'Catteries met stamboom',
     description:
       'Catteries op Nestje: fokkers met stamboom, aangesloten bij een vereniging. Bekijk hun nestjes en lees wie ze zijn.',
     alternates: { canonical: '/catteries' },
-    robots: ras || provincie || gecontroleerd ? { index: false, follow: true } : { index: true, follow: true },
+    robots: zoek || ras || provincie || gecontroleerd ? { index: false, follow: true } : { index: true, follow: true },
   };
 }
 
@@ -35,6 +35,7 @@ const organisatieKort = (o: string | null) => (o && o !== 'Anders' ? o.replace(/
 
 export default async function Catteries({ searchParams }: Props) {
   const sp = await searchParams;
+  const zoekterm = (sp.zoek ?? '').trim().slice(0, 60);
   const provincie = sp.provincie && (PROVINCIES as readonly string[]).includes(sp.provincie) ? sp.provincie : '';
   const rasGekozen = (sp.ras ?? '').slice(0, 60);
   const alleenGecontroleerd = sp.gecontroleerd === '1';
@@ -51,11 +52,17 @@ export default async function Catteries({ searchParams }: Props) {
     rassenNetjes: [...new Set((c.rassen ?? []).flatMap((r) => rasDelen(r)))],
   }));
   const rassenKeuze = [...new Set(alle.flatMap((c) => c.rassenNetjes))].sort((a, b) => a.localeCompare(b, 'nl'));
+  const zoekLower = zoekterm.toLowerCase();
   const lijst = alle.filter(
     (c) =>
       (!alleenGecontroleerd || c.gecontroleerd) &&
       (!provincie || c.provincie === provincie) &&
-      (!rasGekozen || c.rassenNetjes.some((r) => r.toLowerCase() === rasGekozen.toLowerCase())),
+      (!rasGekozen || c.rassenNetjes.some((r) => r.toLowerCase() === rasGekozen.toLowerCase())) &&
+      (!zoekLower ||
+        catteryNaam(c.cattery).toLowerCase().includes(zoekLower) ||
+        c.cattery.toLowerCase().includes(zoekLower) ||
+        (c.naam ?? '').toLowerCase().includes(zoekLower) ||
+        (c.woonplaats ?? '').toLowerCase().includes(zoekLower)),
   );
 
   return (
@@ -76,6 +83,10 @@ export default async function Catteries({ searchParams }: Props) {
         </section>
 
         <form className="cat-filters panel" method="get" action="/catteries">
+          <label className="veld">
+            <span>Naam of woonplaats</span>
+            <input type="text" name="zoek" defaultValue={zoekterm} placeholder="Bijv. Mistinguett of Capelle" maxLength={60} />
+          </label>
           <label className="veld">
             <span>Ras</span>
             <select name="ras" defaultValue={rasGekozen}>
@@ -130,7 +141,7 @@ export default async function Catteries({ searchParams }: Props) {
           })}
         </div>
       ) : (
-        <p className="hint">Geen catteries gevonden met deze keuze. Kies een ander ras of een andere provincie.</p>
+        <p className="hint">Geen catteries gevonden met deze keuze. Probeer een andere naam, ras of provincie.</p>
       )}
 
       <section className="panel" style={{ marginTop: 28 }}>
