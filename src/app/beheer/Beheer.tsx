@@ -187,6 +187,9 @@ export default function Beheer({
         {!nest.whatsapp_nummer && (
           <p className="fout">Vul je WhatsApp-nummer in bij Gegevens, anders kunnen kopers je niet bereiken.</p>
         )}
+        <p className="hint" style={{ margin: '10px 0 0' }}>
+          👁 {nest.weergaven ? `${nest.weergaven} keer bekeken` : 'Nog niet bekeken'}
+        </p>
       </section>
 
       <Checklist

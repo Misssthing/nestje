@@ -6,6 +6,8 @@ import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import AccountKnop from '@/components/AccountKnop';
 import EigenaarBalk from '@/components/EigenaarBalk';
+import Hartknop from '@/components/Hartknop';
+import Weergaveteller from '@/components/Weergaveteller';
 import Voet from '@/components/Voet';
 import { TerugNaarOverzicht } from '@/components/Overzichtgeheugen';
 import ZoekFilters from '@/components/ZoekFilters';
@@ -165,6 +167,7 @@ export default async function NestjesPagina({ params }: Props) {
 
   return (
     <main className={inOverzicht ? 'wrap breed' : 'wrap'}>
+      <Weergaveteller slug={nest.slug} />
       <div className="bar">
         {inOverzicht ? (
           <TerugNaarOverzicht className="brand" />
@@ -289,6 +292,7 @@ export default async function NestjesPagina({ params }: Props) {
                 <div className="portrait">
                   <Fotostrip fotos={k.fotos.map(fotoUrl)} naam={k.naam} />
                   <span className={`chip ${k.status}`}>{STATUS_PUBLIEK[k.status]}</span>
+                  <Hartknop kittenId={k.id} hartjes={k.hartjes} />
                 </div>
                 <div className="kbody">
                   <h2 className="kname">{k.naam}</h2>

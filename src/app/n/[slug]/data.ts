@@ -27,7 +27,7 @@ export const haalNestje = cache(async (slug: string) => {
       .returns<Pick<NestFoto, 'storage_path' | 'volgorde'>[]>(),
     supabase
       .from('openbare_kittens')
-      .select('id, naam, geslacht, vacht, status, volgorde, omschrijving, gechipt, enting1, enting2, ontwormd, ontvlooid, dierenarts')
+      .select('id, naam, geslacht, vacht, status, volgorde, omschrijving, gechipt, enting1, enting2, ontwormd, ontvlooid, dierenarts, hartjes')
       .eq('nest_id', nest.id)
       .order('volgorde')
       .returns<Omit<Kitten, 'nest_id' | 'notitie'>[]>(),

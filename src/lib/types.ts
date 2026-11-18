@@ -53,6 +53,8 @@ export interface Nest {
   controle_status?: 'wacht' | 'goedgekeurd' | 'aanpassen';
   controle_reden?: string | null;
   gecontroleerd_op?: string | null;
+  /** Aantal keer dat de openbare pagina is bekeken. Alleen zichtbaar voor de verkoper (uitbreiding 34). */
+  weergaven?: number;
 }
 
 export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 'vader_stamboomnr' | 'moeder_chip'> & {
@@ -97,6 +99,8 @@ export interface Kitten {
   ontwormd: boolean;
   ontvlooid: boolean;
   dierenarts: boolean;
+  /** Aantal hartjes van bezoekers, openbaar zichtbaar (uitbreiding 34). */
+  hartjes: number;
 }
 
 export type KittenMetFotos = Kitten & { kitten_photos: Foto[] };

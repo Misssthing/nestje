@@ -130,6 +130,7 @@ export default async function Overzicht() {
                 {!n.afgerond && (
                   <span className={`overzichtlabel${label.aan ? ' aan' : ''}`}>{label.tekst}</span>
                 )}
+                <span>👁 {n.weergaven ? `${n.weergaven} keer bekeken` : 'Nog niet bekeken'}</span>
                 <span className="aanpassen-label" aria-hidden="true">✎ Aanpassen ›</span>
               </div>
               <span className={`chip ${n.afgerond ? 'verhuisd' : 'vrij'}`}>
