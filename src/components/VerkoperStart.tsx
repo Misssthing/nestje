@@ -78,6 +78,7 @@ export default function VerkoperStart({ ingelogd = false, fout = false }: { inge
               <li>Foto&apos;s van de kittens (je kunt ze later toevoegen)</li>
               <li>Je WhatsApp-nummer (staat nooit als tekst op je pagina)</li>
               <li>Bij een raskat: de stamboomgegevens van beide ouders</li>
+              <li>Bij een raskat: de testuitslagen van de ouders (of aangeven dat die er nog niet zijn)</li>
             </ul>
           </section>
 
