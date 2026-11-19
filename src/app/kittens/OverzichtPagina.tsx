@@ -115,10 +115,9 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
           <h1>{landing?.kop ?? 'Kittens te koop'}</h1>
           <p>
             {landing?.intro ??
-              'Vind jouw kitten bij hobbyverkopers en fokkers in Nederland en België. Je ziet meteen welke kittens nog vrij zijn en wanneer ze mogen verhuizen.'}
+              'Vind jouw kitten bij hobbyverkopers en fokkers in Nederland en België — elk nestje gecontroleerd voordat het hier verschijnt. Je ziet meteen welke kittens nog vrij zijn en wanneer ze mogen verhuizen.'}
           </p>
           <p className="kop-hero-klein">
-            Kom altijd eerst kijken, bij de kittens én hun moeder.{' '}
             <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')} target="_blank" rel="noopener">Waar let je op bij het kopen? ↗</a>
             {' '}· <Link href="/kitten-reserveren">Nog niet geboren? Zo reserveer je veilig</Link>
             {' '}· <Link href="/huisregels">Meer over verantwoord kittens verkopen</Link>
