@@ -16,6 +16,9 @@ export default function KittenReserveren() {
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
       </div>
+      <nav className="kruimel" aria-label="Kruimelpad">
+        <Link href="/kenniscentrum">Kenniscentrum</Link> <span aria-hidden="true">›</span> <span>Een kitten reserveren</span>
+      </nav>
 
       <h1>Een kitten reserveren voor hij geboren is</h1>
       <p>

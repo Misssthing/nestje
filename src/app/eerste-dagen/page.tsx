@@ -17,6 +17,9 @@ export default function EersteDagen() {
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
       </div>
+      <nav className="kruimel" aria-label="Kruimelpad">
+        <Link href="/kenniscentrum">Kenniscentrum</Link> <span aria-hidden="true">›</span> <span>{EERSTE_DAGEN_TITEL}</span>
+      </nav>
 
       <h1>{EERSTE_DAGEN_TITEL}</h1>
       <p>{EERSTE_DAGEN_INTRO}</p>

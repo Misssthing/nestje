@@ -16,6 +16,9 @@ export default function GezondheidstestenKittens() {
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
       </div>
+      <nav className="kruimel" aria-label="Kruimelpad">
+        <Link href="/kenniscentrum">Kenniscentrum</Link> <span aria-hidden="true">›</span> <span>Gezondheidstesten uitgelegd</span>
+      </nav>
 
       <h1>Gezondheidstesten bij kittens, uitgelegd</h1>
       <p>
