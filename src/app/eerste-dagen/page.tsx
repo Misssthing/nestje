@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import KopieerLink from '@/components/KopieerLink';
+import LeesOok from '@/components/LeesOok';
 import Voet from '@/components/Voet';
 import { CONFIG, metUtm } from '@/lib/config';
 import { EERSTE_DAGEN, EERSTE_DAGEN_INTRO, EERSTE_DAGEN_PDF, EERSTE_DAGEN_TITEL } from '@/lib/eerste-dagen';
@@ -62,6 +63,8 @@ export default function EersteDagen() {
           Wat heb je nodig voor een kitten? ↗
         </a>
       </section>
+
+      <LeesOok huidige="/eerste-dagen" />
 
       <Voet />
     </main>

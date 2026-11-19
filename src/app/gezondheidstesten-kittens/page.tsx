@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import LeesOok from '@/components/LeesOok';
 import Voet from '@/components/Voet';
 import { TEST_UITLEG } from '@/lib/nest';
 
@@ -89,6 +90,8 @@ export default function GezondheidstestenKittens() {
         <p>Bekijk alle nestjes die nu op Nestje staan.</p>
         <Link className="btn accent" href="/kittens">Bekijk kittens →</Link>
       </section>
+
+      <LeesOok huidige="/gezondheidstesten-kittens" />
 
       <Voet />
     </main>

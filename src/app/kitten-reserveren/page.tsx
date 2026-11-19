@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CONFIG, metUtm } from '@/lib/config';
+import LeesOok from '@/components/LeesOok';
 import Voet from '@/components/Voet';
 
 export const metadata: Metadata = {
@@ -90,6 +91,8 @@ export default function KittenReserveren() {
           Starterslijst voor nieuwe kittenbezitters ↗
         </a>
       </section>
+
+      <LeesOok huidige="/kitten-reserveren" />
 
       <Voet />
     </main>

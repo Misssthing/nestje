@@ -534,7 +534,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .blokkop-link:hover { text-decoration: underline; }
 
 /* Andere nestjes: op de telefoon een swipe-rij, op de computer een raster */
-.andere-nestjes, .artikelen { margin-top: 40px; }
+.andere-nestjes, .artikelen, .lees-ook { margin-top: 40px; }
 .kaart-rij { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: thin; }
 .kaart-rij > .nkaart { scroll-snap-align: start; }
 @media (min-width: 640px) {
