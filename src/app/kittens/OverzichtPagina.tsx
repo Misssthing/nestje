@@ -120,6 +120,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
           <p className="kop-hero-klein">
             Kom altijd eerst kijken, bij de kittens én hun moeder.{' '}
             <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')} target="_blank" rel="noopener">Waar let je op bij het kopen? ↗</a>
+            {' '}· <Link href="/kitten-reserveren">Nog niet geboren? Zo reserveer je veilig</Link>
           </p>
         </div>
       </section>
