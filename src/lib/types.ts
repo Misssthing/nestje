@@ -36,6 +36,9 @@ export interface Nest {
   moeder_chip?: string | null;
   moeder_testen: TestMetBewijs[];
   vader_testen: TestMetBewijs[];
+  /** Expliciet aangevinkt: "nog geen testen gedaan" (uitbreiding 36) */
+  moeder_geen_testen?: boolean | null;
+  vader_geen_testen?: boolean | null;
   /** Gezondheid en vertrouwen, per nestje (uitbreiding 28) */
   dierenarts?: boolean;
   enting1?: boolean;

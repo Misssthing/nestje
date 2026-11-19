@@ -95,6 +95,18 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
       voorOverzicht: false,
     });
   }
+  if (nest.stamboom === true) {
+    const moederKlaar = nest.moeder_testen.length > 0 || Boolean(nest.moeder_geen_testen);
+    const vaderKlaar = !nest.vader_naam?.trim() || nest.vader_testen.length > 0 || Boolean(nest.vader_geen_testen);
+    lijst.push({
+      id: 'testen',
+      tekst: 'Gezondheidstesten',
+      uitleg: 'Vul de testuitslagen van de ouders in, of geef aan dat er nog geen testen zijn gedaan.',
+      klaar: moederKlaar && vaderKlaar,
+      plek: 'gegevens',
+      voorOverzicht: false,
+    });
+  }
   lijst.push({
     id: 'gezondheid',
     tekst: 'Gezondheid en vertrouwen',

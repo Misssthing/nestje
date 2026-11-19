@@ -45,6 +45,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
   const [soort, setSoort] = useState<'eigen' | 'vondeling'>(nest.soort ?? 'eigen');
   const [mTesten, setMTesten] = useState<TestMetBewijs[]>(nest.moeder_testen ?? []);
   const [vTesten, setVTesten] = useState<TestMetBewijs[]>(nest.vader_testen ?? []);
+  const [moederGeenTesten, setMoederGeenTesten] = useState(Boolean(nest.moeder_geen_testen));
+  const [vaderGeenTesten, setVaderGeenTesten] = useState(Boolean(nest.vader_geen_testen));
   const [aandacht, setAandacht] = useState<string[]>([]);
   const [fout, setFout] = useState('');
   const [status, setStatus] = useState<'opgeslagen' | 'wijzigingen' | 'bezig' | 'fout'>('opgeslagen');
@@ -52,8 +54,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     setV((s) => ({ ...s, [k]: e.target.value }));
 
   // Altijd de nieuwste invoer bij de hand, ook in timers en bij het verlaten van de pagina.
-  const laatste = useRef({ v, stamboom, getest, geschat, soort, mTesten, vTesten });
-  laatste.current = { v, stamboom, getest, geschat, soort, mTesten, vTesten };
+  const laatste = useRef({ v, stamboom, getest, geschat, soort, mTesten, vTesten, moederGeenTesten, vaderGeenTesten });
+  laatste.current = { v, stamboom, getest, geschat, soort, mTesten, vTesten, moederGeenTesten, vaderGeenTesten };
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openstaand = useRef(false);
   const bezig = useRef(false);
@@ -70,7 +72,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (!openstaand.current) return;
     if (bezig.current) return; // na de lopende opslag volgt vanzelf een nieuwe ronde
 
-    const { v, getest, geschat, soort, mTesten, vTesten } = laatste.current;
+    const { v, getest, geschat, soort, mTesten, vTesten, moederGeenTesten, vaderGeenTesten } = laatste.current;
     // Vondelingen hebben geen bekende afstamming, dus ook geen stamboom.
     const stamboom = soort === 'vondeling' ? null : laatste.current.stamboom;
     const stop = (melding: string) => {
@@ -155,6 +157,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       moeder_chip: v.moeder_chip.replace(/\s+/g, '') || null,
       moeder_testen: mT,
       vader_testen: vT,
+      moeder_geen_testen: mT.length === 0 ? moederGeenTesten : false,
+      vader_geen_testen: vT.length === 0 ? vaderGeenTesten : false,
     };
 
     openstaand.current = false;
@@ -201,7 +205,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(opslaan, 900);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v, stamboom, getest, geschat, soort, mTesten, vTesten]);
+  }, [v, stamboom, getest, geschat, soort, mTesten, vTesten, moederGeenTesten, vaderGeenTesten]);
 
   // Wie de pagina verlaat of de app wegklikt, verliest niets.
   useEffect(() => {
@@ -449,6 +453,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
               ras={v.moeder_ras}
               testen={mTesten}
               onChange={setMTesten}
+              verplicht={vraagtStamboom(v.moeder_ras)}
+              geenTesten={moederGeenTesten}
+              onGeenTestenChange={setMoederGeenTesten}
             />
             {(v.vader_naam.trim() || stamboom === true) && (
               <TestenLijst
@@ -456,6 +463,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 ras={v.vader_ras || v.moeder_ras}
                 testen={vTesten}
                 onChange={setVTesten}
+                verplicht={vraagtStamboom(v.vader_ras || v.moeder_ras)}
+                geenTesten={vaderGeenTesten}
+                onGeenTestenChange={setVaderGeenTesten}
               />
             )}
             {mTesten.length + vTesten.length === 0 && getest && v.ouders_test_info && (

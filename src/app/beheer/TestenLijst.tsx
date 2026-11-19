@@ -7,16 +7,23 @@ type Props = {
   ras: string;
   testen: OuderTest[];
   onChange: (t: OuderTest[]) => void;
+  /** Bij een raskat vragen we een bewuste keuze: testen invullen, of aangeven dat die er nog niet zijn. */
+  verplicht?: boolean;
+  geenTesten?: boolean;
+  onGeenTestenChange?: (g: boolean) => void;
 };
 
 /** Testen van één ouder: suggesties per ras, plus zelf toevoegen. */
-export default function TestenLijst({ titel, ras, testen, onChange }: Props) {
+export default function TestenLijst({ titel, ras, testen, onChange, verplicht, geenTesten, onGeenTestenChange }: Props) {
   const aanwezig = new Set(testen.map((t) => t.test.trim().toLowerCase()));
   const suggesties = testSuggesties(ras).filter((s) => !aanwezig.has(s.toLowerCase()));
 
   const wijzig = (i: number, deel: Partial<OuderTest>) =>
     onChange(testen.map((t, j) => (j === i ? { ...t, ...deel } : t)));
-  const voegToe = (test = '') => onChange([...testen, { test, uitslag: 'Negatief', datum: '' }]);
+  const voegToe = (test = '') => {
+    onChange([...testen, { test, uitslag: 'Negatief', datum: '' }]);
+    onGeenTestenChange?.(false);
+  };
   const verwijder = (i: number) => onChange(testen.filter((_, j) => j !== i));
 
   return (
@@ -49,6 +56,16 @@ export default function TestenLijst({ titel, ras, testen, onChange }: Props) {
         <button type="button" className="chipknop" onClick={() => voegToe()}>+ Andere test</button>
       </div>
       {ras.trim() === '' && <p className="hint">Vul het ras in, dan zie je de testen die bij dat ras gebruikelijk zijn.</p>}
+      {verplicht && testen.length === 0 && (
+        <label className="vink">
+          <input
+            type="checkbox"
+            checked={Boolean(geenTesten)}
+            onChange={(e) => onGeenTestenChange?.(e.target.checked)}
+          />
+          <span>Nog geen testen gedaan</span>
+        </label>
+      )}
     </div>
   );
 }
