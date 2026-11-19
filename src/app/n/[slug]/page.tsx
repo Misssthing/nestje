@@ -400,11 +400,24 @@ export default async function NestjesPagina({ params }: Props) {
               ouderTest && <p className="ouderfeit">{ouderTest}</p>
             )}
             {gestructureerd && (
-              <p className="hint testhint">
-                {ietsBekeken
-                  ? '“Bekeken door Nestje”: wij hebben de uitslag gezien en hij klopt. “Opgegeven”: ingevuld door de verkoper, vraag gerust om de uitslag.'
-                  : '“Opgegeven” betekent: ingevuld door de verkoper. Vraag gerust om de uitslagen.'}
-              </p>
+              <>
+                <p className="hint testhint">
+                  {ietsBekeken
+                    ? '“Bekeken door Nestje”: wij hebben de uitslag gezien en hij klopt. “Opgegeven”: ingevuld door de verkoper, vraag gerust om de uitslag.'
+                    : '“Opgegeven” betekent: ingevuld door de verkoper. Vraag gerust om de uitslagen.'}
+                </p>
+                <details className="panel testuitleg">
+                  <summary>Wat betekenen deze testen?</summary>
+                  <ul>
+                    <li>“Drager” betekent dat de kat het gen heeft, maar er zelf niet ziek van wordt. Vooral relevant als je zelf ook wilt fokken.</li>
+                    <li>De meeste testen zijn van de ouders, niet van de kitten zelf. Ook bij twee schone ouders kan een kitten in zeldzame gevallen toch drager zijn.</li>
+                    <li>Een DNA-test is eenmalig geldig, het DNA verandert niet. Een hartecho is een momentopname en moet periodiek herhaald worden.</li>
+                  </ul>
+                  <p style={{ marginBottom: 0 }}>
+                    Meer weten? Lees <Link href="/gezondheidstesten-kittens">gezondheidstesten bij kittens, uitgelegd</Link>.
+                  </p>
+                </details>
+              </>
             )}
           </section>
 

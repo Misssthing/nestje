@@ -50,6 +50,7 @@ export default function Voet() {
             <li><Link href="/catteries">Catteries</Link></li>
             <li><Link href="/verkopen">Zelf kittens verkopen</Link></li>
             <li><Link href="/huisregels">Huisregels</Link></li>
+            <li><Link href="/gezondheidstesten-kittens">Gezondheidstesten uitgelegd</Link></li>
             <li><Link href="/hulp">Hulp</Link></li>
             <li><Link href="/login">Inloggen</Link></li>
           </ul>
