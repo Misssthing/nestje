@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Voet from '@/components/Voet';
+import { TEST_UITLEG } from '@/lib/nest';
 
 export const metadata: Metadata = {
   title: 'Gezondheidstesten bij kittens, uitgelegd',
@@ -45,6 +46,16 @@ export default function GezondheidstestenKittens() {
           drager-uitslag in de praktijk meestal geen gevolgen.
         </li>
       </ul>
+
+      <h2>Veelgebruikte testen, en wat ze controleren</h2>
+      <p>
+        Welke testen gebruikelijk zijn, verschilt per ras. Dit zijn de testen die je het vaakst tegenkomt op Nestje:
+      </p>
+      <dl className="rastekst-vragen">
+        {Object.entries(TEST_UITLEG).map(([test, uitleg]) => (
+          <div key={test}><dt>{test}</dt><dd>{uitleg}</dd></div>
+        ))}
+      </dl>
 
       <h2>Ouders getest, wat betekent dat voor de kitten?</h2>
       <p>
