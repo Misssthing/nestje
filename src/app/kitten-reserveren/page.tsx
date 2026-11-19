@@ -56,7 +56,7 @@ export default function KittenReserveren() {
       <h2>Rode vlaggen</h2>
       <ul>
         <li>Meerdere nestjes tegelijk, van verschillende rassen of moeders.</li>
-        <li>Je mag de moederkat niet zien of spreken.</li>
+        <li>Je mag de moeder niet zien, en vragen daarover worden ontweken.</li>
         <li>Druk om snel te beslissen of te betalen.</li>
         <li>Geen enkele gezondheidstest, zonder uitleg waarom niet.</li>
       </ul>
