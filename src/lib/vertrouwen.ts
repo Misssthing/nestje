@@ -18,7 +18,7 @@ export const GEZONDHEID_NEST: [VertrouwenVeld, string][] = [
 /** Vertrouwen en kennismaken */
 export const VERTROUWEN_NEST: [VertrouwenVeld, string][] = [
   ['ouders_te_zien', 'De moeder is te zien'],
-  ['bezoek_mogelijk', 'Je kunt eerst komen kijken'],
+  ['bezoek_mogelijk', 'Je kunt eerst komen kijken of videobellen'],
   ['gesocialiseerd', 'Opgegroeid in huis, gewend aan mensen'],
   ['koopovereenkomst', 'Met koopovereenkomst'],
   ['stamboom_papieren', 'Stamboompapieren gaan mee'],
