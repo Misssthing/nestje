@@ -133,7 +133,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
           </svg>
           <div>
             <strong>Gecontroleerd aanbod</strong>
-            <span>Elk nestje wordt bekeken voordat het hier verschijnt</span>
+            <span>Elk nestje in dit overzicht is bekeken voordat het hier verschijnt</span>
           </div>
         </div>
         <div className="vertrouwen-item">
