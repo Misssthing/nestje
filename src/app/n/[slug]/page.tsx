@@ -409,6 +409,7 @@ export default async function NestjesPagina({ params }: Props) {
                 <details className="panel testuitleg">
                   <summary>Wat betekenen deze testen?</summary>
                   <ul>
+                    <li>“Negatief”, “Vrij” of “Normaal” betekent: geen tekenen van de aandoening gevonden.</li>
                     <li>“Drager” betekent dat de kat het gen heeft, maar er zelf niet ziek van wordt. Vooral relevant als je zelf ook wilt fokken.</li>
                     <li>De meeste testen zijn van de ouders, niet van de kitten zelf. Ook bij twee schone ouders kan een kitten in zeldzame gevallen toch drager zijn.</li>
                     <li>Een DNA-test is eenmalig geldig, het DNA verandert niet. Een hartecho is een momentopname en moet periodiek herhaald worden.</li>
