@@ -293,15 +293,9 @@ export function mailVerkoperOnafgemaakteNestje(o: { nestId: string; moeder: stri
 
 export function mailVerkoperNieuweAanmelding(o: {
   nestId: string; moeder: string; naam: string; woonplaats: string;
-  voorkeur_geslacht: string; voorkeur_vacht: string | null;
-  huisdier: string | null; kinderen: string | null; kat_ervaring: string | null; motivatie: string | null;
+  voorkeur_geslacht: string; voorkeur_vacht: string | null; motivatie: string | null;
 }) {
   const voorkeur = [o.voorkeur_geslacht === 'geen' ? '' : o.voorkeur_geslacht, o.voorkeur_vacht ?? ''].filter(Boolean).join(', ');
-  const achtergrond = [
-    o.huisdier ? `huisdier: ${o.huisdier}` : '',
-    o.kinderen ? `kinderen in huis: ${o.kinderen}` : '',
-    o.kat_ervaring ? `ervaring met katten: ${o.kat_ervaring}` : '',
-  ].filter(Boolean).join(' · ');
   return {
     onderwerp: `Nieuwe aanmelding voor het nestje van ${o.moeder}`,
     html: opmaak(
@@ -309,7 +303,6 @@ export function mailVerkoperNieuweAanmelding(o: {
       [
         `${esc(o.naam)} uit ${esc(o.woonplaats)} heeft zich aangemeld voor het nestje van ${esc(o.moeder)}.`,
         voorkeur ? `<strong>Voorkeur:</strong> ${esc(voorkeur)}` : '',
-        achtergrond ? `<strong>Achtergrond:</strong> ${esc(achtergrond)}` : '',
         o.motivatie ? `<strong>Over ${esc(o.naam)}:</strong><br>${esc(o.motivatie).replace(/\n/g, '<br>')}` : '',
       ].filter(Boolean),
       { tekst: 'Bekijk je wachtlijst', href: beheerLink(o.nestId) },

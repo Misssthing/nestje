@@ -22,21 +22,14 @@ export const AANBOD_UREN = 72;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-export type JaNee = 'ja' | 'nee';
-
 export type Aanmelding = {
   naam: string;
   email: string;
   woonplaats: string;
   voorkeur_geslacht: 'kater' | 'poes' | 'geen';
   voorkeur_vacht: string | null;
-  huisdier: JaNee;
-  kinderen: JaNee;
-  kat_ervaring: JaNee;
   motivatie: string;
 };
-
-const janee = (v: string): JaNee | null => (v === 'ja' || v === 'nee' ? v : null);
 
 /** Leest en controleert het aanmeldformulier. Geeft een foutmelding in gewone taal terug. */
 export function leesAanmelding(f: FormData): { gegevens?: Aanmelding; fout?: string } {
@@ -45,17 +38,10 @@ export function leesAanmelding(f: FormData): { gegevens?: Aanmelding; fout?: str
   const email = t('email', 200).toLowerCase();
   const woonplaats = t('woonplaats', 80);
   const g = t('voorkeur_geslacht', 10);
-  const huisdier = janee(t('huisdier', 10));
-  const kinderen = janee(t('kinderen', 10));
-  const kat_ervaring = janee(t('kat_ervaring', 10));
   const motivatie = t('motivatie', 1000);
   if (!naam) return { fout: 'Vul je naam in.' };
   if (!EMAIL.test(email)) return { fout: 'Vul een geldig e-mailadres in, bijvoorbeeld naam@voorbeeld.nl.' };
   if (!woonplaats) return { fout: 'Vul je woonplaats in.' };
-  if (!huisdier) return { fout: 'Vul in of je al een huisdier hebt.' };
-  if (!kinderen) return { fout: 'Vul in of er kinderen in huis zijn.' };
-  if (!kat_ervaring) return { fout: 'Vul in of je al ervaring hebt met katten.' };
-  if (!motivatie) return { fout: 'Vertel iets over jezelf.' };
   return {
     gegevens: {
       naam,
@@ -63,9 +49,6 @@ export function leesAanmelding(f: FormData): { gegevens?: Aanmelding; fout?: str
       woonplaats,
       voorkeur_geslacht: g === 'kater' || g === 'poes' ? g : 'geen',
       voorkeur_vacht: t('voorkeur_vacht', 80) || null,
-      huisdier,
-      kinderen,
-      kat_ervaring,
       motivatie,
     },
   };
