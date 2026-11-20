@@ -4,9 +4,10 @@ import { redirect } from 'next/navigation';
 import { fotoUrl } from '@/lib/config';
 import { isAdmin } from '@/lib/controle';
 import { aftelling, datumNL, maandJaarNL, rasDelen, RASSEN, rasTekst, vraagtStamboom } from '@/lib/nest';
+import { registerNaam, UITSLAG_BUCKET, veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, verkoperEmail } from '@/lib/wachtlijst/server';
-import { keurAf, keurGoed, zetCattery } from './acties';
+import { beoordeelUitslag, keurAf, keurGoed, zetCattery } from './acties';
 import RedenVeld from './RedenVeld';
 
 export const metadata: Metadata = { title: 'Controle', robots: { index: false } };
@@ -125,6 +126,28 @@ export default async function Controle() {
   const gecontroleerd = (r: Rij) =>
     Boolean(r.cattery && (gc ?? []).some((g) => g.owner_id === r.owner_id && g.cattery.trim().toLowerCase() === r.cattery!.trim().toLowerCase()));
 
+  // Testuitslagen die wachten op controle (los van controle_status: dit kan ook bij een nestje dat al in het overzicht staat).
+  const { data: testNesten } = await db
+    .from('nests')
+    .select('id, slug, moeder_naam, moeder_testen, vader_testen')
+    .eq('afgerond', false)
+    .returns<{ id: string; slug: string; moeder_naam: string; moeder_testen: TestMetBewijs[] | null; vader_testen: TestMetBewijs[] | null }[]>();
+  type Wachtend = { nestId: string; slug: string; moederNaam: string; ouder: 'moeder' | 'vader'; t: TestMetBewijs; url: string | null };
+  const ruw: Omit<Wachtend, 'url'>[] = [];
+  for (const n of testNesten ?? []) {
+    for (const [ouder, lijst] of [['moeder', n.moeder_testen], ['vader', n.vader_testen]] as const) {
+      for (const t of lijst ?? []) {
+        if (t.status === 'wacht' && t.bewijs) ruw.push({ nestId: n.id, slug: n.slug, moederNaam: n.moeder_naam, ouder, t });
+      }
+    }
+  }
+  const uitslagen: Wachtend[] = await Promise.all(
+    ruw.map(async (p) => {
+      const { data } = await db.storage.from(UITSLAG_BUCKET).createSignedUrl(p.t.bewijs!, 3600);
+      return { ...p, url: data?.signedUrl ?? null };
+    }),
+  );
+
   return (
     <main className="wrap">
       <div className="bar">
@@ -155,7 +178,79 @@ export default async function Controle() {
           </div>
         </details>
       )}
+
+      <h2 id="testuitslagen" className="kop2" style={{ marginTop: 28 }}>Testuitslagen ({uitslagen.length})</h2>
+      {uitslagen.length === 0 && <p className="hint">Niets om te bekijken.</p>}
+      <div className="lijst">
+        {uitslagen.map((u) => (
+          <UitslagKaart key={`${u.nestId}-${u.ouder}-${u.t.test}-${u.t.bewijs}`} u={u} />
+        ))}
+      </div>
     </main>
+  );
+}
+
+function UitslagKaart({ u }: {
+  u: { nestId: string; slug: string; moederNaam: string; ouder: 'moeder' | 'vader'; t: TestMetBewijs; url: string | null };
+}) {
+  const link = veiligeLink(u.t.link);
+  const isPdf = (u.t.bewijs ?? '').toLowerCase().endsWith('.pdf');
+  return (
+    <article className="panel ctl-kaart">
+      <div className="ctl-kop">
+        <div>
+          <h3>{u.t.test} · {u.ouder} van het nestje van {u.moederNaam}</h3>
+          <p className="ctl-uitslag-wat hint">
+            Uitslag: {u.t.uitslag}{u.t.datum ? ` · ${datumNL(new Date(u.t.datum))}` : ''}
+            {link && (
+              <>
+                {' · '}
+                <a href={link} target="_blank" rel="noopener noreferrer">Bekijk in {registerNaam(link)} ↗</a>
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+
+      <div className="ctl-uitslag">
+        {u.url ? (
+          isPdf ? (
+            <a className="chipknop" href={u.url} target="_blank" rel="noopener noreferrer">Bekijk pdf ↗</a>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={u.url} alt={`Bewijs ${u.t.test}`} className="ctl-uitslag-foto" />
+          )
+        ) : (
+          <p className="hint">Bestand kon niet worden geladen.</p>
+        )}
+      </div>
+
+      <div className="actions">
+        <a className="btn ghost klein" href={`/n/${u.slug}`} target="_blank" rel="noopener">Bekijk nestjespagina</a>
+        <form action={beoordeelUitslag}>
+          <input type="hidden" name="id" value={u.nestId} />
+          <input type="hidden" name="ouder" value={u.ouder} />
+          <input type="hidden" name="pad" value={u.t.bewijs} />
+          <input type="hidden" name="oordeel" value="klopt" />
+          <button className="btn primary klein" type="submit">✓ Klopt</button>
+        </form>
+      </div>
+
+      <details className="ctl-afkeur">
+        <summary>Klopt niet</summary>
+        <form action={beoordeelUitslag}>
+          <input type="hidden" name="id" value={u.nestId} />
+          <input type="hidden" name="ouder" value={u.ouder} />
+          <input type="hidden" name="pad" value={u.t.bewijs} />
+          <input type="hidden" name="oordeel" value="klopt_niet" />
+          <label className="veld">
+            <span>Reden <small className="opt">optioneel, gaat mee naar de verkoper</small></span>
+            <textarea name="reden" rows={2} maxLength={500} />
+          </label>
+          <button className="btn ghost klein" type="submit">Verstuur naar verkoper</button>
+        </form>
+      </details>
+    </article>
   );
 }
 

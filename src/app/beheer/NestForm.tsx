@@ -456,6 +456,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
               verplicht={vraagtStamboom(v.moeder_ras)}
               geenTesten={moederGeenTesten}
               onGeenTestenChange={setMoederGeenTesten}
+              supabase={supabase}
+              nestId={nest.id}
+              ouder="moeder"
             />
             {(v.vader_naam.trim() || stamboom === true) && (
               <TestenLijst
@@ -466,6 +469,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 verplicht={vraagtStamboom(v.vader_ras || v.moeder_ras)}
                 geenTesten={vaderGeenTesten}
                 onGeenTestenChange={setVaderGeenTesten}
+                supabase={supabase}
+                nestId={nest.id}
+                ouder="vader"
               />
             )}
             {mTesten.length + vTesten.length === 0 && getest && v.ouders_test_info && (
