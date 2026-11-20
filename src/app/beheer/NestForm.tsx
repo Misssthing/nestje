@@ -360,6 +360,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
             Je nummer staat nergens als tekst op de pagina. Kopers tikken op “Vraag naar …” en komen dan in WhatsApp bij jou uit.
+            Laat je dit leeg, dan kunnen geïnteresseerden zich alleen aanmelden via de aanmeldlijst.
             Je provincie kies je bovenaan, bij “Gevonden worden op Nestje”.
           </p>
         </fieldset>
