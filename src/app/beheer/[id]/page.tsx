@@ -22,15 +22,19 @@ export default async function NestBeheer({ params }: { params: Promise<{ id: str
   const { data: nest } = await supabase.from('nests').select('*').eq('id', id).maybeSingle<Nest>();
   if (!nest) notFound();
 
-  const [{ data: nestFotos }, { data: kittens }, { data: profiel }] = await Promise.all([
+  const [{ data: nestFotos }, { data: kittens }, { data: profiel }, { count: andereNestjes }] = await Promise.all([
     supabase.from('nest_photos').select('*').eq('nest_id', nest.id).order('volgorde').returns<NestFoto[]>(),
     supabase.from('kittens').select('*, kitten_photos(*)').eq('nest_id', nest.id).order('volgorde').returns<KittenMetFotos[]>(),
     supabase.from('profielen').select('*').eq('owner_id', user.id).maybeSingle<Profiel>(),
+    // Chipnummer is pas verplicht vanaf een tweede nestje (zie NestForm): bij het allereerste
+    // nestje heeft een verkoper het misschien nog niet zo snel bij de hand.
+    supabase.from('nests').select('id', { count: 'exact', head: true }).eq('owner_id', user.id).neq('id', nest.id),
   ]);
+  const eersteNestje = (andereNestjes ?? 0) === 0;
 
   return (
     <>
-      <Beheer nest={nest} nestFotos={nestFotos ?? []} kittens={kittens ?? []} email={user.email ?? ''} profiel={profiel ?? null} />
+      <Beheer nest={nest} nestFotos={nestFotos ?? []} kittens={kittens ?? []} email={user.email ?? ''} profiel={profiel ?? null} eersteNestje={eersteNestje} />
       {/* Wachtlijst onder het beheer van het nestje (uitbreiding 19) */}
       <div className="wrap" style={{ paddingTop: 0, marginTop: -40 }}>
         <WachtlijstBeheer nestId={nest.id} />

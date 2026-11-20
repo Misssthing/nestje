@@ -29,12 +29,14 @@ export default function Beheer({
   kittens: beginKittens,
   email,
   profiel = null,
+  eersteNestje,
 }: {
   nest: Nest;
   nestFotos: NestFoto[];
   kittens: KittenMetFotos[];
   email: string;
   profiel?: Profiel | null;
+  eersteNestje: boolean;
 }) {
   const supabase = useMemo(() => createClient(), []);
   const router = useRouter();
@@ -270,7 +272,7 @@ export default function Beheer({
       <GezondheidPaneel nest={nest} supabase={supabase} onNest={(patch) => setNest((n) => ({ ...n, ...patch }))} />
 
       <div id="sectie-gegevens">
-        <NestForm nest={nest} supabase={supabase} onOpgeslagen={(n) => { setNest(n); verversControle(); }} openStandaard={!nest.whatsapp_nummer} />
+        <NestForm nest={nest} supabase={supabase} onOpgeslagen={(n) => { setNest(n); verversControle(); }} openStandaard={!nest.whatsapp_nummer} eersteNestje={eersteNestje} />
       </div>
 
       <section className="panel" aria-labelledby="afronden-kop">

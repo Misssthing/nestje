@@ -15,9 +15,12 @@ type Props = {
   supabase: SupabaseClient;
   onOpgeslagen: (n: Nest) => void;
   openStandaard: boolean;
+  /** Bij het allereerste nestje van een account mag het chipnummer nog leeg: dan heeft de check op
+   *  dubbele nestjes toch niets om op terug te vallen. Vanaf een tweede nestje wordt het verplicht. */
+  eersteNestje: boolean;
 };
 
-export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }: Props) {
+export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, eersteNestje }: Props) {
   const [v, setV] = useState({
     moeder_naam: nest.moeder_naam,
     woonplaats: nest.woonplaats ?? '',
@@ -121,6 +124,11 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
       if (m && va && m.replace(/\s/g, '').toLowerCase() === va.replace(/\s/g, '').toLowerCase())
         return stop('De stamboomnummers van moeder en vader zijn hetzelfde. Elke kat heeft een eigen nummer.');
     }
+    // Vanaf een tweede nestje is het chipnummer nodig om de poes betrouwbaar te herkennen (zie
+    // "Waarom vragen we dit" bij het veld): zonder chip valt de controle terug op de naam, en die
+    // typ je zo net iets anders. Bij het allereerste nestje is er nog niets om te verwarren.
+    if (soort === 'eigen' && !eersteNestje && !v.moeder_chip.trim())
+      return stop('Vul het chipnummer van de moeder in. Dat vinden we terug op haar paspoort of bij de dierenarts.');
     // Registerlink, uitslag en de controle door Nestje blijven bewaard (de database bewaakt wie wat mag zetten)
     const schoon = (t: TestMetBewijs[]) =>
       t.filter((x) => x.test.trim()).map((x) => {
@@ -289,8 +297,8 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
           </label>
           {soort === 'eigen' && (
             <label className="veld">
-              <span>Chipnummer <small className="opt">optioneel</small></span>
-              <input inputMode="numeric" value={v.moeder_chip} onChange={zet('moeder_chip')} maxLength={20} placeholder="15 cijfers" />
+              <span>Chipnummer {eersteNestje && <small className="opt">optioneel</small>}</span>
+              <input inputMode="numeric" required={!eersteNestje} value={v.moeder_chip} onChange={zet('moeder_chip')} maxLength={20} placeholder="15 cijfers" />
               <p className="hint">Wordt nooit getoond. Zo houden we bij hoeveel nestjes een poes heeft.</p>
               <details className="waarom">
                 <summary>Waarom vragen we dit, en is het veilig?</summary>
@@ -301,7 +309,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard }
                 </p>
                 <p>
                   Het nummer staat nergens op je pagina of in het overzicht, en we delen het met niemand. Alleen jij en de beheerder van
-                  Nestje kunnen het zien. Wil je het liever niet invullen, dan laat je het gewoon leeg.
+                  Nestje kunnen het zien.{' '}
+                  {eersteNestje
+                    ? 'Wil je het liever niet invullen, dan laat je het gewoon leeg.'
+                    : 'Bij een tweede of volgend nestje is dit verplicht, zodat de controle op maximaal 2 nestjes per jaar ook echt werkt. Je vindt het nummer op het paspoort van je kat, of je dierenarts weet het.'}
                 </p>
               </details>
             </label>
