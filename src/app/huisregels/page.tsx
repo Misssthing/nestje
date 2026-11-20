@@ -40,6 +40,10 @@ export default function Huisregels() {
           haar samen met haar kittens. Zonder foto van de moeder verschijnt je nestje niet in het overzicht. Bij een
           vondelingennestje, waarvan de moeder onbekend is, maken we een uitzondering. Die nestjes krijgen het label “Vondelingen”.
         </p>
+        <p>
+          Alle foto's op je nestjespagina zijn echte, onbewerkte foto's van je eigen kittens en hun moeder. AI-gegenereerde foto's
+          zijn niet toegestaan. Waarom? Een koper moet precies kunnen zien hoe de kittens en hun moeder er nu echt uitzien.
+        </p>
 
         <h2>4. Een rasnaam alleen met stamboom</h2>
         <p>
