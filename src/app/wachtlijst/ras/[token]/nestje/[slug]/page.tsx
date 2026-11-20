@@ -16,7 +16,7 @@ export default async function AanmeldenViaRas({ params, searchParams }: Props) {
   const { fout } = await searchParams;
   if (!isUuid(token)) notFound();
   const { data: r } = await adminClient()
-    .from('wachtlijst_ras').select('naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, motivatie, bevestigd_op')
+    .from('wachtlijst_ras').select('naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, huisdier, kinderen, kat_ervaring, motivatie, bevestigd_op')
     .eq('token', token).maybeSingle();
   const nest = await haalNestOpSlug(slug);
   if (!r || !r.bevestigd_op || !nest || nest.verborgen) notFound();
@@ -37,6 +37,9 @@ export default async function AanmeldenViaRas({ params, searchParams }: Props) {
         <dt>E-mail</dt><dd>{r.email}</dd>
         <dt>Woonplaats</dt><dd>{r.woonplaats}</dd>
         <dt>Voorkeur</dt><dd>{[voorkeur, r.voorkeur_vacht].filter(Boolean).join(', ')}</dd>
+        {r.huisdier && (<><dt>Huisdier</dt><dd>{r.huisdier}</dd></>)}
+        {r.kinderen && (<><dt>Kinderen in huis</dt><dd>{r.kinderen}</dd></>)}
+        {r.kat_ervaring && (<><dt>Ervaring met katten</dt><dd>{r.kat_ervaring}</dd></>)}
         {r.motivatie && (<><dt>Over jou</dt><dd>{r.motivatie}</dd></>)}
       </dl>
       {fout && <p className="fout" role="alert">{fout}</p>}

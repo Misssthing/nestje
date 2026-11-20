@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 
 type Rij = {
   id: string; naam: string; email: string; woonplaats: string;
-  voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null; motivatie: string | null;
+  voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null;
+  huisdier: 'ja' | 'nee' | null; kinderen: 'ja' | 'nee' | null; kat_ervaring: 'ja' | 'nee' | null;
+  motivatie: string | null;
   aangemeld_op: string; status: 'wachtend' | 'aangeboden' | 'geaccepteerd' | 'gesloten';
   kitten_id: string | null; aanbod_verloopt_op: string | null; geweigerd_aantal: number; via_ras_id: string | null;
 };
@@ -131,6 +133,9 @@ export default function WachtlijstBeheer({ nestId }: Props) {
               <div className="wl-info">
                 <a href={`mailto:${r.email}`}>{r.email}</a>
                 {voorkeur && <span>Voorkeur: {voorkeur}</span>}
+                {r.huisdier && <span>Huisdier: {r.huisdier}</span>}
+                {r.kinderen && <span>Kinderen: {r.kinderen}</span>}
+                {r.kat_ervaring && <span>Ervaring met katten: {r.kat_ervaring}</span>}
                 {r.via_ras_id && <span>Via de raslijst</span>}
                 {r.geweigerd_aantal > 0 && <span>{r.geweigerd_aantal}× nee gezegd</span>}
               </div>

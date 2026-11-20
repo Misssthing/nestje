@@ -6,7 +6,9 @@ import { NIEUWSBRIEF_VINKTEKST } from '@/lib/nieuwsbrief-tekst';
 
 type Waarden = {
   naam?: string; email?: string; woonplaats?: string;
-  voorkeur_geslacht?: string; voorkeur_vacht?: string | null; motivatie?: string | null; ras?: string;
+  voorkeur_geslacht?: string; voorkeur_vacht?: string | null;
+  huisdier?: string | null; kinderen?: string | null; kat_ervaring?: string | null;
+  motivatie?: string | null; ras?: string;
 };
 
 type Props = {
@@ -95,11 +97,47 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
         <input id="wl-vacht" name="voorkeur_vacht" defaultValue={w.voorkeur_vacht ?? ''} maxLength={80} placeholder="Bijv. rood, cyperse of maakt niet uit" />
       </label>
 
+      <fieldset className="veld wl-voorkeur">
+        <legend>Heb je al een huisdier?</legend>
+        <div className="seg" role="radiogroup" aria-label="Heb je al een huisdier?">
+          {[['ja', 'Ja'], ['nee', 'Nee']].map(([v, l]) => (
+            <label key={v} className="wl-keuze">
+              <input type="radio" name="huisdier" value={v} required defaultChecked={w.huisdier === v} />
+              <span>{l}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className="veld wl-voorkeur">
+        <legend>Zijn er kinderen in huis?</legend>
+        <div className="seg" role="radiogroup" aria-label="Zijn er kinderen in huis?">
+          {[['ja', 'Ja'], ['nee', 'Nee']].map(([v, l]) => (
+            <label key={v} className="wl-keuze">
+              <input type="radio" name="kinderen" value={v} required defaultChecked={w.kinderen === v} />
+              <span>{l}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset className="veld wl-voorkeur">
+        <legend>Heb je al ervaring met katten?</legend>
+        <div className="seg" role="radiogroup" aria-label="Heb je al ervaring met katten?">
+          {[['ja', 'Ja'], ['nee', 'Nee']].map(([v, l]) => (
+            <label key={v} className="wl-keuze">
+              <input type="radio" name="kat_ervaring" value={v} required defaultChecked={w.kat_ervaring === v} />
+              <span>{l}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <label className="veld">
-        <span>Iets over jezelf (optioneel)</span>
+        <span>Iets over jezelf</span>
         <textarea
-          id="wl-motivatie" name="motivatie" rows={4} maxLength={1000} defaultValue={w.motivatie ?? ''}
-          placeholder="Bijvoorbeeld: hoe je woont, of je andere huisdieren hebt, en of de kat naar buiten mag."
+          id="wl-motivatie" name="motivatie" rows={4} maxLength={1000} defaultValue={w.motivatie ?? ''} required
+          placeholder="Bijvoorbeeld: hoe je woont, hoeveel tijd er thuis is, en of de kat naar buiten mag."
         />
       </label>
 

@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   const db = adminClient();
   const [{ data: rijen }, { data: kittens }, { data: nesten }] = await Promise.all([
     db.from('wachtlijst')
-      .select('id, naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, motivatie, aangemeld_op, status, kitten_id, aanbod_verloopt_op, geweigerd_aantal, via_ras_id')
+      .select('id, naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, huisdier, kinderen, kat_ervaring, motivatie, aangemeld_op, status, kitten_id, aanbod_verloopt_op, geweigerd_aantal, via_ras_id')
       .eq('nest_id', nest.id).neq('status', 'afgemeld').order('aangemeld_op'),
     db.from('kittens').select('id, naam, geslacht, status').eq('nest_id', nest.id).order('volgorde'),
     db.from('nests').select('id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, owner_id, moeder_ras, vader_ras, stamboom, whatsapp_nummer')

@@ -13,14 +13,19 @@ export type FormStaat = {
   waarden?: Record<string, string>;
 };
 
-const zonderEmail = (g: { naam: string; woonplaats: string; voorkeur_geslacht: string; voorkeur_vacht: string | null; motivatie: string | null }) => ({
-  naam: g.naam, woonplaats: g.woonplaats, voorkeur_geslacht: g.voorkeur_geslacht, voorkeur_vacht: g.voorkeur_vacht, motivatie: g.motivatie,
+const zonderEmail = (g: {
+  naam: string; woonplaats: string; voorkeur_geslacht: string; voorkeur_vacht: string | null;
+  huisdier: string; kinderen: string; kat_ervaring: string; motivatie: string;
+}) => ({
+  naam: g.naam, woonplaats: g.woonplaats, voorkeur_geslacht: g.voorkeur_geslacht, voorkeur_vacht: g.voorkeur_vacht,
+  huisdier: g.huisdier, kinderen: g.kinderen, kat_ervaring: g.kat_ervaring, motivatie: g.motivatie,
 });
 
 const terug = (f: FormData, fout: string): FormStaat => ({
   fout,
   waarden: Object.fromEntries(
-    ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'ras', 'nieuwsbrief'].map((k) => [k, String(f.get(k) ?? '')]),
+    ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'huisdier', 'kinderen', 'kat_ervaring', 'motivatie', 'ras', 'nieuwsbrief']
+      .map((k) => [k, String(f.get(k) ?? '')]),
   ),
 });
 
@@ -162,7 +167,8 @@ export async function meldAanViaRas(f: FormData) {
     nest,
     {
       naam: r.naam, email: r.email, woonplaats: r.woonplaats, voorkeur_geslacht: r.voorkeur_geslacht,
-      voorkeur_vacht: r.voorkeur_vacht, motivatie: r.motivatie,
+      voorkeur_vacht: r.voorkeur_vacht, huisdier: r.huisdier, kinderen: r.kinderen, kat_ervaring: r.kat_ervaring,
+      motivatie: r.motivatie,
     },
     r.id,
   );

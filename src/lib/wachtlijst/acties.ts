@@ -18,7 +18,9 @@ type NestRij = {
 type KittenRij = { id: string; nest_id: string; naam: string; geslacht: 'kater' | 'poes'; vacht: string | null; status: string; notitie?: string | null };
 export type WachtRij = {
   id: string; nest_id: string; naam: string; email: string; woonplaats: string;
-  voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null; motivatie: string | null;
+  voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null;
+  huisdier: 'ja' | 'nee' | null; kinderen: 'ja' | 'nee' | null; kat_ervaring: 'ja' | 'nee' | null;
+  motivatie: string | null;
   aangemeld_op: string; status: 'wachtend' | 'aangeboden' | 'geaccepteerd' | 'afgemeld' | 'gesloten';
   kitten_id: string | null; aanbod_verloopt_op: string | null; geweigerd_aantal: number; token: string;
   geboren_mail_op: string | null;
@@ -94,7 +96,8 @@ export async function aanmeldenVoorNest(nest: NestRij, g: Aanmelding, viaRasId?:
   if (ve) {
     const v = mailVerkoperNieuweAanmelding({
       nestId: nest.id, moeder: nest.moeder_naam, naam: g.naam, woonplaats: g.woonplaats,
-      voorkeur_geslacht: g.voorkeur_geslacht, voorkeur_vacht: g.voorkeur_vacht, motivatie: g.motivatie,
+      voorkeur_geslacht: g.voorkeur_geslacht, voorkeur_vacht: g.voorkeur_vacht,
+      huisdier: g.huisdier, kinderen: g.kinderen, kat_ervaring: g.kat_ervaring, motivatie: g.motivatie,
     });
     await stuurMail(ve, v.onderwerp, v.html, g.email);
   }
