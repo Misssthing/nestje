@@ -11,7 +11,7 @@ export default function Start() {
       <h1>Een goede match voor je kitten</h1>
       <p className="lead">
         Eén link met foto's, wie nog vrij is en wanneer ze mogen verhuizen. Raskatten met stamboom, pas verhuizen na 13 weken,
-        gechipt — en kopers die eerst iets over zichzelf vertellen. Zo vindt elke kitten zijn juiste toekomstige personeel.
+        gechipt — en de mogelijkheid voor kopers om eerst iets over zichzelf te vertellen. Zo vindt elke kitten zijn juiste toekomstige personeel.
       </p>
       <Link href="/login" className="btn primary">Maak je nestjespagina</Link>
       <div className="voorbeeld" aria-hidden="true">
