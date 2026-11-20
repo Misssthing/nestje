@@ -41,6 +41,17 @@ export default async function VraagPagina({ params }: Props) {
       </p>
 
       <form className="panel" method="get" action={actie}>
+        <fieldset className="veld wl-voorkeur">
+          <legend>Heb je zelf al katten? (optioneel)</legend>
+          <div className="seg" role="radiogroup" aria-label="Heb je zelf al katten?">
+            {[['ja', 'Ja'], ['nee', 'Nee']].map(([v, l]) => (
+              <label key={v} className="wl-keuze">
+                <input type="radio" name="heeft_katten" value={v} />
+                <span>{l}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <label className="veld">
           <span>Over mij (optioneel)</span>
           <textarea

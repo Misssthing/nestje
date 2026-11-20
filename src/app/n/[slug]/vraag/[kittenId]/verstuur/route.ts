@@ -27,8 +27,10 @@ export async function GET(
   if (!data?.nummer) return NextResponse.redirect(terug);
 
   const toelichting = request.nextUrl.searchParams.get('toelichting')?.trim().slice(0, 300) ?? '';
+  const heeftKatten = request.nextUrl.searchParams.get('heeft_katten');
   const basis = `Hoi! Ik zag het nestje van ${data.moeder_naam} op Nestje. Is ${data.kitten_naam} nog beschikbaar?`;
-  const tekst = toelichting ? `${basis} ${toelichting}` : basis;
+  const katten = heeftKatten === 'ja' ? ' Ik heb zelf al katten.' : heeftKatten === 'nee' ? ' Ik heb zelf nog geen katten.' : '';
+  const tekst = `${basis}${katten}${toelichting ? ` ${toelichting}` : ''}`;
   const res = NextResponse.redirect(`https://wa.me/${data.nummer}?text=${encodeURIComponent(tekst)}`, 302);
   res.headers.set('X-Robots-Tag', 'noindex, nofollow');
   res.headers.set('Cache-Control', 'no-store');
