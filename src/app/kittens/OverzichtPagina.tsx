@@ -17,7 +17,16 @@ import { LANDINGS, POPULAIRE_RASSEN, landingVoor, type Landing } from '@/lib/lan
 import { ALGEMENE_VRAGEN, rasTekstVoor } from '@/lib/rasteksten';
 
 
-export type Zoek = { q?: string; ras?: string; provincie?: string; soort?: string; vrij?: string; binnen4?: string; geslacht?: string };
+export type Zoek = {
+  q?: string;
+  ras?: string;
+  provincie?: string;
+  soort?: string;
+  vrij?: string;
+  binnen4?: string;
+  geslacht?: string;
+  verwacht?: string;
+};
 
 
 /** Het overzicht. Wordt ook gebruikt door de vaste pagina's per ras en per provincie (/kittens/maine-coon). */
@@ -26,6 +35,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
   const zoekterm = (sp.q ?? '').replace(/[%,()*:]/g, ' ').trim().slice(0, 40);
   const alleenVrij = sp.vrij === '1';
   const binnenVier = sp.binnen4 === '1';
+  const alleenVerwacht = sp.verwacht === '1';
   const geslacht = sp.geslacht === 'kater' || sp.geslacht === 'poes' ? sp.geslacht : '';
   const soort = soortParam && soortParam in SOORTEN ? soortParam : '';
   const ras = rasParam && rasParam.length <= 60 ? rasParam : '';
@@ -52,11 +62,13 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
     // Ras: zelfde logica als de telling in het filter (afkortingen netjes, een kruising telt bij beide rassen).
     if (rasGezocht && ![...rasDelen(n.moeder_ras), ...rasDelen(n.vader_ras)].some((r) => r.toLowerCase() === rasGezocht))
       return false;
-    if (!binnenVier) return true;
+    if (!binnenVier && !alleenVerwacht) return true;
     const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
-    return !a.verwacht && a.wekenTeGaan <= 4;
+    if (alleenVerwacht && !a.verwacht) return false;
+    if (binnenVier && !(!a.verwacht && a.wekenTeGaan <= 4)) return false;
+    return true;
   });
-  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || geslacht);
+  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || alleenVerwacht || geslacht);
   const uitleg = ras ? rasUitleg(ras) : null;
   const artikel = metUtm(RAS_ARTIKEL_URL, 'ras-uitleg');
   const artikelLink = uitleg?.anker ? `${artikel}#${uitleg.anker}` : artikel;
@@ -166,6 +178,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
             soort={soort}
             alleenVrij={alleenVrij}
             binnenVier={binnenVier}
+            alleenVerwacht={alleenVerwacht}
             geslacht={geslacht}
           />
         </aside>

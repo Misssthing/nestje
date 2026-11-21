@@ -15,6 +15,7 @@ type Props = {
   soort?: string;
   alleenVrij?: boolean;
   binnenVier?: boolean;
+  alleenVerwacht?: boolean;
   geslacht?: string;
 };
 
@@ -26,6 +27,7 @@ export default async function ZoekFilters({
   soort = '',
   alleenVrij = false,
   binnenVier = false,
+  alleenVerwacht = false,
   geslacht = '',
 }: Props) {
   const supabase = createPublicClient();
@@ -60,7 +62,7 @@ export default async function ZoekFilters({
   const zonderStamboom = zonderNestjes.filter((r) => algemeen.has(r.toLowerCase()));
   const andereRassen = zonderNestjes.filter((r) => !algemeen.has(r.toLowerCase()));
 
-  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || geslacht);
+  const filtersActief = Boolean(zoekterm || ras || provincie || soort || alleenVrij || binnenVier || alleenVerwacht || geslacht);
 
   return (
     <form className="zoekfilters" method="get" action="/kittens">
@@ -119,6 +121,10 @@ export default async function ZoekFilters({
       <label className="vink breedveld">
         <input type="checkbox" name="binnen4" value="1" defaultChecked={binnenVier} />
         <span>Verhuist binnen 4 weken</span>
+      </label>
+      <label className="vink breedveld">
+        <input type="checkbox" name="verwacht" value="1" defaultChecked={alleenVerwacht} />
+        <span>Nog verwacht (nog niet geboren)</span>
       </label>
       <div className="filterknoppen breedveld">
         <button className="btn primary">Toon</button>

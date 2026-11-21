@@ -8,13 +8,13 @@ export const dynamic = 'force-dynamic';
 type Props = { searchParams: Promise<Zoek> };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { q, ras, provincie, soort, vrij, binnen4, geslacht } = await searchParams;
-  const gefilterd = Boolean(q || ras || provincie || soort || vrij || binnen4 || geslacht);
+  const { q, ras, provincie, soort, vrij, binnen4, geslacht, verwacht } = await searchParams;
+  const gefilterd = Boolean(q || ras || provincie || soort || vrij || binnen4 || geslacht || verwacht);
   // Alleen een ras of alleen een provincie gekozen? Dan is de vaste pagina daarvoor de echte versie voor Google.
   const vast =
-    ras && !provincie && !q && !soort && !vrij && !binnen4 && !geslacht
+    ras && !provincie && !q && !soort && !vrij && !binnen4 && !geslacht && !verwacht
       ? landingVoor('ras', ras)
-      : provincie && !ras && !q && !soort && !vrij && !binnen4 && !geslacht
+      : provincie && !ras && !q && !soort && !vrij && !binnen4 && !geslacht && !verwacht
         ? landingVoor('provincie', provincie)
         : null;
   return {
@@ -33,7 +33,7 @@ export default async function Overzicht({ searchParams }: Props) {
   const sp = await searchParams;
   // Alleen een ras of alleen een provincie gekozen? Dan naar de vaste pagina, bijv. /kittens/brits-korthaar
   const leeg = (v?: string) => !v || !v.trim();
-  const rest = leeg(sp.q) && leeg(sp.soort) && leeg(sp.vrij) && leeg(sp.binnen4) && leeg(sp.geslacht);
+  const rest = leeg(sp.q) && leeg(sp.soort) && leeg(sp.vrij) && leeg(sp.binnen4) && leeg(sp.geslacht) && leeg(sp.verwacht);
   if (rest && !leeg(sp.ras) && leeg(sp.provincie)) {
     const l = landingVoor('ras', sp.ras!.trim());
     if (l) redirect(`/kittens/${l.slug}`);
