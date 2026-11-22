@@ -107,6 +107,13 @@ export default async function Overzicht() {
         </Link>
       )}
 
+      {admin && (
+        <Link href="/beheer/zoeken" className="ctl-melding">
+          <strong>Nestjes zoeken</strong>
+          <span>Zoek een nestje van wie dan ook op naam of link →</span>
+        </Link>
+      )}
+
       <section className="hero">
         <h1>Je nestjes</h1>
       </section>
