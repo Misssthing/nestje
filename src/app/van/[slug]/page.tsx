@@ -101,7 +101,7 @@ export default async function ProfielPagina({ params }: Props) {
   return (
     <main className="wrap">
       <div className="bar">
-        <Link href="/" className="brand">Nestje</Link>
+        <Link href="/catteries" className="brand">← Catteries</Link>
         <KopieerLink url={`${CONFIG.siteUrl}/van/${profiel.slug}`} className="btn ghost klein" />
       </div>
 
