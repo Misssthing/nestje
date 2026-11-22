@@ -47,6 +47,7 @@ export interface Nest {
   ontvlooid?: boolean;
   gechipt?: boolean;
   paspoort?: boolean;
+  gecastreerd?: boolean;
   stamboom_papieren?: boolean;
   koopovereenkomst?: boolean;
   gesocialiseerd?: boolean;
