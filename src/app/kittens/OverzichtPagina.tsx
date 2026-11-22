@@ -47,10 +47,19 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
   if (soort === 'stamboom') query = query.eq('stamboom', true);
   if (soort === 'huiskat') query = query.eq('soort', 'eigen').or('stamboom.is.null,stamboom.eq.false');
   if (soort === 'vondeling') query = query.eq('soort', 'vondeling');
-  if (zoekterm) {
-    query = query.or(
-      `moeder_naam.ilike.*${zoekterm}*,woonplaats.ilike.*${zoekterm}*,moeder_ras.ilike.*${zoekterm}*,vader_ras.ilike.*${zoekterm}*`,
-    );
+    if (zoekterm) {
+    // Mensen typen vaak woorden als "kittens" of "te koop" erbij, die in geen enkel veld letterlijk voorkomen.
+    // Die woorden negeren we, en van de rest moet elk woord ergens staan (niet per se allemaal in hetzelfde veld).
+    const genegeerd = new Set([
+      'kitten', 'kittens', 'kat', 'katten', 'poes', 'poezen', 'kater', 'katers', 'raskat', 'raskatten',
+      'te', 'koop', 'kopen', 'verkoop', 'verkopen', 'verkocht', 'nestje', 'nestjes', 'van', 'de', 'het', 'een',
+    ]);
+    const woorden = zoekterm.toLowerCase().split(/\s+/).filter((w) => w.length >= 2 && !genegeerd.has(w));
+    for (const w of woorden.length ? woorden : [zoekterm]) {
+      query = query.or(
+        `moeder_naam.ilike.*${w}*,woonplaats.ilike.*${w}*,moeder_ras.ilike.*${w}*,vader_ras.ilike.*${w}*`,
+      );
+    }
   }
   if (ras) {
     // Grove voorfilter in de database, vóór de limit van 200: anders valt een ouder nestje buiten de laatste 200
