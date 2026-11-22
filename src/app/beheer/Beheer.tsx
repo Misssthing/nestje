@@ -192,6 +192,10 @@ export default function Beheer({
         <p className="hint" style={{ margin: '10px 0 0' }}>
           👁 {nest.weergaven ? `${nest.weergaven} keer bekeken` : 'Nog niet bekeken'}
         </p>
+        <p className="hint" style={{ margin: '4px 0 0' }}>
+          Let op: Nestje is een eigen, onafhankelijk platform — niet hetzelfde als andere kittensites zoals nestjes.nl.
+          Alleen de link hierboven is jouw pagina.
+        </p>
       </section>
 
       <Checklist
