@@ -80,7 +80,7 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
     lijst.push({
       id: 'stamboom',
       tekst: 'Stamboomgegevens',
-      uitleg: 'Organisatie, catterynaam en de naam van de vader. Zonder deze drie toont je pagina geen “met stamboom”. Vul in hetzelfde scherm ook, optioneel, de stamboomnummers (voor het vinkje “✓ Gecontroleerd”) en de testuitslagen van de ouders in.',
+      uitleg: 'Organisatie, catterynaam en de naam van de vader. Zonder deze drie toont je pagina geen “met stamboom”. Vul in hetzelfde scherm ook, optioneel, de stamboomnummers (voor het label “Nummers opgegeven”) en de testuitslagen van de ouders in.',
       klaar: kernKlaar,
       plek: 'gegevens',
       voorOverzicht: false,
