@@ -22,20 +22,21 @@ type Rij = {
   afgerond: boolean;
   in_overzicht: boolean;
   controle_status: string;
+  verborgen: boolean;
   kittens: { id: string }[];
 };
 
 export default async function NestjesZoeken({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; verwijderd?: string }>;
+  searchParams: Promise<{ q?: string; verwijderd?: string; verborgen?: string; teruggezet?: string }>;
 }) {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect('/login');
   if (!isAdmin(auth.user.email)) redirect('/beheer');
 
-  const { q = '', verwijderd } = await searchParams;
+  const { q = '', verwijderd, verborgen: netVerborgen, teruggezet } = await searchParams;
   const zoekterm = q.trim().slice(0, 60);
 
   let rijen: Rij[] = [];
@@ -43,7 +44,9 @@ export default async function NestjesZoeken({
     const veilig = zoekterm.replace(/[%,()*]/g, ' ');
     const { data } = await adminClient()
       .from('nests')
-      .select('id, owner_id, slug, moeder_naam, woonplaats, provincie, geboortedatum, aangemaakt_op, afgerond, in_overzicht, controle_status, kittens(id)')
+      .select(
+        'id, owner_id, slug, moeder_naam, woonplaats, provincie, geboortedatum, aangemaakt_op, afgerond, in_overzicht, controle_status, verborgen, kittens(id)',
+      )
       .or(`slug.ilike.*${veilig}*,moeder_naam.ilike.*${veilig}*`)
       .order('aangemaakt_op', { ascending: false })
       .limit(40)
@@ -66,12 +69,13 @@ export default async function NestjesZoeken({
         <h1>Nestjes zoeken</h1>
         <p>
           Zoek een nestje van wie dan ook, op naam van de moeder of op het stukje uit de link (de slug). Handig om een
-          verdwaald test- of probleemnestje terug te vinden en te verwijderen, ook als het niet onder jouw eigen
-          account staat.
+          verdwaald test- of probleemnestje terug te vinden.
         </p>
       </section>
 
       {verwijderd && <p className="hint" style={{ color: 'var(--free)' }}>Nestje verwijderd.</p>}
+      {netVerborgen && <p className="hint" style={{ color: 'var(--free)' }}>Nestje verborgen: de pagina is nu offline.</p>}
+      {teruggezet && <p className="hint" style={{ color: 'var(--free)' }}>Nestje weer online gezet.</p>}
 
       <form method="get" className="zoekfilters" style={{ marginBottom: 22 }}>
         <label className="veld breedveld">
@@ -97,17 +101,19 @@ export default async function NestjesZoeken({
                     aantalKittens(r.kittens.length),
                     r.woonplaats || r.provincie ? [r.woonplaats, r.provincie].filter(Boolean).join(', ') : '',
                     r.afgerond ? 'afgerond' : '',
-                    r.in_overzicht ? `in overzicht · ${r.controle_status}` : 'alleen als link',
+                    r.verborgen ? '⚠ verborgen (offline)' : r.in_overzicht ? `in overzicht · ${r.controle_status}` : 'alleen als link',
                     emails.get(r.owner_id) ? `account: ${emails.get(r.owner_id)}` : '',
                   ]
                     .filter(Boolean)
                     .join(' · ')}
                 </span>
               </div>
-              <a className="btn ghost klein" href={`/n/${r.slug}`} target="_blank" rel="noopener noreferrer">
-                Bekijk pagina ↗
-              </a>
-              <VerwijderKnop id={r.id} q={q} moederNaam={r.moeder_naam} />
+              {!r.verborgen && (
+                <a className="btn ghost klein" href={`/n/${r.slug}`} target="_blank" rel="noopener noreferrer">
+                  Bekijk pagina ↗
+                </a>
+              )}
+              <VerwijderKnop id={r.id} q={q} moederNaam={r.moeder_naam} verborgen={r.verborgen} />
             </li>
           ))}
         </ul>
