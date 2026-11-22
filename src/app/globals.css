@@ -465,6 +465,9 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 }
 .wl-ras-keuze { display: flex; align-items: center; gap: 7px; font-size: 14px; padding: 4px 0; cursor: pointer; }
 .wl-ras-keuze:has(input:disabled) { opacity: 0.45; cursor: default; }
+.wl-rassen input[type="checkbox"] {
+  width: 18px; height: 18px; min-height: 0; flex: none; padding: 0; border-radius: 4px; accent-color: var(--free);
+}
 .wl-uitleg {
   margin: 20px 0 24px;
   padding: 16px 20px 16px 36px;
