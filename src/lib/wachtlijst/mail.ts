@@ -393,6 +393,31 @@ export function mailAdminNieuwNestje(o: {
   };
 }
 
+/**
+ * Een nestje dat de verkoper alleen als deelbare link maakt (niet in het overzicht) komt nooit in de
+ * echte controle: de pagina staat meteen online, er is dus niets om goed te keuren. Deze mail is puur
+ * ter info, één keer per nestje, zodat je kunt ingrijpen bij iets verdachts (vreemde prijs, oplichting).
+ */
+export function mailAdminNieuwNestjeLink(o: {
+  moeder: string; slug: string; plaats: string; ras: string; vondeling: boolean; foto: string | null; verkoper: string;
+}) {
+  const foto = o.foto
+    ? `<img src="${o.foto}" alt="" width="240" style="display:block;width:240px;max-width:100%;height:auto;border-radius:12px" />`
+    : '<em>Geen foto van de moeder</em>';
+  return {
+    onderwerp: `Nieuw (alleen als link): het nestje van ${o.moeder}`,
+    html: opmaak(
+      'Nieuw nestje, alleen als deelbare link',
+      [
+        `Deze verkoper heeft niet gekozen voor het openbare overzicht, dus dit nestje gaat niet door de controle. De pagina staat al online. Puur ter info:`,
+        `<strong>Het nestje van ${esc(o.moeder)}</strong>${o.vondeling ? ' (vondelingen)' : ''}<br>${esc(o.ras)}<br>${esc(o.plaats)}<br>Verkoper: ${esc(o.verkoper)}`,
+        foto,
+        `<a href="${url(`/n/${o.slug}`)}" style="color:#1F2A24;font-weight:600">Bekijk de pagina →</a>`,
+      ],
+    ),
+  };
+}
+
 export function mailAdminUitslag(o: { moeder: string; slug: string; aantal: number; verkoper: string }) {
   return {
     onderwerp: `Testuitslag om te bekijken: het nestje van ${o.moeder}`,

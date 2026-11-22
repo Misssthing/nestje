@@ -3,7 +3,7 @@ import { fotoUrl } from '@/lib/config';
 import { ADMIN_EMAIL } from '@/lib/controle';
 import { rasTekst } from '@/lib/nest';
 import { createClient } from '@/lib/supabase/server';
-import { mailAdminNieuwNestje, stuurMail } from '@/lib/wachtlijst/mail';
+import { mailAdminNieuwNestje, mailAdminNieuwNestjeLink, stuurMail } from '@/lib/wachtlijst/mail';
 import { adminClient, isUuid, verkoperEmail } from '@/lib/wachtlijst/server';
 
 export const dynamic = 'force-dynamic';
@@ -22,33 +22,57 @@ export async function POST(req: Request) {
   const db = adminClient();
   const { data: n } = await db
     .from('nests')
-    .select('id, owner_id, slug, moeder_naam, woonplaats, provincie, moeder_ras, vader_ras, stamboom, soort, moeder_foto, in_overzicht, afgerond, controle_status, ter_controle_op, controle_gemeld_op')
+    .select(
+      'id, owner_id, slug, moeder_naam, woonplaats, provincie, moeder_ras, vader_ras, stamboom, soort, moeder_foto, in_overzicht, afgerond, controle_status, ter_controle_op, controle_gemeld_op, nieuw_gemeld_op',
+    )
     .eq('id', nestId)
     .maybeSingle();
   if (!n || n.owner_id !== auth.user.id) return NextResponse.json({ gemeld: false }, { status: 403 });
 
-  const klaar =
-    n.controle_status === 'wacht' && n.in_overzicht && n.provincie && !n.afgerond && (n.soort === 'vondeling' || n.moeder_foto);
+  const basisKlaar = !n.afgerond && (n.soort === 'vondeling' || n.moeder_foto);
+  const klaar = n.controle_status === 'wacht' && n.in_overzicht && n.provincie && basisKlaar;
   const alGemeld = n.controle_gemeld_op && (!n.ter_controle_op || n.controle_gemeld_op >= n.ter_controle_op);
-  if (!klaar || alGemeld) return NextResponse.json({ gemeld: false });
-
-  // Eerst vastleggen (voorkomt dubbele mails als het beheer twee keer kort na elkaar aanroept)
   const nu = new Date().toISOString();
-  let q = db.from('nests').update({ controle_gemeld_op: nu }).eq('id', n.id);
-  q = n.controle_gemeld_op ? q.eq('controle_gemeld_op', n.controle_gemeld_op) : q.is('controle_gemeld_op', null);
-  const { data: vast } = await q.select('id');
-  if (!vast?.length) return NextResponse.json({ gemeld: false });
 
-  const m = mailAdminNieuwNestje({
-    moeder: n.moeder_naam,
-    slug: n.slug,
-    plaats: [n.woonplaats, n.provincie].filter(Boolean).join(', '),
-    ras: (rasTekst(n.moeder_ras, n.vader_ras) || 'Geen ras ingevuld') + (n.stamboom ? ', met stamboom' : ''),
-    vondeling: n.soort === 'vondeling',
-    foto: n.moeder_foto ? fotoUrl(n.moeder_foto) : null,
-    verkoper: (await verkoperEmail(n.owner_id)) ?? auth.user.email ?? 'onbekend',
-    opnieuw: Boolean(n.controle_gemeld_op),
-  });
-  await stuurMail(ADMIN_EMAIL, m.onderwerp, m.html);
-  return NextResponse.json({ gemeld: true });
+  if (klaar && !alGemeld) {
+    // Eerst vastleggen (voorkomt dubbele mails als het beheer twee keer kort na elkaar aanroept)
+    let q = db.from('nests').update({ controle_gemeld_op: nu }).eq('id', n.id);
+    q = n.controle_gemeld_op ? q.eq('controle_gemeld_op', n.controle_gemeld_op) : q.is('controle_gemeld_op', null);
+    const { data: vast } = await q.select('id');
+    if (!vast?.length) return NextResponse.json({ gemeld: false });
+
+    const m = mailAdminNieuwNestje({
+      moeder: n.moeder_naam,
+      slug: n.slug,
+      plaats: [n.woonplaats, n.provincie].filter(Boolean).join(', '),
+      ras: (rasTekst(n.moeder_ras, n.vader_ras) || 'Geen ras ingevuld') + (n.stamboom ? ', met stamboom' : ''),
+      vondeling: n.soort === 'vondeling',
+      foto: n.moeder_foto ? fotoUrl(n.moeder_foto) : null,
+      verkoper: (await verkoperEmail(n.owner_id)) ?? auth.user.email ?? 'onbekend',
+      opnieuw: Boolean(n.controle_gemeld_op),
+    });
+    await stuurMail(ADMIN_EMAIL, m.onderwerp, m.html);
+    return NextResponse.json({ gemeld: true });
+  }
+
+  // Nestje gekozen als alleen een deelbare link (niet in het overzicht): komt nooit in de echte controle,
+  // de pagina staat al online. Puur ter info, één keer per nestje, geen actie nodig.
+  if (!n.in_overzicht && basisKlaar && !n.nieuw_gemeld_op) {
+    const { data: vast2 } = await db.from('nests').update({ nieuw_gemeld_op: nu }).eq('id', n.id).is('nieuw_gemeld_op', null).select('id');
+    if (!vast2?.length) return NextResponse.json({ gemeld: false });
+
+    const m2 = mailAdminNieuwNestjeLink({
+      moeder: n.moeder_naam,
+      slug: n.slug,
+      plaats: [n.woonplaats, n.provincie].filter(Boolean).join(', '),
+      ras: (rasTekst(n.moeder_ras, n.vader_ras) || 'Geen ras ingevuld') + (n.stamboom ? ', met stamboom' : ''),
+      vondeling: n.soort === 'vondeling',
+      foto: n.moeder_foto ? fotoUrl(n.moeder_foto) : null,
+      verkoper: (await verkoperEmail(n.owner_id)) ?? auth.user.email ?? 'onbekend',
+    });
+    await stuurMail(ADMIN_EMAIL, m2.onderwerp, m2.html);
+    return NextResponse.json({ gemeld: true });
+  }
+
+  return NextResponse.json({ gemeld: false });
 }
