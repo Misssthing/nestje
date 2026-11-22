@@ -52,6 +52,12 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
       `moeder_naam.ilike.*${zoekterm}*,woonplaats.ilike.*${zoekterm}*,moeder_ras.ilike.*${zoekterm}*,vader_ras.ilike.*${zoekterm}*`,
     );
   }
+  if (ras) {
+    // Grove voorfilter in de database, vóór de limit van 200: anders valt een ouder nestje buiten de laatste 200
+    // en wordt het hieronder nooit meer bekeken, ook al past het ras perfect. Hieronder volgt nog de exacte match.
+    const rasVeilig = ras.replace(/[%,()*:]/g, ' ').trim().slice(0, 60);
+    query = query.or(`moeder_ras.ilike.*${rasVeilig}*,vader_ras.ilike.*${rasVeilig}*`);
+  }
   if (alleenVrij) query = query.gt('vrij', 0);
   // Kater of poes: alleen nestjes met een vrije kater of poes
   if (geslacht === 'kater') query = query.gt('vrij_katers', 0);
