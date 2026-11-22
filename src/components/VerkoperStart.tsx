@@ -55,7 +55,10 @@ export default function VerkoperStart({ ingelogd = false, fout = false }: { inge
               </li>
               <li>
                 <strong>Foto&apos;s en gegevens aanvullen</strong>
-                <span>Een checklist laat zien wat er nog mist, zoals de foto van de moeder en je WhatsApp-nummer.</span>
+                <span>
+                  Een checklist laat zien wat er nog mist, zoals de foto van de moeder en je WhatsApp-nummer. Reken op
+                  ongeveer 10 minuten voor de hele lijst — en dat hoeft niet in één keer.
+                </span>
               </li>
               <li>
                 <strong>Delen, en eventueel in het overzicht</strong>
