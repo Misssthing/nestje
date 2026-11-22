@@ -100,7 +100,7 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
     const vaderKlaar = !nest.vader_naam?.trim() || nest.vader_testen.length > 0 || Boolean(nest.vader_geen_testen);
     lijst.push({
       id: 'testen',
-      tekst: 'Gezondheidstesten',
+      tekst: 'Testuitslagen van de ouders',
       uitleg: 'Vul de testuitslagen van de ouders in, of geef aan dat er nog geen testen zijn gedaan.',
       klaar: moederKlaar && vaderKlaar,
       plek: 'gegevens',
@@ -131,7 +131,9 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
   lijst.push({
     id: 'overzicht',
     tekst: 'In het overzicht van Nestje',
-    uitleg: 'Zet bij “Gevonden worden op Nestje” het overzicht aan en kies je provincie.',
+    uitleg: nest.in_overzicht
+      ? 'Kies bij “Gevonden worden op Nestje” ook je provincie, dan kunnen kopers in de buurt je vinden.'
+      : 'Zet bij “Gevonden worden op Nestje” het overzicht aan en kies je provincie.',
     klaar: Boolean(nest.in_overzicht && nest.provincie),
     plek: 'overzicht',
     voorOverzicht: true,
