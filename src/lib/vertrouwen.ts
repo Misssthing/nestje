@@ -1,7 +1,7 @@
 import type { Nest } from '@/lib/types';
 
 export type VertrouwenVeld =
-  | 'dierenarts' | 'enting1' | 'enting2' | 'ontwormd' | 'ontvlooid' | 'gechipt' | 'paspoort'
+  | 'dierenarts' | 'enting1' | 'enting2' | 'ontwormd' | 'ontvlooid' | 'gechipt' | 'paspoort' | 'gecastreerd'
   | 'stamboom_papieren' | 'koopovereenkomst' | 'gesocialiseerd' | 'ouders_te_zien' | 'bezoek_mogelijk';
 
 /** Gezondheid: hangt af van "al gedaan" of "bij verhuizing" */
@@ -13,6 +13,7 @@ export const GEZONDHEID_NEST: [VertrouwenVeld, string][] = [
   ['ontvlooid', 'Ontvlooid'],
   ['gechipt', 'Gechipt'],
   ['paspoort', 'Europees dierenpaspoort'],
+  ['gecastreerd', 'Gecastreerd of gesteriliseerd'],
 ];
 
 /** Vertrouwen en kennismaken */
