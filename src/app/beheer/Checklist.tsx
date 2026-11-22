@@ -46,7 +46,7 @@ export default function Checklist({ nest, kittens, nestFotos, supabase, onNest, 
   }
 
   // Wat is de stand voor het openbare overzicht?
-  let stand: { soort: 'ok' | 'wacht' | 'actie' | 'info'; kop: string; tekst: string };
+  let stand: { soort: 'ok' | 'wacht' | 'actie' | 'info'; kop: string; tekst: string; knopPlek?: Plek };
   if (nest.afgerond) {
     stand = { soort: 'info', kop: 'Dit nestje is afgerond', tekst: 'Je pagina blijft bestaan. Het nestje staat niet meer in het overzicht.' };
   } else if (nest.controle_status === 'aanpassen') {
@@ -60,6 +60,7 @@ export default function Checklist({ nest, kittens, nestFotos, supabase, onNest, 
       soort: 'info',
       kop: `Nog ${missendVoorOverzicht.length === 1 ? '1 stap' : `${missendVoorOverzicht.length} stappen`} tot het overzicht`,
       tekst: 'Je link werkt al en je kunt hem delen. Wil je ook gevonden worden op Nestje, maak dan de stappen met een ster af.',
+      knopPlek: missendVoorOverzicht[0].plek,
     };
   } else if (nest.controle_status === 'wacht') {
     stand = {
@@ -76,6 +77,11 @@ export default function Checklist({ nest, kittens, nestFotos, supabase, onNest, 
       <div className={`cl-stand ${stand.soort}`} role={stand.soort === 'actie' ? 'alert' : undefined}>
         <strong>{stand.kop}</strong>
         <p>{stand.tekst}</p>
+        {stand.knopPlek && (
+          <button className="btn primary klein" style={{ marginTop: 10 }} onClick={() => ganaar(stand.knopPlek!)}>
+            Nu instellen
+          </button>
+        )}
         {stand.soort === 'actie' && (
           <>
             <p className="hint" style={{ margin: '6px 0 0' }}>
