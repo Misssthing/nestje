@@ -16,6 +16,8 @@ export type NestKaartData = {
   verkoper: string | null;
   vondeling: boolean;
   stamboom: boolean;
+  /** Fokker + cattery met stamboomnummers geverifieerd door Nestje (los van het stamboomlabel zelf) */
+  catteryGecontroleerd: boolean;
   fotos: string[];
 };
 
@@ -85,14 +87,27 @@ export default function NestKaart({ n, klein = false }: { n: NestKaartData; klei
           </>
         )}
         {n.vondeling && <span className="nkaart-badge">Vondelingen</span>}
-        {n.stamboom && (
-          <span className="nkaart-badge stamboom">
-            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6l7-3z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-            Stamboom
-          </span>
+        {(n.stamboom || n.catteryGecontroleerd) && (
+          <div className="nkaart-badges-rechts">
+            {n.stamboom && (
+              <span className="nkaart-badge stamboom">
+                <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6l7-3z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+                Stamboom
+              </span>
+            )}
+            {n.catteryGecontroleerd && (
+              <span className="nkaart-badge gekeurd" title="De stamboomnummers van de ouders zijn door Nestje gecontroleerd">
+                <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M8.5 12.2l2.3 2.3 4.7-4.9" />
+                </svg>
+                Gecontroleerd
+              </span>
+            )}
+          </div>
         )}
       </div>
 

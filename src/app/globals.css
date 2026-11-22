@@ -535,11 +535,16 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .nkaart-stippen span { width: 6px; height: 6px; border-radius: 999px; background: rgb(255 255 255 / .6); box-shadow: 0 0 2px rgb(0 0 0 / .3); transition: width .2s, background .2s; }
 .nkaart-stippen span.aan { width: 18px; background: #fff; }
 .nkaart-badge { position: absolute; top: 10px; left: 10px; background: var(--opt-bg); color: var(--opt); font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
-.nkaart-badge.stamboom {
-  left: auto; right: 10px; display: inline-flex; align-items: center; gap: 4px;
+.nkaart-badges-rechts { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.nkaart-badge.stamboom, .nkaart-badge.gekeurd {
+  position: static; display: inline-flex; align-items: center; gap: 4px;
   background: rgb(255 255 255 / .92); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .18);
 }
-@media (prefers-color-scheme: dark) { .nkaart-badge.stamboom { background: rgb(31 39 34 / .92); } }
+.nkaart-badge.gekeurd { background: var(--free-bg); color: var(--free); }
+@media (prefers-color-scheme: dark) {
+  .nkaart-badge.stamboom { background: rgb(31 39 34 / .92); }
+  .nkaart-badge.gekeurd { background: var(--free-bg); color: var(--free); }
+}
 .nkaart-tekst { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px 16px; text-decoration: none; color: var(--ink); flex: 1; }
 .nkaart-label { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
 .nkaart-label.vrij { color: var(--free); }
