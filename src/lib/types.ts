@@ -31,6 +31,8 @@ export interface Nest {
   soort: 'eigen' | 'vondeling';
   stamboom_organisatie: string | null;
   cattery: string | null;
+  /** Vrije tekst voor wat niet in de standaardvinkjes past, opvallend getoond bovenaan de nestjespagina (uitbreiding 38) */
+  bijzonderheden?: string | null;
   moeder_stamboomnr: string | null;
   vader_stamboomnr: string | null;
   moeder_chip?: string | null;
