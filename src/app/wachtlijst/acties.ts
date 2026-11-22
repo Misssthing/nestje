@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { aanmeldenVoorNest, haalNestOpSlug, reageerOpAanbod, type WachtRij } from '@/lib/wachtlijst/acties';
 import { mailRasBevestigen, stuurMail } from '@/lib/wachtlijst/mail';
-import { adminClient, isBot, isUuid, leesAanmelding, RASLIJST_RASSEN } from '@/lib/wachtlijst/server';
+import { ALLE_RASSEN, adminClient, isBot, isUuid, leesAanmelding, rassenOpsomming, RASLIJST_RASSEN } from '@/lib/wachtlijst/server';
 import { bevestigNieuwsbriefVoorEmail, nieuwsbriefAanvragen } from '@/lib/nieuwsbrief';
 
 export type FormStaat = {
@@ -22,10 +22,13 @@ const zonderEmail = (g: {
 
 const terug = (f: FormData, fout: string): FormStaat => ({
   fout,
-  waarden: Object.fromEntries(
-    ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'ras', 'nieuwsbrief']
-      .map((k) => [k, String(f.get(k) ?? '')]),
-  ),
+  waarden: {
+    ...Object.fromEntries(
+      ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'nieuwsbrief']
+        .map((k) => [k, String(f.get(k) ?? '')]),
+    ),
+    rassen: f.getAll('rassen').map(String).join(','),
+  },
 });
 
 // ─── Nestlijst ──────────────────────────────────────────────────
@@ -85,28 +88,33 @@ export async function reageer(f: FormData) {
 export async function meldAanVoorRas(_: FormStaat, f: FormData): Promise<FormStaat> {
   const klaar = 'Bijna klaar. We hebben je een mail gestuurd. Klik op de knop in die mail om je aanmelding te bevestigen.';
   if (isBot(f)) return { klaar };
-  const ras = String(f.get('ras') ?? '');
-  if (!RASLIJST_RASSEN.includes(ras)) return terug(f, 'Kies een ras uit de lijst.');
+  const gekozen = f.getAll('rassen').map(String);
+  const rassen = gekozen.includes(ALLE_RASSEN)
+    ? [ALLE_RASSEN]
+    : gekozen.filter((r) => RASLIJST_RASSEN.includes(r));
+  if (rassen.length === 0) return terug(f, 'Kies minstens één ras, of "Alle rassen".');
   const { gegevens, fout } = leesAanmelding(f);
   if (!gegevens) return terug(f, fout!);
 
   const db = adminClient();
   const { data: bestaand } = await db
-    .from('wachtlijst_ras').select('id, token, bevestigd_op').eq('ras', ras).eq('email', gegevens.email)
-    .maybeSingle<{ id: string; token: string; bevestigd_op: string | null }>();
+    .from('wachtlijst_ras').select('id, token, rassen, bevestigd_op').eq('email', gegevens.email)
+    .maybeSingle<{ id: string; token: string; rassen: string[]; bevestigd_op: string | null }>();
   const wilNieuwsbrief = f.get('nieuwsbrief') === 'ja';
   if (bestaand?.bevestigd_op) {
-    // E-mailadres is al bevestigd voor de raslijst; de nieuwsbrief krijgt dan een eigen bevestigingsmail.
+    // E-mailadres staat al op de raslijst: rassen samenvoegen in plaats van opnieuw bevestigen.
+    const samen = Array.from(new Set([...bestaand.rassen, ...rassen]));
+    await db.from('wachtlijst_ras').update({ ...gegevens, rassen: samen }).eq('id', bestaand.id);
     if (wilNieuwsbrief) {
       await nieuwsbriefAanvragen({ email: gegevens.email, naam: gegevens.naam, bron: 'raslijst' }, { stuurBevestiging: true });
     }
-    return { klaar: `Je staat al op de raslijst ${ras}. Je krijgt een mail zodra er een nieuw nestje bij komt.` };
+    return { klaar: `Je staat al op de raslijst voor ${rassenOpsomming(samen)}. Je krijgt een mail zodra er een nieuw nestje bij komt.` };
   }
   let token = bestaand?.token;
   if (bestaand) {
-    await db.from('wachtlijst_ras').update(gegevens).eq('id', bestaand.id);
+    await db.from('wachtlijst_ras').update({ ...gegevens, rassen }).eq('id', bestaand.id);
   } else {
-    const { data, error } = await db.from('wachtlijst_ras').insert({ ras, ...gegevens }).select('token').single<{ token: string }>();
+    const { data, error } = await db.from('wachtlijst_ras').insert({ rassen, ...gegevens }).select('token').single<{ token: string }>();
     if (error || !data) return terug(f, 'Aanmelden lukte niet. Probeer het over een paar minuten opnieuw.');
     token = data.token;
   }
@@ -114,7 +122,7 @@ export async function meldAanVoorRas(_: FormStaat, f: FormData): Promise<FormSta
   if (wilNieuwsbrief) {
     await nieuwsbriefAanvragen({ email: gegevens.email, naam: gegevens.naam, bron: 'raslijst' }, { stuurBevestiging: false });
   }
-  const m = mailRasBevestigen({ naam: gegevens.naam, ras, token: token!, nieuwsbrief: wilNieuwsbrief });
+  const m = mailRasBevestigen({ naam: gegevens.naam, rassen, token: token!, nieuwsbrief: wilNieuwsbrief });
   await stuurMail(gegevens.email, m.onderwerp, m.html);
   return { klaar };
 }

@@ -1,4 +1,5 @@
 import { CONFIG } from '@/lib/config';
+import { rassenOpsomming } from './rassen';
 
 /**
  * Mails versturen via Brevo (dezelfde dienst als de inlogmails).
@@ -207,14 +208,15 @@ export function mailNestVol(o: {
 
 // ─── Mails aan kopers: raslijst ────────────────────────────────
 
-export function mailRasBevestigen(o: { naam: string; ras: string; token: string; nieuwsbrief?: boolean }) {
+export function mailRasBevestigen(o: { naam: string; rassen: string[]; token: string; nieuwsbrief?: boolean }) {
+  const ras = rassenOpsomming(o.rassen);
   return {
-    onderwerp: `Bevestig je aanmelding voor de raslijst ${o.ras}`,
+    onderwerp: `Bevestig je aanmelding voor de raslijst ${ras}`,
     html: opmaak(
       `Bevestig je e-mailadres`,
       [
         `Hoi ${esc(o.naam)},`,
-        `Je wilt een mail krijgen als er een nieuw nestje ${esc(o.ras)} met stamboom op Nestje komt. Bevestig eerst dat dit jouw e-mailadres is.`,
+        `Je wilt een mail krijgen als er een nieuw nestje ${esc(ras)} met stamboom op Nestje komt. Bevestig eerst dat dit jouw e-mailadres is.`,
         ...(o.nieuwsbrief ? ['Je hebt ook aangegeven dat je de Nestje-nieuwsbrief wilt ontvangen. Met dezelfde knop bevestig je die aanmelding.'] : []),
       ],
       { tekst: 'Bevestig mijn aanmelding', href: url(`/wachtlijst/ras/${o.token}`) },
@@ -241,14 +243,15 @@ export function mailNieuwNestRas(o: {
   };
 }
 
-export function mailRasHerinnering(o: { naam: string; ras: string; token: string; tot: Date }) {
+export function mailRasHerinnering(o: { naam: string; rassen: string[]; token: string; tot: Date }) {
+  const ras = rassenOpsomming(o.rassen);
   return {
-    onderwerp: `Wil je op de raslijst ${o.ras} blijven?`,
+    onderwerp: `Wil je op de raslijst ${ras} blijven?`,
     html: opmaak(
       `Wil je op de raslijst blijven?`,
       [
         `Hoi ${esc(o.naam)},`,
-        `Je staat bijna een jaar op de raslijst ${esc(o.ras)}. Op ${esc(o.tot.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', timeZone: 'Europe/Amsterdam' }))} verloopt je aanmelding en verwijderen we je gegevens.`,
+        `Je staat bijna een jaar op de raslijst ${esc(ras)}. Op ${esc(o.tot.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', timeZone: 'Europe/Amsterdam' }))} verloopt je aanmelding en verwijderen we je gegevens.`,
         'Wil je blijven? Klik op de knop, dan verlengen we je aanmelding met een jaar.',
       ],
       { tekst: 'Ik wil blijven', href: url(`/wachtlijst/ras/${o.token}`) },

@@ -15,7 +15,7 @@ type Props = { searchParams: Promise<{ ras?: string }> };
 
 export default async function Raslijst({ searchParams }: Props) {
   const { ras } = await searchParams;
-  const gekozen = ras && RASLIJST_RASSEN.includes(ras) ? ras : '';
+  const gekozen = ras && RASLIJST_RASSEN.includes(ras) ? [ras] : [];
 
   return (
     <main className="wrap">
@@ -25,8 +25,8 @@ export default async function Raslijst({ searchParams }: Props) {
       <section className="hero">
         <h1>Mail me bij een nieuw nestje</h1>
         <p>
-          Kies een ras. Komt er een nieuw nestje met stamboom van dat ras op Nestje, dan krijg je een mail. Met één klik meld
-          je je dan aan voor de wachtlijst van dat nestje.
+          Kies een of meer rassen, of "Alle rassen" als het je niet uitmaakt. Komt er een nieuw nestje met stamboom op Nestje
+          dat daarbij past, dan krijg je een mail. Met één klik meld je je dan aan voor de wachtlijst van dat nestje.
         </p>
       </section>
       <ul className="wl-uitleg">
@@ -37,7 +37,7 @@ export default async function Raslijst({ searchParams }: Props) {
       <AanmeldFormulier
         actie={meldAanVoorRas}
         rassen={RASLIJST_RASSEN}
-        waarden={{ ras: gekozen }}
+        waarden={{ rassen: gekozen }}
         knop="Aanmelden"
         nieuwsbrief
         uitleg="Je krijgt eerst een mail om je e-mailadres te bevestigen. Wat je hieronder invult, sturen we mee als je je voor een nestje aanmeldt."

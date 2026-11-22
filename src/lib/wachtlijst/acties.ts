@@ -6,7 +6,7 @@ import {
   mailVerkoperOnafgemaakteNestje,
   mailVerkoperReactie, mailVerkoperWachtlijstHerinnering, stuurMail,
 } from './mail';
-import { AANBOD_UREN, adminClient, type Aanmelding, verkoperEmail } from './server';
+import { AANBOD_UREN, adminClient, ALLE_RASSEN, type Aanmelding, verkoperEmail } from './server';
 
 type NestRij = {
   id: string; owner_id: string; slug: string; moeder_naam: string; geboortedatum: string;
@@ -458,16 +458,20 @@ export async function rasMails() {
     if (!o || o.stamboom !== true) continue; // label "met stamboom" alleen met organisatie, cattery en vader
     const rassen = rassenVan(o);
     const { data: lijst } = await db()
-      .from('wachtlijst_ras').select('id, ras, naam, email, token')
+      .from('wachtlijst_ras').select('id, rassen, naam, email, token')
       .not('bevestigd_op', 'is', null).gt('geldig_tot', new Date().toISOString());
     const regel = regelVoor(o);
     const gehad = new Set<string>();
     for (const r of lijst ?? []) {
-      if (!rassen.includes(String(r.ras).toLowerCase())) continue;
+      const zijnRassen = (r.rassen as string[]).map((x) => x.toLowerCase());
+      const matcht = zijnRassen.includes(ALLE_RASSEN.toLowerCase()) || zijnRassen.some((x) => rassen.includes(x));
+      if (!matcht) continue;
       const sleutel = String(r.email).toLowerCase();
       if (gehad.has(sleutel)) continue; // iemand op twee raslijsten krijgt één mail
+      const rasDelenAlle = [...new Map([...rasDelen(o.moeder_ras), ...rasDelen(o.vader_ras)].map((x) => [x.toLowerCase(), x])).values()];
+      const weergaveRas = rasDelenAlle.join(' × ') || 'raskat';
       gehad.add(sleutel);
-      const m = mailNieuwNestRas({ naam: r.naam, ras: r.ras, token: r.token, moeder: o.moeder_naam, slug: o.slug, regel });
+      const m = mailNieuwNestRas({ naam: r.naam, ras: weergaveRas, token: r.token, moeder: o.moeder_naam, slug: o.slug, regel });
       await stuurMail(r.email, m.onderwerp, m.html);
       n++;
     }
@@ -481,10 +485,10 @@ export async function rasOnderhoud() {
   const nu = new Date();
   const overMaand = new Date(nu.getTime() + 30 * 864e5).toISOString();
   const { data: bijna } = await db()
-    .from('wachtlijst_ras').select('id, ras, naam, email, token, geldig_tot')
+    .from('wachtlijst_ras').select('id, rassen, naam, email, token, geldig_tot')
     .not('bevestigd_op', 'is', null).is('herinnerd_op', null).lt('geldig_tot', overMaand);
   for (const r of bijna ?? []) {
-    const m = mailRasHerinnering({ naam: r.naam, ras: r.ras, token: r.token, tot: new Date(r.geldig_tot) });
+    const m = mailRasHerinnering({ naam: r.naam, rassen: r.rassen as string[], token: r.token, tot: new Date(r.geldig_tot) });
     await stuurMail(r.email, m.onderwerp, m.html);
     await db().from('wachtlijst_ras').update({ herinnerd_op: nu.toISOString() }).eq('id', r.id);
   }

@@ -1,13 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useActionState } from 'react';
 import type { FormStaat } from './acties';
 import { NIEUWSBRIEF_VINKTEKST } from '@/lib/nieuwsbrief-tekst';
+import { ALLE_RASSEN } from '@/lib/wachtlijst/rassen';
 
 type Waarden = {
   naam?: string; email?: string; woonplaats?: string;
   voorkeur_geslacht?: string; voorkeur_vacht?: string | null;
-  motivatie?: string | null; ras?: string;
+  motivatie?: string | null; rassen?: string[];
 };
 
 type Props = {
@@ -27,7 +29,11 @@ type Props = {
 
 export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, waarden = {}, emailVast, uitleg, nieuwsbrief }: Props) {
   const [staat, verstuur, bezig] = useActionState(actie, {});
-  const w = { ...waarden, ...(staat.waarden ?? {}) };
+  const foutRassen = staat.waarden?.rassen !== undefined
+    ? staat.waarden.rassen.split(',').filter(Boolean)
+    : undefined;
+  const w = { ...waarden, ...(staat.waarden ?? {}), rassen: foutRassen ?? waarden.rassen };
+  const [alleRassen, setAlleRassen] = useState((w.rassen ?? []).includes(ALLE_RASSEN));
 
   if (staat.klaar) {
     return (
@@ -48,15 +54,28 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
       </label>
 
       {rassen && (
-        <label className="veld">
-          <span>Ras</span>
-          <select id="wl-ras" name="ras" defaultValue={w.ras ?? ''} required>
-            <option value="" disabled>Kies een ras</option>
+        <fieldset className="veld wl-rassen">
+          <legend>Ras(sen)</legend>
+          <label className="wl-ras-alle">
+            <input
+              type="checkbox" name="rassen" value={ALLE_RASSEN}
+              checked={alleRassen} onChange={(e) => setAlleRassen(e.target.checked)}
+            />
+            <span>{ALLE_RASSEN} (geen voorkeur, mail bij elk nieuw nestje met stamboom)</span>
+          </label>
+          <div className="wl-rassen-lijst">
             {rassen.map((r) => (
-              <option key={r} value={r}>{r}</option>
+              <label key={r} className="wl-ras-keuze">
+                <input
+                  type="checkbox" name="rassen" value={r}
+                  defaultChecked={(w.rassen ?? []).includes(r)} disabled={alleRassen}
+                />
+                <span>{r}</span>
+              </label>
             ))}
-          </select>
-        </label>
+          </div>
+          <p className="hint" style={{ marginBottom: 0 }}>Je kunt meerdere rassen aanvinken. Later terugkomen om er nog een toe te voegen mag ook.</p>
+        </fieldset>
       )}
 
       <div className="row stapel">

@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-export { RASLIJST_RASSEN } from './rassen';
+export { RASLIJST_RASSEN, ALLE_RASSEN, rassenOpsomming } from './rassen';
 
 /**
  * Supabase met de service-sleutel. Alleen op de server gebruiken: deze sleutel omzeilt de beveiligingsregels.

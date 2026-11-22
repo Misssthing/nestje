@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Voet from '@/components/Voet';
-import { adminClient, isUuid } from '@/lib/wachtlijst/server';
+import { adminClient, isUuid, rassenOpsomming } from '@/lib/wachtlijst/server';
 import AanmeldFormulier from '../../AanmeldFormulier';
 import { afmeldenRas, bevestigOfVerlengRas, wijzigRasAanmelding } from '../../acties';
 
@@ -21,6 +21,7 @@ export default async function MijnRaslijst({ params, searchParams }: Props) {
   const tot = new Date(r.geldig_tot);
   const bijnaVerlopen = tot.getTime() - Date.now() < 31 * 864e5;
   const totTekst = tot.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Amsterdam' });
+  const ras = rassenOpsomming(r.rassen ?? []);
 
   return (
     <main className="wrap">
@@ -28,15 +29,15 @@ export default async function MijnRaslijst({ params, searchParams }: Props) {
         <Link href="/kittens" className="brand">← Alle kittens</Link>
       </div>
       <section className="hero">
-        <h1>Raslijst {r.ras}</h1>
+        <h1>Raslijst {ras}</h1>
         {r.bevestigd_op ? (
-          <p>Je krijgt een mail zodra er een nieuw nestje {r.ras} met stamboom op Nestje komt. Je aanmelding loopt tot {totTekst}.</p>
+          <p>Je krijgt een mail zodra er een nieuw nestje {ras} met stamboom op Nestje komt. Je aanmelding loopt tot {totTekst}.</p>
         ) : (
-          <p>Nog één stap: bevestig dat je mails wilt krijgen over nieuwe nestjes {r.ras}.</p>
+          <p>Nog één stap: bevestig dat je mails wilt krijgen over nieuwe nestjes {ras}.</p>
         )}
       </section>
 
-      {bevestigd && <p className="toast-melding" role="status">Gelukt. Je staat op de raslijst {r.ras}.</p>}
+      {bevestigd && <p className="toast-melding" role="status">Gelukt. Je staat op de raslijst {ras}.</p>}
 
       {(!r.bevestigd_op || bijnaVerlopen) && (
         <form action={bevestigOfVerlengRas} className="wl-bevestig">
@@ -55,7 +56,7 @@ export default async function MijnRaslijst({ params, searchParams }: Props) {
       )}
 
       <details className="wl-afmelden">
-        <summary>Geen mails meer over {r.ras}</summary>
+        <summary>Geen mails meer over {ras}</summary>
         <p className="hint">We verwijderen je aanmelding en je gegevens meteen.</p>
         <form action={afmeldenRas}>
           <input type="hidden" name="token" value={token} />
