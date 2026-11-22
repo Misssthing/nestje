@@ -127,7 +127,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
           <h1>{landing?.kop ?? 'Kittens te koop'}</h1>
           <p>
             {landing?.intro ??
-              'Kittens te koop bij verantwoorde verkopers: raskatten met stamboom, pas verhuizen na 13 weken, gechipt — en de mogelijkheid voor kopers om eerst iets over zichzelf te vertellen. Zo vindt elke kitten zijn juiste toekomstige personeel.'}
+              'Kittens te koop bij verantwoorde verkopers: raskatten met stamboom, pas verhuizen na 12 weken, gechipt — en de mogelijkheid voor kopers om eerst iets over zichzelf te vertellen. Zo vindt elke kitten zijn juiste toekomstige personeel.'}
           </p>
           <p className="kop-hero-klein">
             <a href={metUtm(CONFIG.kopenArtikelUrl, 'overzicht')} target="_blank" rel="noopener">Waar let je op bij het kopen? ↗</a>

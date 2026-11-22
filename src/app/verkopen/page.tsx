@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 export const metadata: Metadata = {
   title: 'Kittens verkopen? Maak gratis je nestjespagina',
   description:
-    'Maak in een minuut een mooie pagina voor je nestje kittens en deel hem via WhatsApp en Facebook. Gratis, zonder wachtwoord.',
+    'Maak binnen een minuut je nestjespagina en vul hem daarna rustig verder aan. Deel via WhatsApp en Facebook. Gratis, zonder wachtwoord.',
   alternates: { canonical: '/verkopen' },
 };
 
