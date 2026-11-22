@@ -41,6 +41,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     moeder_stamboomnr: nest.moeder_stamboomnr ?? '',
     vader_stamboomnr: nest.vader_stamboomnr ?? '',
     moeder_chip: nest.moeder_chip ?? '',
+    bijzonderheden: nest.bijzonderheden ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
   const [getest] = useState<boolean | null>(nest.ouders_getest);
@@ -167,6 +168,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
       vader_testen: vT,
       moeder_geen_testen: mT.length === 0 ? moederGeenTesten : false,
       vader_geen_testen: vT.length === 0 ? vaderGeenTesten : false,
+      bijzonderheden: v.bijzonderheden.trim().slice(0, 300) || null,
     };
 
     openstaand.current = false;
@@ -274,6 +276,23 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
           {soort === 'vondeling' && (
             <p className="hint">Is de moeder onbekend? Vul bij de naam bijvoorbeeld “de vondelingetjes” in. Een foto van de moeder is dan niet nodig, en je pagina krijgt het label “Vondelingen”.</p>
           )}
+        </fieldset>
+
+        <fieldset className="formblok">
+          <legend>Bijzonderheden <small className="opt">optioneel</small></legend>
+          <label className="veld">
+            <span>Iets wat kopers moeten weten, maar niet in de andere velden past</span>
+            <textarea
+              value={v.bijzonderheden}
+              onChange={zet('bijzonderheden')}
+              maxLength={300}
+              placeholder="Bijv. “Kittens verhuizen gecastreerd, daarom een week later dan de teller aangeeft.”"
+            />
+          </label>
+          <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
+            Komt opvallend bovenaan je nestjespagina te staan, direct onder de titel en de aftelling. Laat leeg als er niets
+            bijzonders is.
+          </p>
         </fieldset>
 
         <fieldset className="formblok">
