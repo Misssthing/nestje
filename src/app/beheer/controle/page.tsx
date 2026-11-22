@@ -27,7 +27,7 @@ const SNELLE_REDENEN = [
   'Een rasnaam mag alleen met stamboom. Vul de stamboomgegevens in, of kies Huiskat of Kruising.',
   'De kittens verhuizen te vroeg. Volgens de huisregels is dat op zijn vroegst na 12 weken.',
   'Deze moeder heeft volgens onze gegevens te veel nestjes in korte tijd (huisregel: max. 2 per 12 maanden).',
-  'Vul de stamboomnummers van beide ouders in (alleen zichtbaar voor Nestje). Dan kunnen we je cattery controleren en krijg je het vinkje Gecontroleerd.',
+  'Vul de stamboomnummers van beide ouders in (alleen zichtbaar voor Nestje). Dan controleren we ze en krijgt je nestje het label “Nummers gecontroleerd”.',
   'We konden je cattery niet terugvinden. Stuur een foto van je catterycertificaat of de stamboom van de moeder naar nestje@kattenverzorging.com.',
 ];
 

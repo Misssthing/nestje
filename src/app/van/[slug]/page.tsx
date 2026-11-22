@@ -110,7 +110,7 @@ export default async function ProfielPagina({ params }: Props) {
         {cattery && (
           <div className="cattery-kaart">
             <span className="chip verkoper">Fokker · met stamboom</span>
-            {cattery.gecontroleerd && <span className="chip vrij">✓ Gecontroleerd door Nestje</span>}
+            {cattery.gecontroleerd && <span className="chip vrij">Nummers gecontroleerd</span>}
             <div>
               {cattery.naam && <strong>Cattery {cattery.naam}</strong>}
               {cattery.organisatie && cattery.organisatie !== 'Anders' && <span>Aangesloten bij {cattery.organisatie}</span>}

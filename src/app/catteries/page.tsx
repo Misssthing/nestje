@@ -76,9 +76,9 @@ export default async function Catteries({ searchParams }: Props) {
         <section className="hero">
           <h1>Catteries</h1>
           <p>
-            Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Gecontroleerd” hebben we de cattery zelf
-            nagekeken; bij de andere zijn de gegevens opgegeven door de fokker. Kom altijd eerst kijken, bij de kittens én hun
-            moeder, en vraag naar de stamboompapieren.
+            Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Nummers gecontroleerd” hebben we de stamboomnummers
+            gecheckt op format en dubbel gebruik bij andere verkopers; bij de andere staan alleen de gegevens die de fokker zelf opgaf.
+            Kom altijd eerst kijken, bij de kittens én hun moeder, en vraag naar de stamboompapieren.
           </p>
         </section>
 
@@ -103,7 +103,7 @@ export default async function Catteries({ searchParams }: Props) {
           </label>
           <label className="vink cat-vink">
             <input type="checkbox" name="gecontroleerd" value="1" defaultChecked={alleenGecontroleerd} />
-            <span>Alleen gecontroleerd door Nestje</span>
+            <span>Alleen met nummers gecontroleerd</span>
           </label>
           <button className="btn primary klein" type="submit">Toon</button>
         </form>
@@ -132,7 +132,7 @@ export default async function Catteries({ searchParams }: Props) {
                     {c.sinds_jaar ? ` · fokt sinds ${c.sinds_jaar}` : ''}
                   </span>
                   <span className="ckaart-chips">
-                    {c.gecontroleerd && <span className="chip vrij">✓ Gecontroleerd</span>}
+                    {c.gecontroleerd && <span className="chip vrij">Nummers gecontroleerd</span>}
                     {org && <span className="chip verkoper">{org}</span>}
                   </span>
                 </span>

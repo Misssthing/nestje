@@ -435,7 +435,7 @@ export default async function NestjesPagina({ params }: Props) {
                 <div className="vk-chips">
                   <span className="chip verkoper">Fokker · met stamboom</span>
                   {extra?.cattery_gecontroleerd ? (
-                    <span className="chip vrij">✓ Gecontroleerd door Nestje</span>
+                    <span className="chip vrij">Nummers gecontroleerd</span>
                   ) : (
                     <span className="chip vk-opgegeven">Opgegeven door de verkoper</span>
                   )}
