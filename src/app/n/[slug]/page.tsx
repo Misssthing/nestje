@@ -245,6 +245,11 @@ export default async function NestjesPagina({ params }: Props) {
               </p>
             )}
             <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
+            {nest.bijzonderheden?.trim() && (
+              <p className="bijzonderheden" role="note">
+                {nest.bijzonderheden.trim()}
+              </p>
+            )}
             {wachtlijstOpen && !whatsappPerKitten && (
               <div className="interesse">
                 <Link className="btn primary" href={`/n/${nest.slug}/wachtlijst`} rel="nofollow">
