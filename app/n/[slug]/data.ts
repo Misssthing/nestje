@@ -1,0 +1,70 @@
+import { cache } from 'react';
+import { createPublicClient } from '@/lib/supabase/public';
+import type { Foto, Kitten, NestFoto, OpenbaarNest } from '@/lib/types';
+
+export type OpenbaarKitten = Omit<Kitten, 'nest_id' | 'notitie'> & { fotos: string[] };
+
+/** Leest één nestje via de openbare views (geen owner_id, e-mail of telefoonnummer). */
+export const haalNestje = cache(async (slug: string) => {
+  if (!/^[a-z0-9-]{4,40}$/.test(slug)) return null;
+  const supabase = createPublicClient();
+
+  const { data: nest } = await supabase
+    .from('openbare_nesten')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle<OpenbaarNest>();
+  if (!nest) return null;
+
+  // Deze vier hangen niet van elkaar af, dus tegelijk opvragen in plaats van op elkaar te wachten.
+  // Dat scheelt op trage verbindingen merkbaar tijd voordat de pagina kan laden.
+  const [{ data: nestFotos }, { data: kittens }, { data: profiel }, { data: inOverzicht }] = await Promise.all([
+    supabase
+      .from('openbare_nestfotos')
+      .select('storage_path, volgorde')
+      .eq('nest_id', nest.id)
+      .order('volgorde')
+      .returns<Pick<NestFoto, 'storage_path' | 'volgorde'>[]>(),
+    supabase
+      .from('openbare_kittens')
+      .select('id, naam, geslacht, vacht, status, volgorde, omschrijving, gechipt, enting1, enting2, ontwormd, ontvlooid, dierenarts, hartjes')
+      .eq('nest_id', nest.id)
+      .order('volgorde')
+      .returns<Omit<Kitten, 'nest_id' | 'notitie'>[]>(),
+    supabase
+      .from('openbare_profiel_nesten')
+      .select('profiel_slug, profiel_naam')
+      .eq('slug', slug)
+      .maybeSingle<{ profiel_slug: string; profiel_naam: string }>(),
+    // Staat dit nestje in het openbare overzicht? Dan tonen we een link terug.
+    supabase
+      .from('openbare_overzicht')
+      .select('slug')
+      .eq('slug', slug)
+      .maybeSingle<{ slug: string }>(),
+  ]);
+
+  // De foto's per kitten hebben de kitten-id's nodig, dus die kunnen pas hierna opgevraagd worden.
+  const ids = (kittens ?? []).map((k) => k.id);
+  const { data: fotos } = ids.length
+    ? await supabase
+        .from('openbare_fotos')
+        .select('kitten_id, storage_path, volgorde')
+        .in('kitten_id', ids)
+        .order('volgorde')
+        .returns<Omit<Foto, 'id'>[]>()
+    : { data: [] as Omit<Foto, 'id'>[] };
+
+  const perKitten = new Map<string, string[]>();
+  for (const f of fotos ?? []) {
+    perKitten.set(f.kitten_id, [...(perKitten.get(f.kitten_id) ?? []), f.storage_path]);
+  }
+
+  return {
+    nest,
+    profiel,
+    inOverzicht: Boolean(inOverzicht),
+    nestFotos: (nestFotos ?? []).map((f) => f.storage_path),
+    kittens: (kittens ?? []).map<OpenbaarKitten>((k) => ({ ...k, fotos: perKitten.get(k.id) ?? [] })),
+  };
+});

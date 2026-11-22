@@ -1,0 +1,24 @@
+/* Bovenbalk met logo (uitbreiding 35). Wordt geladen vanuit layout.tsx. */
+.sitekop { background: var(--surface); border-bottom: 1px solid var(--line); }
+.sitekop-binnen { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 12px;
+  padding-block: 10px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
+.sitekop-merk { display: flex; align-items: center; gap: 4px 16px; flex-wrap: wrap; min-width: 0; }
+.sitekop-logo { display: flex; align-items: center; flex: none; }
+.sitekop-logo img { height: 32px; width: auto; display: block; }
+.sitekop-moeder { font-size: 13px; color: var(--muted); text-decoration: none; line-height: 1.2; }
+.sitekop-moeder strong { font-weight: 600; color: var(--ink); }
+.sitekop-moeder:hover strong { text-decoration: underline; }
+.sitekop-insta { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 600; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); }
+.sitekop-insta:hover { background: var(--bg); }
+@media (max-width: 520px) {
+  .sitekop-logo img { height: 28px; }
+  .sitekop-insta span { display: none; }
+  .sitekop-insta { padding: 7px; }
+  .sitekop-moeder { font-size: 12px; }
+  .sitekop-merk { flex-direction: column; align-items: flex-start; }
+}
+/* Het woord "Nestje" in de kleine balk van de pagina's is nu dubbel: verbergen. Terug-links ("← Je nestjes") blijven. */
+.sitekop ~ main .bar > span.brand,
+.sitekop ~ main .bar > a.brand[href="/"],
+.sitekop ~ * main .bar > span.brand,
+.sitekop ~ * main .bar > a.brand[href="/"] { visibility: hidden; }

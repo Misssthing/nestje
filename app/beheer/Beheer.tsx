@@ -1,0 +1,316 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import Aftelling from '@/components/Aftelling';
+import FotoBeheer from '@/components/FotoBeheer';
+import KopieerLink from '@/components/KopieerLink';
+import OuderFoto from '@/components/OuderFoto';
+import { useToast } from '@/components/Toast';
+import { CONFIG } from '@/lib/config';
+import { aantalKittens, STATUS_LABEL } from '@/lib/nest';
+import { createClient } from '@/lib/supabase/browser';
+import type { Foto, Kitten, KittenMetFotos, Nest, NestFoto, Profiel } from '@/lib/types';
+import Checklist from './Checklist';
+import GezondheidPaneel from './GezondheidPaneel';
+import Zichtbaarheid from './Zichtbaarheid';
+import { magVerhuizen } from '@/lib/vertrouwen';
+import KittenKaart from './KittenKaart';
+import NestForm from './NestForm';
+
+const sorteer = (k: KittenMetFotos[]) =>
+  [...k]
+    .sort((a, b) => a.volgorde - b.volgorde)
+    .map((x) => ({ ...x, kitten_photos: [...x.kitten_photos].sort((a, b) => a.volgorde - b.volgorde) }));
+
+export default function Beheer({
+  nest: beginNest,
+  nestFotos: beginNestFotos,
+  kittens: beginKittens,
+  email,
+  profiel = null,
+  eersteNestje,
+}: {
+  nest: Nest;
+  nestFotos: NestFoto[];
+  kittens: KittenMetFotos[];
+  email: string;
+  profiel?: Profiel | null;
+  eersteNestje: boolean;
+}) {
+  const supabase = useMemo(() => createClient(), []);
+  const router = useRouter();
+  const toast = useToast();
+  const [nest, setNest] = useState(beginNest);
+  const [kittens, setKittens] = useState(() => sorteer(beginKittens));
+  const [nestFotos, setNestFotos] = useState(beginNestFotos);
+  const [origin, setOrigin] = useState(CONFIG.siteUrl);
+  useEffect(() => setOrigin(window.location.origin), []);
+  const url = `${origin}/n/${nest.slug}`;
+
+  async function werkKittenBij(id: string, patch: Partial<Kitten>, melding?: string) {
+    const vorig = kittens;
+    setKittens((ks) => ks.map((k) => (k.id === id ? { ...k, ...patch } : k)));
+    const { error } = await supabase.from('kittens').update(patch).eq('id', id);
+    if (error) {
+      setKittens(vorig);
+      toast('Opslaan lukte niet');
+    } else if (melding) toast(melding);
+  }
+
+  function zetFotos(id: string, fn: (f: Foto[]) => Foto[]) {
+    setKittens((ks) => ks.map((k) => (k.id === id ? { ...k, kitten_photos: fn(k.kitten_photos) } : k)));
+  }
+
+  async function voegToe() {
+    const volgorde = kittens.length ? Math.max(...kittens.map((k) => k.volgorde)) + 1 : 0;
+    const { data, error } = await supabase
+      .from('kittens')
+      .insert({ nest_id: nest.id, naam: `Kitten ${kittens.length + 1}`, volgorde })
+      .select('*, kitten_photos(*)')
+      .single<KittenMetFotos>();
+    if (error || !data) return toast('Toevoegen lukte niet');
+    setKittens((ks) => [...ks, data]);
+    toast('Kitten toegevoegd');
+  }
+
+  async function verwijder(k: KittenMetFotos) {
+    if (!confirm(`${k.naam} verwijderen, inclusief foto's?`)) return;
+    const paden = k.kitten_photos.map((f) => f.storage_path);
+    if (paden.length) await supabase.storage.from(CONFIG.fotoBucket).remove(paden);
+    const { error } = await supabase.from('kittens').delete().eq('id', k.id);
+    if (error) return toast('Verwijderen lukte niet');
+    setKittens((ks) => ks.filter((x) => x.id !== k.id));
+    toast(`${k.naam} verwijderd`);
+  }
+
+  async function verplaats(index: number, richting: -1 | 1) {
+    const doel = index + richting;
+    if (doel < 0 || doel >= kittens.length) return;
+    const nieuw = [...kittens];
+    [nieuw[index], nieuw[doel]] = [nieuw[doel], nieuw[index]];
+    const hernummerd = nieuw.map((k, i) => ({ ...k, volgorde: i }));
+    setKittens(hernummerd);
+    const gewijzigd = hernummerd.filter((k, i) => i === index || i === doel);
+    const resultaten = await Promise.all(
+      gewijzigd.map((k) => supabase.from('kittens').update({ volgorde: k.volgorde }).eq('id', k.id)),
+    );
+    if (resultaten.some((r) => r.error)) toast('Volgorde opslaan lukte niet');
+  }
+
+  async function verwijderNestje() {
+    if (!confirm('Je hele nestje verwijderen? De pagina en alle foto\'s zijn daarna weg.')) return;
+    const paden = [
+      ...[nest.moeder_foto, nest.vader_foto].filter((p): p is string => Boolean(p)),
+      ...nestFotos.map((f) => f.storage_path),
+      ...kittens.flatMap((k) => k.kitten_photos.map((f) => f.storage_path)),
+    ];
+    if (paden.length) await supabase.storage.from(CONFIG.fotoBucket).remove(paden);
+    // Uitslagen van gezondheidstesten die nog op controle wachten
+    const uitslagen = [...(nest.moeder_testen ?? []), ...(nest.vader_testen ?? [])]
+      .map((t) => t.bewijs)
+      .filter((p): p is string => Boolean(p));
+    if (uitslagen.length) await supabase.storage.from('testuitslagen').remove(uitslagen);
+    const { error } = await supabase.from('nests').delete().eq('id', nest.id);
+    if (error) return toast('Verwijderen lukte niet');
+    router.push('/beheer');
+    router.refresh();
+  }
+
+  async function wisselAfgerond() {
+    const afgerond = !nest.afgerond;
+    if (afgerond) {
+      const nogOpen = kittens.filter((k) => k.status === 'vrij' || k.status === 'optie');
+      const vraag = nogOpen.length
+        ? `Let op: ${nogOpen.length === 1 ? 'kitten' : 'deze kittens staan'} nog op “vrij” of “onder optie”: ${nogOpen
+            .map((k) => k.naam)
+            .join(', ')}. Als je toch afsluit, toont je pagina dat alle kittens een thuis hebben, ook al klopt dat nog niet. Toch afsluiten?`
+        : 'Nestje afsluiten? Je pagina blijft bestaan en toont dat alle kittens een thuis hebben.';
+      if (!confirm(vraag)) return;
+    }
+    const { error } = await supabase.from('nests').update({ afgerond }).eq('id', nest.id);
+    if (error) return toast('Opslaan lukte niet');
+    setNest((n) => ({ ...n, afgerond }));
+    toast(afgerond ? 'Nestje afgesloten' : 'Nestje weer geopend');
+  }
+
+  /** Na het opslaan kan de controle-status in de database zijn veranderd (bijv. ras of moederfoto gewijzigd). */
+  async function verversControle() {
+    const { data } = await supabase.from('nests').select('controle_status, controle_reden').eq('id', nest.id).single<Partial<Nest>>();
+    if (data) setNest((n) => ({ ...n, ...data }));
+    if (data?.controle_status === 'wacht') meldControle();
+  }
+
+  /** Staat het nestje klaar voor controle, dan krijgt de beheerder direct een mail (de server stuurt er maar één). */
+  function meldControle() {
+    fetch('/api/controle/melden', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ nestId: nest.id }),
+    }).catch(() => {});
+  }
+  useEffect(() => {
+    if (beginNest.controle_status === 'wacht') meldControle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const vrij = kittens.filter((k) => k.status === 'vrij').length;
+  const nogNietGeplaatst = kittens.filter((k) => k.status === 'vrij' || k.status === 'optie');
+
+  return (
+    <main className="wrap">
+      <div className="bar">
+        <a className="brand" href="/beheer">← Je nestjes</a>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <a className="btn ghost klein" href="/hulp">Hulp</a>
+          <form action="/auth/uitloggen" method="post">
+            <button className="btn ghost klein">Uitloggen</button>
+          </form>
+        </div>
+      </div>
+
+      <section className="hero">
+        <h1>Het nestje van {nest.moeder_naam}</h1>
+        <p>
+          {aantalKittens(kittens.length)}, {vrij} {STATUS_LABEL.vrij.toLowerCase()}.
+        </p>
+        <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
+      </section>
+
+      <section className="linkkaart" aria-label="Je openbare pagina">
+        <span className="hint" style={{ margin: 0 }}>Je pagina voor kopers</span>
+        <code>{url.replace(/^https?:\/\//, '')}</code>
+        <div className="actions">
+          <KopieerLink url={url} className="btn primary" />
+          <a className="btn ghost" href={`/n/${nest.slug}`} target="_blank" rel="noopener">
+            Bekijk pagina
+          </a>
+        </div>
+        {!nest.whatsapp_nummer && (
+          <p className="fout">Vul je WhatsApp-nummer in bij Gegevens, anders kunnen kopers je niet bereiken.</p>
+        )}
+        <p className="hint" style={{ margin: '10px 0 0' }}>
+          👁 {nest.weergaven ? `${nest.weergaven} keer bekeken` : 'Nog niet bekeken'}
+        </p>
+      </section>
+
+      <Checklist
+        nest={nest}
+        kittens={kittens}
+        nestFotos={nestFotos}
+        supabase={supabase}
+        profiel={profiel}
+        onNest={(patch) => {
+          setNest((n) => ({ ...n, ...patch }));
+          if (patch.controle_status === 'wacht') meldControle();
+        }}
+      />
+
+      <Zichtbaarheid
+        nest={nest}
+        supabase={supabase}
+        onNest={(patch) => {
+          setNest((n) => ({ ...n, ...patch }));
+          verversControle();
+        }}
+      />
+
+      <section className="panel" id="sectie-nestfotos" aria-label="Nestfoto's">
+        <h2>Nestfoto&apos;s</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
+          Komen bovenaan je pagina en in de deelafbeelding. Bijvoorbeeld het hele nestje samen, of de moeder met haar kittens.
+        </p>
+        <FotoBeheer
+          supabase={supabase}
+          fotos={nestFotos}
+          max={CONFIG.maxNestFotos}
+          tabel="nest_photos"
+          ouder={{ kolom: 'nest_id', id: nest.id }}
+          map={`${nest.id}/nest`}
+          naam={`het nestje van ${nest.moeder_naam}`}
+          onFotos={setNestFotos}
+        />
+      </section>
+
+      <section className="panel" id="sectie-ouders" aria-label="Foto's van de ouders">
+        <h2>Foto&apos;s van de ouders</h2>
+        <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
+          Komen in het blok “De ouders” op je pagina. Bij de moeder het liefst een foto van haar samen met haar kittens: zo zien
+          kopers dat ze er echt bij is.{nest.soort === 'vondeling' ? ' Bij vondelingen is een foto van de moeder niet nodig.' : ''}
+        </p>
+        <div className="ouderfoto">
+          <OuderFoto supabase={supabase} nest={nest} kolom="moeder_foto" label={`Moeder (${nest.moeder_naam})`} onWijzig={(p) => { setNest((n) => ({ ...n, ...p })); verversControle(); }} />
+          <OuderFoto supabase={supabase} nest={nest} kolom="vader_foto" label={nest.vader_naam ? `Vader (${nest.vader_naam})` : 'Vader'} onWijzig={(p) => setNest((n) => ({ ...n, ...p }))} />
+        </div>
+      </section>
+
+      <h2 className="kop2" id="sectie-kittens">Kittens</h2>
+      <div className="lijst">
+        {kittens.map((k, i) => (
+          <KittenKaart
+            key={k.id}
+            kitten={k}
+            nestId={nest.id}
+            nestSlug={nest.slug}
+            supabase={supabase}
+            eerste={i === 0}
+            laatste={i === kittens.length - 1}
+            onWijzig={(patch, melding) => werkKittenBij(k.id, patch, melding)}
+            onFotos={(fn) => zetFotos(k.id, fn)}
+            onVerwijder={() => verwijder(k)}
+            onVerplaats={(r) => verplaats(i, r)}
+            magVerhuizen={magVerhuizen(nest)}
+          />
+        ))}
+      </div>
+      <div className="actions">
+        <button className="btn ghost" onClick={voegToe}>
+          Kitten toevoegen
+        </button>
+      </div>
+
+      <GezondheidPaneel nest={nest} supabase={supabase} onNest={(patch) => setNest((n) => ({ ...n, ...patch }))} />
+
+      <div id="sectie-gegevens">
+        <NestForm nest={nest} supabase={supabase} onOpgeslagen={(n) => { setNest(n); verversControle(); }} openStandaard={!nest.whatsapp_nummer} eersteNestje={eersteNestje} />
+      </div>
+
+      <section className="panel" aria-labelledby="afronden-kop">
+        <h2 id="afronden-kop">Nestje afsluiten of verwijderen</h2>
+
+        <div className="afrondblok">
+          <h3>{nest.afgerond ? 'Dit nestje is afgesloten' : 'Alle kittens verhuisd?'}</h3>
+          <p className="hint">
+            {nest.afgerond
+              ? 'Je pagina laat zien dat alle kittens een thuis hebben. Je kunt het nestje altijd weer openen.'
+              : 'Sluit je nestje af. Je pagina blijft bestaan en laat zien dat alle kittens een thuis hebben gevonden. Het nestje verdwijnt uit het overzicht.'}
+          </p>
+          {!nest.afgerond && nogNietGeplaatst.length > 0 && (
+            <p className="hint" style={{ color: '#b3421f' }}>
+              Let op: {nogNietGeplaatst.map((k) => k.naam).join(', ')} staat nog op “vrij” of “onder optie”.
+            </p>
+          )}
+          <button className="btn ghost" onClick={wisselAfgerond}>
+            {nest.afgerond
+              ? 'Nestje weer openen'
+              : nogNietGeplaatst.length > 0
+                ? 'Toch afsluiten'
+                : 'Nestje afsluiten'}
+          </button>
+        </div>
+
+        <div className="afrondblok">
+          <h3>Nestje helemaal verwijderen</h3>
+          <p className="hint">
+            Je pagina en alle foto’s zijn daarna direct weg, en de link werkt niet meer. Dit kun je niet ongedaan maken.
+          </p>
+          <button className="btn danger" onClick={verwijderNestje}>
+            Nestje verwijderen
+          </button>
+        </div>
+
+        <p className="hint" style={{ marginBottom: 0 }}>Ingelogd als {email}</p>
+      </section>
+    </main>
+  );
+}
