@@ -76,33 +76,12 @@ export function stappen(nest: Nest, kittens: KittenMetFotos[], nestFotos: NestFo
     voorOverzicht: false,
   });
   if (nest.stamboom === true) {
+    const kernKlaar = Boolean(nest.stamboom_organisatie && nest.cattery?.trim() && nest.vader_naam?.trim());
     lijst.push({
       id: 'stamboom',
       tekst: 'Stamboomgegevens',
-      uitleg: 'Organisatie, catterynaam en de naam van de vader. Zonder deze drie toont je pagina geen “met stamboom”. Stamboomnummers zijn optioneel.',
-      klaar: Boolean(nest.stamboom_organisatie && nest.cattery?.trim() && nest.vader_naam?.trim()),
-      plek: 'gegevens',
-      voorOverzicht: false,
-    });
-  }
-  if (nest.stamboom === true) {
-    lijst.push({
-      id: 'stamboomnrs',
-      tekst: 'Stamboomnummers (aanbevolen)',
-      uitleg: 'Met de nummers van beide ouders kunnen we je cattery controleren. Je krijgt dan het vinkje “✓ Gecontroleerd” en komt bovenaan bij Catteries. Kopers zien de nummers nooit.',
-      klaar: Boolean(nest.moeder_stamboomnr && nest.vader_stamboomnr),
-      plek: 'gegevens',
-      voorOverzicht: false,
-    });
-  }
-  if (nest.stamboom === true) {
-    const moederKlaar = nest.moeder_testen.length > 0 || Boolean(nest.moeder_geen_testen);
-    const vaderKlaar = !nest.vader_naam?.trim() || nest.vader_testen.length > 0 || Boolean(nest.vader_geen_testen);
-    lijst.push({
-      id: 'testen',
-      tekst: 'Testuitslagen van de ouders',
-      uitleg: 'Vul de testuitslagen van de ouders in, of geef aan dat er nog geen testen zijn gedaan.',
-      klaar: moederKlaar && vaderKlaar,
+      uitleg: 'Organisatie, catterynaam en de naam van de vader. Zonder deze drie toont je pagina geen “met stamboom”. Vul in hetzelfde scherm ook, optioneel, de stamboomnummers (voor het vinkje “✓ Gecontroleerd”) en de testuitslagen van de ouders in.',
+      klaar: kernKlaar,
       plek: 'gegevens',
       voorOverzicht: false,
     });
