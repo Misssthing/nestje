@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import KopieerLink from './KopieerLink';
+import SocialIcoon from './SocialIcoon';
 
 type Props = {
   naam: string;
@@ -48,7 +49,8 @@ export default function NestjeZijbalk({
       <p className="nzijbalk-kop">Deze pagina delen</p>
       <div className="nzijbalk-deel">
         <a className="btn ghost klein" href={whatsappUrl} target="_blank" rel="noopener">
-          WhatsApp
+          <SocialIcoon soort="whatsapp" maat={16} />
+          <span>WhatsApp</span>
         </a>
         <KopieerLink url={paginaUrl} className="btn ghost klein" />
       </div>

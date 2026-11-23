@@ -425,7 +425,9 @@ details.panel[open] summary { margin-bottom: 12px; }
 .nzijbalk-stand p { margin: 0; font-size: 15px; }
 .nzijbalk-kop { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 8px 0 8px; }
 .nzijbalk-deel { display: flex; gap: 8px; }
-.nzijbalk-deel .btn { width: auto; flex: 1; }
+.nzijbalk-deel { flex-wrap: wrap; }
+.nzijbalk-deel .btn { width: auto; flex: 1 1 auto; padding-left: 10px; padding-right: 10px; white-space: nowrap; }
+.btn svg { flex-shrink: 0; }
 
 /* Zijbalk op de nestjespagina: alleen op de computer */
 .alleen-desktop { display: none; }

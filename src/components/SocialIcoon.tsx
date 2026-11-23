@@ -1,6 +1,30 @@
 /** Eenvoudige iconen voor de links op een profiel. Kleur volgt de tekst (currentColor). */
-export default function SocialIcoon({ soort, maat = 18 }: { soort: 'facebook' | 'instagram' | 'website'; maat?: number }) {
+export default function SocialIcoon({
+  soort,
+  maat = 18,
+}: {
+  soort: 'facebook' | 'instagram' | 'website' | 'whatsapp' | 'link';
+  maat?: number;
+}) {
   const gemeen = { width: maat, height: maat, viewBox: '0 0 24 24', 'aria-hidden': true as const, focusable: 'false' as const };
+  if (soort === 'whatsapp')
+    return (
+      <svg {...gemeen} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4l-4.5 1.1Z" />
+        <path
+          d="M9 8.6c0-.5.4-.9.8-.9h.5c.2 0 .4.1.5.3l.7 1.6c.1.2 0 .5-.1.6l-.6.6c.5 1.1 1.4 2 2.5 2.5l.6-.6c.2-.2.4-.2.6-.1l1.6.7c.2.1.3.3.3.5v.5c0 .5-.4.8-.9.8A6 6 0 0 1 9 8.6Z"
+          fill="currentColor"
+          stroke="none"
+        />
+      </svg>
+    );
+  if (soort === 'link')
+    return (
+      <svg {...gemeen} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2" />
+        <path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2" />
+      </svg>
+    );
   if (soort === 'facebook')
     return (
       <svg {...gemeen} fill="currentColor">

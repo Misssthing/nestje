@@ -1,5 +1,6 @@
 'use client';
 
+import SocialIcoon from './SocialIcoon';
 import { useToast } from './Toast';
 
 export default function KopieerLink({ url, className = 'btn ghost' }: { url: string; className?: string }) {
@@ -23,7 +24,8 @@ export default function KopieerLink({ url, className = 'btn ghost' }: { url: str
 
   return (
     <button type="button" className={className} onClick={kopieer}>
-      Link kopiëren
+      <SocialIcoon soort="link" maat={16} />
+      <span>Link kopiëren</span>
     </button>
   );
 }
