@@ -103,13 +103,15 @@ export default function Over() {
 
       <h1>Over Nestje</h1>
 
-      <img
-        src="/lisette-over-nestje.jpg"
-        alt="Lisette, van Nestje"
-        width={700}
-        height={932}
-        style={{ width: '100%', maxWidth: 140, borderRadius: 16, display: 'block', margin: '4px auto 24px' }}
-      />
+      <div style={{ textAlign: 'center', margin: '4px 0 24px' }}>
+        <img
+          src="/lisette-over-nestje.jpg"
+          alt="Lisette, van Nestje"
+          width={700}
+          height={932}
+          style={{ width: 140, height: 'auto', borderRadius: 16, display: 'inline-block' }}
+        />
+      </div>
 
       <p>Ik ben Lisette, en Nestje is ontstaan uit ergernis.</p>
       <p>
