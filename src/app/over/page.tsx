@@ -121,6 +121,12 @@ export default function Over() {
         snel geld mee wil verdienen.
       </p>
       <p>
+        En het is niet alleen voor kopers vervelend — ik hoorde het ook van verkopers zelf. Tientallen appjes op
+        WhatsApp, Marktplaats en Instagram, allemaal met ongeveer dezelfde vragen. Nestje is daarom ook bedoeld als
+        één centrale plek: foto's, de status per kitten, de moeder, de prijs — alles staat overzichtelijk op die ene
+        pagina die je deelt, in plaats van verspreid over tien verschillende appjes en platforms.
+      </p>
+      <p>
         Dat wilde ik anders. Nestje is geen plek om zo snel mogelijk een kitten te verkopen. Het is een plek om op een
         eerlijke, verantwoorde manier een kitten een nieuw thuis te geven — en voor kopers om een kitten te{' '}
         <em>kiezen</em>, niet zomaar te kopen.
