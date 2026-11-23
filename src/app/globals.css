@@ -183,6 +183,7 @@ img { max-width: 100%; display: block; }
 .veld textarea { min-height: 96px; resize: vertical; }
 .hint { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
 .hint.teller { text-align: right; }
+.hint.teller.bijna-vol { color: var(--opt); font-weight: 600; }
 .nestkaart { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 16px; text-decoration: none; color: var(--ink); }
 .nestkaart strong { display: block; font-size: 20px; font-weight: 800; line-height: 1.15; }
 .nestkaart span:not(.chip) { display: block; font-size: 14px; color: var(--muted); margin-top: 2px; }
@@ -320,6 +321,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 .aandacht { margin: 8px 0 0; padding: 10px 14px 10px 30px; border-radius: 12px; background: var(--opt-bg); color: var(--opt); font-size: 14px; }
 .aandacht li + li { margin-top: 4px; }
 .bijzonderheden { margin: 10px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--opt-bg); color: var(--opt); font-size: 14px; font-weight: 600; white-space: pre-line; }
+.hero .bijzonderheden { max-width: none; margin: 10px 0 0; color: var(--opt); }
 .testkaart { margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .testkaart .testkaart-kop { max-width: none; margin: 0; padding: 10px 14px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--line); }
 .oudertesten { list-style: none; padding: 0; margin: 0; font-size: 14px; }
