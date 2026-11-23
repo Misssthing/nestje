@@ -10,6 +10,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
   const router = useRouter();
   const [moeder, setMoeder] = useState('');
   const [geboren, setGeboren] = useState('');
+  const [verkoperNaam, setVerkoperNaam] = useState('');
   const [woonplaats, setWoonplaats] = useState('');
   const [aantal, setAantal] = useState(4);
   const [soort, setSoort] = useState<'eigen' | 'vondeling'>('eigen');
@@ -19,6 +20,10 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
 
   async function maak(e: React.FormEvent) {
     e.preventDefault();
+    if (!verkoperNaam.trim()) {
+      setFout('Vul je naam in.');
+      return;
+    }
     setBezig(true);
     setFout('');
     const supabase = createClient();
@@ -27,6 +32,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
       .insert({
         moeder_naam: moeder.trim(),
         geboortedatum: geboren,
+        verkoper_naam: verkoperNaam.trim(),
         woonplaats: woonplaats.trim() || null,
         verhuisleeftijd_weken: CONFIG.standaardVerhuisleeftijd,
         soort,
@@ -83,6 +89,11 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
         <label className="veld">
           <span>{soort === 'vondeling' ? 'Naam voor het nestje' : 'Naam van de moeder'}</span>
           <input value={moeder} onChange={(e) => setMoeder(e.target.value)} maxLength={60} required />
+        </label>
+        <label className="veld">
+          <span>Jouw naam</span>
+          <input value={verkoperNaam} onChange={(e) => setVerkoperNaam(e.target.value)} maxLength={40} placeholder="Bijv. Lisette" required />
+          <p className="hint">Dan zien kopers op je nestjespagina bijvoorbeeld &quot;Lisette&quot; in plaats van alleen &quot;Particulier&quot;.</p>
         </label>
         <div className="row stapel">
           <label className="veld">
