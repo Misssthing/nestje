@@ -381,20 +381,24 @@ const ONAFGEMAAKT_HERINNERING_NA_UUR = 24;
 /**
  * Nestjes waar de verkoper mee is begonnen maar halverwege is gestopt: nog geen kitten toegevoegd,
  * of kittens zonder foto's. 24 uur na aanmaken krijgt de verkoper daar één keer een vriendelijke
- * herinnering over (nooit vaker).
+ * herinnering over (nooit vaker). Nestjes die nog moeten geboren worden slaan we over: daar kunnen
+ * nog helemaal geen kittens of foto's zijn, dus "onafgemaakt" is dan geen eerlijke conclusie. We
+ * markeren die ook niet als herinnerd, zodat ze na de geboorte alsnog in aanmerking komen.
  */
 export async function onafgemaakteNestjes() {
   const drempel = new Date(Date.now() - ONAFGEMAAKT_HERINNERING_NA_UUR * 36e5).toISOString();
   const { data: kandidaten } = await db()
     .from('nests')
-    .select('id, owner_id, slug, moeder_naam')
+    .select('id, owner_id, slug, moeder_naam, geboortedatum')
     .lt('aangemaakt_op', drempel)
     .eq('afgerond', false)
     .is('onafgemaakt_herinnerd_op', null)
-    .returns<{ id: string; owner_id: string; slug: string; moeder_naam: string }[]>();
+    .returns<{ id: string; owner_id: string; slug: string; moeder_naam: string; geboortedatum: string }[]>();
 
   let n = 0;
   for (const nest of kandidaten ?? []) {
+    if (new Date(nest.geboortedatum).getTime() > Date.now()) continue; // nog niet geboren: nog geen foto's te verwachten
+
     const { data: kittens } = await db()
       .from('kittens').select('id, kitten_photos(id)').eq('nest_id', nest.id)
       .returns<{ id: string; kitten_photos: { id: string }[] }[]>();
