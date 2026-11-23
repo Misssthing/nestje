@@ -22,7 +22,9 @@ export default function KittenReserveren() {
       </nav>
 
       <h1>Een kitten reserveren voor hij geboren is</h1>
-      <p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="artikel-hero" src="/kenniscentrum/kitten-reserveren.jpg" alt="" />
+      <p className="lead">
         Wacht je op een nestje dat nog geboren moet worden? Een plekje op een interesselijst is dan nog geen garantie.
         Deze gids helpt je door elke fase heen: waar je op moet letten, welke vragen je kunt stellen, en hoe je een
         serieuze fokker herkent.
@@ -55,7 +57,7 @@ export default function KittenReserveren() {
       </p>
 
       <h2>Rode vlaggen</h2>
-      <ul>
+      <ul className="vlaggen">
         <li>Meerdere nestjes tegelijk, van verschillende rassen of moeders.</li>
         <li>Je mag de moeder niet zien, en vragen daarover worden ontweken.</li>
         <li>Druk om snel te beslissen of te betalen.</li>
@@ -63,7 +65,7 @@ export default function KittenReserveren() {
       </ul>
 
       <h2>Goede tekenen</h2>
-      <ul>
+      <ul className="tekenen">
         <li>De verkoper stelt zelf ook vragen aan jou.</li>
         <li>Open over gezondheidstesten, ook als een uitslag niet perfect is.</li>
         <li>Bereid om te videobellen of je op bezoek te laten komen.</li>
