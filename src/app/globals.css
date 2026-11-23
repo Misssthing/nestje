@@ -364,7 +364,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 .labelchip { display: inline-block; margin-bottom: 8px; }
 
 /* Uitleg bij regels */
-.waarom { margin: -4px 0 14px; font-size: 14px; }
+.waarom { margin: 10px 0 14px; font-size: 14px; }
 .waarom summary { cursor: pointer; color: var(--free); font-weight: 600; list-style: none; }
 .waarom summary::-webkit-details-marker { display: none; }
 .waarom summary::before { content: 'ⓘ '; }
