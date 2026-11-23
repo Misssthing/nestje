@@ -18,6 +18,7 @@ export const CONFIG = {
   maxFotosPerKitten: 5,
   maxNestFotos: 3,
   maxOmschrijving: 300,
+  maxBijzonderheden: 600,
   maxFotoPx: 1600,
   maxFotoKleinPx: 480,
   fotoKwaliteit: 0.85,
