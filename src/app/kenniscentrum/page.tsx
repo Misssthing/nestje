@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function Kenniscentrum() {
   return (
-    <main className="wrap tekst">
+    <main className="wrap tekst breed">
       <div className="bar">
         <Link href="/kittens" className="brand">Nestje</Link>
       </div>

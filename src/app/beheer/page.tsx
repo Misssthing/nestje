@@ -70,7 +70,7 @@ export default async function Overzicht() {
   if (!nesten.length && !admin) return <NieuwNestje eerste />;
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         <span className="brand">Nestje</span>
         <div style={{ display: 'flex', gap: 8 }}>

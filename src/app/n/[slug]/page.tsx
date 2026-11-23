@@ -10,7 +10,7 @@ import Hartknop from '@/components/Hartknop';
 import Weergaveteller from '@/components/Weergaveteller';
 import Voet from '@/components/Voet';
 import { TerugNaarOverzicht } from '@/components/Overzichtgeheugen';
-import ZoekFilters from '@/components/ZoekFilters';
+import NestjeZijbalk from '@/components/NestjeZijbalk';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
 import { aantalKittens, aftelling, dagen, datumNL, maandJaarNL, ouderLabel, verkoperVan, VERKOPER_LABEL, prijsNL, rasDelen, STATUS_PUBLIEK, STATUSSEN, GOEDE_UITSLAG, TEST_UITLEG } from '@/lib/nest';
 import { haalNestje } from './data';
@@ -164,9 +164,12 @@ export default async function NestjesPagina({ params }: Props) {
   ];
   const rasVoorLijst =
     nest.stamboom === true && rassenNest.length === 1 && RASLIJST_RASSEN.includes(rassenNest[0]) ? rassenNest[0] : null;
+  const verkoperLabel = verkoper ? VERKOPER_LABEL[verkoper] : vondeling ? 'Vondeling' : 'Verkoper';
+  const zijbalkNaam =
+    nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam || verkoperLabel;
 
   return (
-    <main className={inOverzicht ? 'wrap breed' : 'wrap'}>
+    <main className="wrap breed">
       <Weergaveteller slug={nest.slug} />
       <div className="bar">
         {inOverzicht ? (
@@ -183,13 +186,20 @@ export default async function NestjesPagina({ params }: Props) {
       </div>
       <EigenaarBalk slug={nest.slug} />
 
-      <div className={inOverzicht ? 'overzicht-grid' : undefined}>
-        {inOverzicht && (
-          <aside className="filterbalk alleen-desktop" aria-label="Zoek andere kittens">
-            <ZoekFilters />
-          </aside>
-        )}
-        <div className={inOverzicht ? 'overzicht-lijst' : undefined}>
+      <div className="overzicht-grid">
+        <aside className="filterbalk alleen-desktop" aria-label="Over deze verkoper">
+          <NestjeZijbalk
+            naam={zijbalkNaam}
+            profielSlug={extra?.verkoper?.slug ?? profiel?.profiel_slug ?? null}
+            chipTekst={verkoperLabel}
+            sindsJaar={extra?.verkoper?.sinds_jaar ?? null}
+            vrijeKittens={vrijeKittens}
+            totaalKittens={kittens.length}
+            paginaUrl={paginaUrl}
+            whatsappDeelTekst={`Kijk eens naar het nestje van ${nest.moeder_naam} op Nestje:`}
+          />
+        </aside>
+        <div className="overzicht-lijst">
 
           {nestFotos.length > 0 && (
             <div className="nestfoto">

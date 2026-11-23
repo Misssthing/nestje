@@ -36,7 +36,7 @@ export default async function NestBeheer({ params }: { params: Promise<{ id: str
     <>
       <Beheer nest={nest} nestFotos={nestFotos ?? []} kittens={kittens ?? []} email={user.email ?? ''} profiel={profiel ?? null} eersteNestje={eersteNestje} />
       {/* Wachtlijst onder het beheer van het nestje (uitbreiding 19) */}
-      <div className="wrap" style={{ paddingTop: 0, marginTop: -40 }}>
+      <div className="wrap breed" style={{ paddingTop: 0, marginTop: -40 }}>
         <WachtlijstBeheer nestId={nest.id} />
       </div>
     </>

@@ -413,6 +413,18 @@ details.panel[open] summary { margin-bottom: 12px; }
   .zoekfilters { grid-template-columns: 1fr; padding: 20px; }
 }
 
+/* Infokaart naast een nestje: verkoper, stand van zaken, delen */
+.nzijbalk { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 4px; }
+.nzijbalk-naam { font-size: 18px; font-weight: 800; margin: 0 0 6px; }
+.nzijbalk-naam a { color: inherit; }
+.nzijbalk .chip { align-self: flex-start; margin-bottom: 6px; }
+.nzijbalk-feit { font-size: 14px; color: var(--muted); margin: 2px 0 0; }
+.nzijbalk-stand { margin: 14px 0; padding: 12px 14px; border-radius: 14px; background: var(--free-bg); }
+.nzijbalk-stand p { margin: 0; font-size: 15px; }
+.nzijbalk-kop { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 8px 0 8px; }
+.nzijbalk-deel { display: flex; gap: 8px; }
+.nzijbalk-deel .btn { width: auto; flex: 1; }
+
 /* Zijbalk op de nestjespagina: alleen op de computer */
 .alleen-desktop { display: none; }
 @media (min-width: 1024px) {

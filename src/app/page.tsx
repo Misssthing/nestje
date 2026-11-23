@@ -3,7 +3,7 @@ import Voet from '@/components/Voet';
 
 export default function Start() {
   return (
-    <main className="wrap start">
+    <main className="wrap start breed">
       <div className="bar">
         <span className="brand">Nestje</span>
         <Link href="/login" className="btn ghost klein">Inloggen</Link>

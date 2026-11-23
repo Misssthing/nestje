@@ -61,7 +61,7 @@ export default async function NestjesZoeken({
   }
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         <Link href="/beheer" className="brand">← Je nestjes</Link>
       </div>

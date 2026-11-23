@@ -55,7 +55,7 @@ export default async function Controle() {
   if (!user) redirect('/login');
   if (!isAdmin(user.email)) {
     return (
-      <main className="wrap">
+      <main className="wrap breed">
         <div className="bar">
           <Link href="/beheer" className="brand">← Je nestjes</Link>
         </div>
@@ -149,7 +149,7 @@ export default async function Controle() {
   );
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         <Link href="/beheer" className="brand">← Je nestjes</Link>
       </div>

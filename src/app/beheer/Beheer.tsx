@@ -158,7 +158,7 @@ export default function Beheer({
   const nogNietGeplaatst = kittens.filter((k) => k.status === 'vrij' || k.status === 'optie');
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         <a className="brand" href="/beheer">← Je nestjes</a>
         <div style={{ display: 'flex', gap: 8 }}>

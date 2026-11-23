@@ -53,7 +53,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
   }
 
   return (
-    <main className="wrap">
+    <main className="wrap breed">
       <div className="bar">
         {eerste ? <span className="brand">Nestje</span> : <a className="brand" href="/beheer">← Je nestjes</a>}
         <div style={{ display: 'flex', gap: 8 }}>
