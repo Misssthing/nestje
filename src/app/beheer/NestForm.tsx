@@ -282,15 +282,15 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
         </fieldset>
 
         <fieldset className="formblok">
-          <legend>Bijzonderheden <small className="opt">optioneel</small></legend>
+          <legend>Over dit nestje <small className="opt">optioneel</small></legend>
           <label className="veld">
-            <span>Iets wat kopers moeten weten, maar niet in de andere velden past</span>
+            <span>Vertel iets over dit nestje, of iets wat kopers moeten weten maar niet in de andere velden past</span>
             <textarea
               value={v.bijzonderheden}
               onChange={zet('bijzonderheden')}
               maxLength={CONFIG.maxBijzonderheden}
               rows={5}
-              placeholder="Bijv. “Kittens verhuizen gecastreerd, daarom een week later dan de teller aangeeft.”"
+              placeholder="Bijv. “Wat een vrolijk, nieuwsgierig stel! Ze klimmen overal op en spinnen zodra je ze oppakt.” of “Kittens verhuizen gecastreerd, daarom een week later dan de teller aangeeft.”"
             />
           </label>
           <p
@@ -301,8 +301,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             {v.bijzonderheden.length}/{CONFIG.maxBijzonderheden} tekens
           </p>
           <p className="hint" style={{ marginBottom: 0 }}>
-            Komt opvallend bovenaan je nestjespagina te staan, direct onder de titel en de aftelling. Maximaal{' '}
-            {CONFIG.maxBijzonderheden} tekens. Laat leeg als er niets bijzonders is.
+            Komt opvallend bovenaan je nestjespagina te staan, direct onder de titel en de aftelling. Ruimte voor
+            een enthousiast woordje over de kittens, of voor iets wat kopers echt moeten weten. Maximaal{' '}
+            {CONFIG.maxBijzonderheden} tekens. Laat leeg als je niets wilt toevoegen.
           </p>
         </fieldset>
 
