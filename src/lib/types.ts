@@ -31,6 +31,8 @@ export interface Nest {
   soort: 'eigen' | 'vondeling';
   stamboom_organisatie: string | null;
   cattery: string | null;
+  /** Voornaam van de verkoper, alleen getoond op de eigen nestjespagina (nooit op de overzichtskaart) */
+  verkoper_naam: string | null;
   /** Vrije tekst voor wat niet in de standaardvinkjes past, opvallend getoond bovenaan de nestjespagina (uitbreiding 38) */
   bijzonderheden?: string | null;
   moeder_stamboomnr: string | null;

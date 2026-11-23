@@ -165,8 +165,10 @@ export default async function NestjesPagina({ params }: Props) {
   const rasVoorLijst =
     nest.stamboom === true && rassenNest.length === 1 && RASLIJST_RASSEN.includes(rassenNest[0]) ? rassenNest[0] : null;
   const verkoperLabel = verkoper ? VERKOPER_LABEL[verkoper] : vondeling ? 'Vondeling' : 'Verkoper';
+  // Voorrang: wat de verkoper zelf als naam invulde bij dit nestje, dan de catterynaam, dan het
+  // profiel (als er een openbare profielpagina is), en anders gewoon "Fokker"/"Particulier".
   const zijbalkNaam =
-    nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam || verkoperLabel;
+    nest.verkoper_naam || (nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam) || verkoperLabel;
 
   return (
     <main className="wrap breed">

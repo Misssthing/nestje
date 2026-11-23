@@ -42,6 +42,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     vader_stamboomnr: nest.vader_stamboomnr ?? '',
     moeder_chip: nest.moeder_chip ?? '',
     bijzonderheden: nest.bijzonderheden ?? '',
+    verkoper_naam: nest.verkoper_naam ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
   const [getest] = useState<boolean | null>(nest.ouders_getest);
@@ -147,6 +148,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
       verhuisleeftijd_weken: weken,
       prijs,
       whatsapp_nummer: nummer,
+      verkoper_naam: v.verkoper_naam.trim() || null,
       over_moeder: v.over_moeder.trim() || null,
       vader_naam: v.vader_naam.trim() || null,
       moeder_ras: netjesRas(v.moeder_ras),
@@ -387,6 +389,14 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
           <label className="veld">
             <span>Woonplaats</span>
             <input value={v.woonplaats} onChange={zet('woonplaats')} maxLength={80} />
+          </label>
+          <label className="veld">
+            <span>Jouw naam <small className="opt">optioneel</small></span>
+            <input value={v.verkoper_naam} onChange={zet('verkoper_naam')} maxLength={40} placeholder="Bijv. Lisette" />
+            <p className="hint">
+              Dan zien kopers op deze nestjespagina bijvoorbeeld “Lisette” in plaats van alleen “Particulier”. In het overzicht met
+              alle nestjes blijft gewoon “Fokker” of “Particulier” staan.
+            </p>
           </label>
           <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
             Je nummer staat nergens als tekst op de pagina. Kopers tikken op “Vraag naar …” en komen dan in WhatsApp bij jou uit.
