@@ -22,7 +22,9 @@ export default function GezondheidstestenKittens() {
       </nav>
 
       <h1>Gezondheidstesten bij kittens, uitgelegd</h1>
-      <p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="artikel-hero" src="/kenniscentrum/gezondheidstesten.jpg" alt="" />
+      <p className="lead">
         Bij veel rassen laten fokkers de ouderdieren testen op erfelijke aandoeningen. Op papier ziet dat er simpel uit — een
         testnaam en een uitslag — maar wat die uitslag precies betekent, blijft voor kopers vaak onduidelijk. Deze uitleg helpt
         je op weg.
