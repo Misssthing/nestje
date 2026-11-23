@@ -108,7 +108,7 @@ export default function Over() {
         alt="Lisette, van Nestje"
         width={700}
         height={932}
-        style={{ width: '100%', maxWidth: 260, borderRadius: 16, display: 'block', margin: '4px 0 24px' }}
+        style={{ width: '100%', maxWidth: 140, borderRadius: 16, display: 'block', margin: '4px auto 24px' }}
       />
 
       <p>Ik ben Lisette, en Nestje is ontstaan uit ergernis.</p>
