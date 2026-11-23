@@ -74,7 +74,7 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
         We bekijken elk nieuw nestje met de hand voordat het in het <Link href="/kittens">overzicht</Link> verschijnt,
         en checken onder andere of de huisregels zijn gevolgd. Geeft een verkoper stamboomnummers van beide ouders op,
         dan controleren we die ook op het juiste format en op dubbel gebruik bij andere verkopers — dat zie je terug
-        als het label “Nummers gecontroleerd”.
+        als het label "Nummers gecontroleerd".
       </p>
     ),
   },
@@ -103,9 +103,17 @@ export default function Over() {
 
       <h1>Over Nestje</h1>
 
+      <img
+        src="/lisette-over-nestje.jpg"
+        alt="Lisette, van Nestje"
+        width={700}
+        height={932}
+        style={{ width: '100%', maxWidth: 260, borderRadius: 16, display: 'block', margin: '4px 0 24px' }}
+      />
+
       <p>Ik ben Lisette, en Nestje is ontstaan uit ergernis.</p>
       <p>
-        Op Marktplaats en social media zie je het dagelijks: kittens die als “raskat” worden aangeboden, terwijl het
+        Op Marktplaats en social media zie je het dagelijks: kittens die als "raskat" worden aangeboden, terwijl het
         eigenlijk gewoon een kruising is. Geen stamboom, geen papieren, en vaak verhuizen ze veel te vroeg bij hun
         moeder weg. Als koper weet je dan niet eens met wie je te maken hebt — een serieuze fokker, of iemand die er
         snel geld mee wil verdienen.
