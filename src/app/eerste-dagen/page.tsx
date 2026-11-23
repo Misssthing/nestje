@@ -23,7 +23,9 @@ export default function EersteDagen() {
       </nav>
 
       <h1>{EERSTE_DAGEN_TITEL}</h1>
-      <p>{EERSTE_DAGEN_INTRO}</p>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="artikel-hero" src="/kenniscentrum/eerste-dagen.jpg" alt="" />
+      <p className="lead">{EERSTE_DAGEN_INTRO}</p>
 
       <div className="panel ed-delen">
         <p style={{ marginTop: 0 }}>
