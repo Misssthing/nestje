@@ -9,6 +9,7 @@ import {
 import TestenLijst from './TestenLijst';
 import { veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import type { Nest } from '@/lib/types';
+import { CONFIG } from '@/lib/config';
 
 type Props = {
   nest: Nest;
@@ -170,7 +171,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
       vader_testen: vT,
       moeder_geen_testen: mT.length === 0 ? moederGeenTesten : false,
       vader_geen_testen: vT.length === 0 ? vaderGeenTesten : false,
-      bijzonderheden: v.bijzonderheden.trim().slice(0, 300) || null,
+      bijzonderheden: v.bijzonderheden.trim().slice(0, CONFIG.maxBijzonderheden) || null,
     };
 
     openstaand.current = false;
@@ -287,13 +288,21 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             <textarea
               value={v.bijzonderheden}
               onChange={zet('bijzonderheden')}
-              maxLength={300}
+              maxLength={CONFIG.maxBijzonderheden}
+              rows={5}
               placeholder="Bijv. “Kittens verhuizen gecastreerd, daarom een week later dan de teller aangeeft.”"
             />
           </label>
-          <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
-            Komt opvallend bovenaan je nestjespagina te staan, direct onder de titel en de aftelling. Laat leeg als er niets
-            bijzonders is.
+          <p
+            className={`hint teller${v.bijzonderheden.length >= CONFIG.maxBijzonderheden * 0.9 ? ' bijna-vol' : ''}`}
+            style={{ marginTop: -4 }}
+            aria-live="polite"
+          >
+            {v.bijzonderheden.length}/{CONFIG.maxBijzonderheden} tekens
+          </p>
+          <p className="hint" style={{ marginBottom: 0 }}>
+            Komt opvallend bovenaan je nestjespagina te staan, direct onder de titel en de aftelling. Maximaal{' '}
+            {CONFIG.maxBijzonderheden} tekens. Laat leeg als er niets bijzonders is.
           </p>
         </fieldset>
 
