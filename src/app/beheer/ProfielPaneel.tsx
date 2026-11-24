@@ -56,7 +56,9 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
   const [slug, setSlug] = useState(profiel?.slug ?? '');
   const [slugAangepast, setSlugAangepast] = useState(Boolean(profiel));
   const [intro, setIntro] = useState(profiel?.intro ?? '');
-  const [zichtbaar, setZichtbaar] = useState(profiel?.zichtbaar ?? false);
+  // Nieuw profiel: standaard Aan, zodat invullen en opslaan genoeg is om de profielpagina te tonen.
+  // Een al bestaand profiel behoudt gewoon de eerder gekozen stand (ook als die "Uit" is).
+  const [zichtbaar, setZichtbaar] = useState(profiel?.zichtbaar ?? true);
   const [website, setWebsite] = useState(profiel?.website ?? '');
   const [facebook, setFacebook] = useState(profiel?.facebook ?? '');
   const [instagram, setInstagram] = useState(profiel?.instagram ?? '');

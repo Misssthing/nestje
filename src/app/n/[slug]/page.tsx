@@ -169,6 +169,9 @@ export default async function NestjesPagina({ params }: Props) {
   // profiel (als er een openbare profielpagina is), en anders gewoon "Fokker"/"Particulier".
   const zijbalkNaam =
     nest.verkoper_naam || (nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam) || verkoperLabel;
+  // Foto en welkomstzin horen alleen bij de eigen naam van de verkoper, niet bij de catterynaam of het profiel.
+  const zijbalkFoto = nest.verkoper_naam ? nest.verkoper_foto : null;
+  const zijbalkTekst = nest.verkoper_naam ? nest.verkoper_tekst : null;
 
   return (
     <main className="wrap breed">
@@ -199,6 +202,8 @@ export default async function NestjesPagina({ params }: Props) {
             totaalKittens={kittens.length}
             paginaUrl={paginaUrl}
             whatsappDeelTekst={`Kijk eens naar het nestje van ${nest.moeder_naam} op Nestje:`}
+            foto={zijbalkFoto}
+            tekst={zijbalkTekst}
           />
         </aside>
         <div className="overzicht-lijst">

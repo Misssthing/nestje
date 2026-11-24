@@ -115,6 +115,10 @@ img { max-width: 100%; display: block; }
 .ouderfoto .vak { display: flex; flex-direction: column; gap: 6px; }
 .ouderfoto .vak > span { font-size: 13px; color: var(--muted); }
 .ouderfoto .thumb { aspect-ratio: 4/3; }
+/* Losstaand fotovak (niet in de ouderfoto-grid), zoals de eigen foto van de verkoper */
+.vak.rond { display: flex; flex-direction: column; gap: 6px; width: 96px; }
+.vak.rond > span { font-size: 13px; color: var(--muted); }
+.vak.rond .thumb { border-radius: 50%; }
 .gz { display: flex; flex-wrap: wrap; gap: 6px; }
 .gz button { border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600; cursor: pointer; min-height: 36px; }
 .gz button[aria-pressed="true"] { background: var(--free-bg); color: var(--free); border-color: transparent; }
@@ -421,6 +425,13 @@ details.panel[open] summary { margin-bottom: 12px; }
 .nzijbalk-naam a { color: inherit; }
 .nzijbalk .chip { align-self: flex-start; margin-bottom: 6px; }
 .nzijbalk-feit { font-size: 14px; color: var(--muted); margin: 2px 0 0; }
+.nzijbalk-foto-rij { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.nzijbalk-foto { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--line); background: var(--line); }
+.nzijbalk-foto.placeholder { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: var(--surface); background: var(--free); }
+.nzijbalk-welkom { font-size: 13px; color: var(--muted); margin: 0; }
+.nzijbalk-welkom strong { color: var(--ink); font-size: 15px; }
+.nzijbalk-welkom a { color: inherit; }
+.nzijbalk-bio { font-size: 14px; color: var(--muted); margin: 8px 0 0; line-height: 1.4; }
 .nzijbalk-stand { margin: 14px 0; padding: 12px 14px; border-radius: 14px; background: var(--free-bg); }
 .nzijbalk-stand p { margin: 0; font-size: 15px; }
 .nzijbalk-kop { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 8px 0 8px; }

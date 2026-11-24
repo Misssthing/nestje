@@ -33,6 +33,10 @@ export interface Nest {
   cattery: string | null;
   /** Voornaam van de verkoper, alleen getoond op de eigen nestjespagina (nooit op de overzichtskaart) */
   verkoper_naam: string | null;
+  /** Eigen foto van de verkoper, opgeslagen als <nest_id>/verkoper/<uuid>.jpg; rond getoond naast "Welkom namens ..." */
+  verkoper_foto: string | null;
+  /** Kort welkomstzinnetje van de verkoper zelf, getoond onder de chip in het infoblokje */
+  verkoper_tekst: string | null;
   /** Vrije tekst voor wat niet in de standaardvinkjes past, opvallend getoond bovenaan de nestjespagina (uitbreiding 38) */
   bijzonderheden?: string | null;
   moeder_stamboomnr: string | null;

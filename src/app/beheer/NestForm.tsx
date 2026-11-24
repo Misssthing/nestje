@@ -7,9 +7,12 @@ import {
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
+import OuderFoto from '@/components/OuderFoto';
 import { veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import type { Nest } from '@/lib/types';
 import { CONFIG } from '@/lib/config';
+
+const MAX_VERKOPER_TEKST = 120;
 
 type Props = {
   nest: Nest;
@@ -44,6 +47,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     moeder_chip: nest.moeder_chip ?? '',
     bijzonderheden: nest.bijzonderheden ?? '',
     verkoper_naam: nest.verkoper_naam ?? '',
+    verkoper_tekst: nest.verkoper_tekst ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
   const [getest] = useState<boolean | null>(nest.ouders_getest);
@@ -150,6 +154,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
       prijs,
       whatsapp_nummer: nummer,
       verkoper_naam: v.verkoper_naam.trim() || null,
+      verkoper_tekst: v.verkoper_tekst.trim().slice(0, MAX_VERKOPER_TEKST) || null,
       over_moeder: v.over_moeder.trim() || null,
       vader_naam: v.vader_naam.trim() || null,
       moeder_ras: netjesRas(v.moeder_ras),
@@ -408,6 +413,30 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
               alle nestjes blijft gewoon “Fokker” of “Particulier” staan.
             </p>
           </label>
+          {v.verkoper_naam.trim() && (
+            <>
+              <OuderFoto
+                supabase={supabase}
+                nest={nest}
+                kolom="verkoper_foto"
+                label="Jouw foto"
+                map="verkoper"
+                maxPx={480}
+                rond
+                onWijzig={(p) => onOpgeslagenRef.current({ ...nestRef.current, ...p })}
+              />
+              <label className="veld">
+                <span>Kort welkomstzinnetje <small className="opt">optioneel</small></span>
+                <textarea
+                  value={v.verkoper_tekst}
+                  maxLength={MAX_VERKOPER_TEKST}
+                  placeholder="Bijv. Al jaren gek op Maine Coons. Kom gerust een kijkje nemen!"
+                  onChange={zet('verkoper_tekst')}
+                />
+                <p className="hint teller">{v.verkoper_tekst.length}/{MAX_VERKOPER_TEKST}</p>
+              </label>
+            </>
+          )}
           <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
             Je nummer staat nergens als tekst op de pagina. Kopers tikken op “Vraag naar …” en komen dan in WhatsApp bij jou uit.
             Laat je dit leeg, dan kunnen geïnteresseerden zich alleen aanmelden via de aanmeldlijst.
