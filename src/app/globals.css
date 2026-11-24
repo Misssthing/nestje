@@ -775,6 +775,26 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .profiel-kop h1 { margin: 0; }
 .profiel-foto { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--line); }
 
+/* Potlood-icoontje: alleen zichtbaar voor de ingelogde eigenaar, springt naar de juiste plek in Beheer */
+.bewerkicoon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  text-decoration: none;
+}
+.bewerkicoon:hover { background: var(--line); color: var(--ink); }
+.zijbalk-bewerkrij { display: flex; justify-content: flex-end; margin-bottom: -6px; }
+.kittens-kop { display: flex; justify-content: flex-end; margin: -6px 0 2px; }
+
 /* ─── Label Fokker · met stamboom (uitbreiding 29) ─── */
 .labelcheck { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; font-size: 15px; }
 .labelcheck strong { display: block; margin-bottom: 6px; }

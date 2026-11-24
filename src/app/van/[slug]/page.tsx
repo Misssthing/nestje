@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import KopieerLink from '@/components/KopieerLink';
+import ProfielBewerkIcoon from '@/components/ProfielBewerkIcoon';
 import SocialIcoon from '@/components/SocialIcoon';
 import Voet from '@/components/Voet';
 import { CONFIG, fotoUrl, metUtm } from '@/lib/config';
@@ -117,6 +118,7 @@ export default async function ProfielPagina({ params }: Props) {
             <img className="profiel-foto" src={fotoUrl(profiel.foto)} alt="" />
           )}
           <h1>{profiel.naam}</h1>
+          <ProfielBewerkIcoon slug={profiel.slug} />
         </div>
         {cattery && (
           <div className="cattery-kaart">

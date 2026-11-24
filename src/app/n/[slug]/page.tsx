@@ -5,6 +5,7 @@ import Aftelling from '@/components/Aftelling';
 import Fotostrip from '@/components/Fotostrip';
 import KopieerLink from '@/components/KopieerLink';
 import AccountKnop from '@/components/AccountKnop';
+import BewerkIcoon from '@/components/BewerkIcoon';
 import EigenaarBalk from '@/components/EigenaarBalk';
 import Hartknop from '@/components/Hartknop';
 import Weergaveteller from '@/components/Weergaveteller';
@@ -202,6 +203,9 @@ export default async function NestjesPagina({ params }: Props) {
 
       <div className="overzicht-grid">
         <aside className="filterbalk alleen-desktop" aria-label="Over deze verkoper">
+          <div className="zijbalk-bewerkrij">
+            <BewerkIcoon slug={nest.slug} anchor="sectie-gegevens" label="Gegevens aanpassen" />
+          </div>
           <NestjeZijbalk
             naam={zijbalkNaam}
             profielSlug={extra?.verkoper?.slug ?? profiel?.profiel_slug ?? null}
@@ -317,6 +321,9 @@ export default async function NestjesPagina({ params }: Props) {
             </div>
           )}
 
+          <div className="kittens-kop">
+            <BewerkIcoon slug={nest.slug} anchor="sectie-kittens" label="Kittens aanpassen" />
+          </div>
           <div className="kittens">
             {kittens.map((k) => (
               <article key={k.id} id={`kitten-${k.id}`} className={`kit${k.status === 'verhuisd' ? ' is-verhuisd' : ''}`}>
@@ -387,7 +394,10 @@ export default async function NestjesPagina({ params }: Props) {
           )}
 
           <section className="mother">
-            <h2>{heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}</h2>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}
+              <BewerkIcoon slug={nest.slug} anchor="sectie-ouders" label="Ouders aanpassen" />
+            </h2>
             {beideGetest && <p className="beide-getest">✓ Beide ouders getest · bekeken door Nestje</p>}
             <div className={`ouders${heeftVader ? ' twee' : ''}`}>
               <div className="ouder">

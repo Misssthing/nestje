@@ -48,6 +48,18 @@ export default function Beheer({
   useEffect(() => setOrigin(window.location.origin), []);
   const url = `${origin}/n/${nest.slug}`;
 
+  // Kom je hier binnen via een bewerk-icoontje op de openbare pagina (#sectie-...)? Open dan
+  // eventueel ingeklapte details en scroll er direct naartoe, net als de Checklist dat doet.
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);
+    if (!hash.startsWith('sectie-')) return;
+    const el = document.getElementById(hash);
+    if (!el) return;
+    const details = el.matches('details') ? (el as HTMLDetailsElement) : el.querySelector('details');
+    if (details) details.open = true;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   async function werkKittenBij(id: string, patch: Partial<Kitten>, melding?: string) {
     const vorig = kittens;
     setKittens((ks) => ks.map((k) => (k.id === id ? { ...k, ...patch } : k)));
