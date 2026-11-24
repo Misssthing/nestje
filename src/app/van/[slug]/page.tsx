@@ -101,7 +101,11 @@ export default async function ProfielPagina({ params }: Props) {
   return (
     <main className="wrap">
       <div className="bar">
-        <Link href="/catteries" className="brand">← Catteries</Link>
+        {/* Fokt deze verkoper met stamboom (staat dus ook echt bij Catteries)? Dan terug daarnaartoe.
+            Anders is "Kittens" het overzicht waar deze verkoper wél in voorkomt. */}
+        <Link href={cattery ? '/catteries' : '/kittens'} className="brand">
+          {cattery ? '← Catteries' : '← Kittens'}
+        </Link>
         <KopieerLink url={`${CONFIG.siteUrl}/van/${profiel.slug}`} className="btn ghost klein" />
       </div>
 
