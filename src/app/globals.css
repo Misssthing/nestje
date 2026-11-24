@@ -489,6 +489,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 }
 .kenmerken .tag a { text-decoration: none; }
 .kenmerken .tag a:hover { text-decoration: underline; }
+.kenmerken .tag.vermoeden { background: none; border-style: dashed; color: var(--muted); font-weight: 500; }
 
 /* ─── Wachtlijst (uitbreiding 19) ─── */
 .wl-form { display: flex; flex-direction: column; gap: 4px; margin-bottom: 18px; }

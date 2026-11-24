@@ -56,8 +56,10 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
     ]);
     const woorden = zoekterm.toLowerCase().split(/\s+/).filter((w) => w.length >= 2 && !genegeerd.has(w));
     for (const w of woorden.length ? woorden : [zoekterm]) {
+      // vermoedelijk_ras telt hier bewust wel mee (vrij zoekwoord), maar niet bij het exacte ras-filter
+      // hieronder of de vaste raspagina's — die beloven expliciet "alleen met stamboom".
       query = query.or(
-        `moeder_naam.ilike.*${w}*,woonplaats.ilike.*${w}*,moeder_ras.ilike.*${w}*,vader_ras.ilike.*${w}*`,
+        `moeder_naam.ilike.*${w}*,woonplaats.ilike.*${w}*,moeder_ras.ilike.*${w}*,vader_ras.ilike.*${w}*,vermoedelijk_ras.ilike.*${w}*`,
       );
     }
   }

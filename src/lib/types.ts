@@ -16,6 +16,8 @@ export interface Nest {
   over_vader: string | null;
   moeder_ras: string | null;
   vader_ras: string | null;
+  /** Optioneel: lijkt op een raskitten maar zonder stamboom. Getoond als “[Ras]-type”. Alleen zonder stamboom. */
+  vermoedelijk_ras: string | null;
   stamboom: boolean | null;
   ouders_getest: boolean | null;
   ouders_test_info: string | null;
@@ -157,6 +159,8 @@ export interface OverzichtNest {
   provincie: string | null;
   moeder_ras: string | null;
   vader_ras: string | null;
+  /** Optioneel: lijkt op een raskitten maar zonder stamboom. Getoond als “[Ras]-type”. */
+  vermoedelijk_ras?: string | null;
   stamboom: boolean | null;
   geboortedatum: string;
   verhuisleeftijd_weken: number;

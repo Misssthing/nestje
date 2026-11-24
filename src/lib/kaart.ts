@@ -48,6 +48,7 @@ export function naarKaart(n: OverzichtNest): NestKaartData {
         ras,
       ].filter(Boolean).join(' · '),
       [n.woonplaats, n.provincie].filter(Boolean).join(', '),
+      n.vermoedelijk_ras && n.stamboom !== true ? `${n.vermoedelijk_ras}-type` : '',
     ],
     prijs: n.prijs ? prijsNL(Number(n.prijs)) : null,
     verkoper: n.verkoper ? VERKOPER_LABEL[n.verkoper] : null,

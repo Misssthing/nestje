@@ -260,7 +260,7 @@ export default async function NestjesPagina({ params }: Props) {
                 {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.
               </p>
             )}
-            {(rassenNest.length > 0 || nest.stamboom !== null) && (
+            {(rassenNest.length > 0 || nest.stamboom !== null || (nest.vermoedelijk_ras && nest.stamboom !== true)) && (
               <p className="kenmerken">
                 {rassenNest.map((r) => {
                   const l = landingVoor('ras', r);
@@ -272,6 +272,11 @@ export default async function NestjesPagina({ params }: Props) {
                 })}
                 {nest.stamboom === true && <span className="tag">Met stamboom</span>}
                 {nest.stamboom === false && <span className="tag">Zonder stamboom</span>}
+                {nest.vermoedelijk_ras && nest.stamboom !== true && (
+                  <span className="tag vermoeden" title="Inschatting van de verkoper, niet bevestigd met stamboom">
+                    {nest.vermoedelijk_ras}-type
+                  </span>
+                )}
               </p>
             )}
             <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />

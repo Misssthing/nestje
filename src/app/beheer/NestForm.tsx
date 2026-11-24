@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, toonNummer,
+  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, RASSEN_STAMBOOM, toonNummer,
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
@@ -35,6 +35,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     vader_naam: nest.vader_naam ?? '',
     moeder_ras: nest.moeder_ras ?? '',
     vader_ras: nest.vader_ras ?? '',
+    vermoedelijk_ras: nest.vermoedelijk_ras ?? '',
     ouders_test_info: nest.ouders_test_info ?? '',
     moeder_gewicht: nest.moeder_gewicht != null ? String(nest.moeder_gewicht).replace('.', ',') : '',
     vader_gewicht: nest.vader_gewicht != null ? String(nest.vader_gewicht).replace('.', ',') : '',
@@ -104,7 +105,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     if ([mg, vg].some((g) => g != null && (Number.isNaN(g) || g < 0.5 || g > 20)))
       return stop('Vul het gewicht in kilo’s in, bijvoorbeeld 5,2.');
 
-    const rassen = `${v.moeder_ras} ${v.vader_ras}`;
+    const rassen = `${v.moeder_ras} ${v.vader_ras} ${v.vermoedelijk_ras}`;
     if (VERBODEN_RAS.test(rassen))
       return stop('Met dit ras mag in Nederland niet worden gefokt. Naaktkatten en katten met vouworen kunnen daarom niet op Nestje.');
     const onbekend = [...rasDelen(v.moeder_ras), ...rasDelen(v.vader_ras)].find(
@@ -120,6 +121,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
           ? 'Bij vondelingen is de afstamming onbekend. Kies bij het ras “Huiskat” of “Kruising”.'
           : 'Een rasnaam gebruik je alleen met stamboom. Kies “Huiskat” of “Kruising”, of zet Stamboom op Ja.',
       );
+    const lijktOp = v.vermoedelijk_ras.trim();
+    if (lijktOp && stamboom !== true && !RASSEN_STAMBOOM.some((r) => r.toLowerCase() === lijktOp.toLowerCase()))
+      return stop(`“${lijktOp}” staat niet in onze lijst met rassen. Kies bij “Lijkt op” een ras uit de lijst, of laat dit leeg.`);
     if (stamboom === true) {
       const m = v.moeder_stamboomnr.trim();
       const va = v.vader_stamboomnr.trim();
@@ -158,6 +162,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
       vader_naam: v.vader_naam.trim() || null,
       moeder_ras: netjesRas(v.moeder_ras),
       vader_ras: netjesRas(v.vader_ras),
+      vermoedelijk_ras: stamboom === true ? null : netjesRas(v.vermoedelijk_ras),
       stamboom,
       moeder_gewicht: mg,
       vader_gewicht: vg,
@@ -242,7 +247,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
   }, [opslaan]);
 
   /** “bkh” wordt na het typen “Brits korthaar”, zodat de verkoper ziet wat er wordt opgeslagen. */
-  function netjesRasVeld(k: 'moeder_ras' | 'vader_ras') {
+  function netjesRasVeld(k: 'moeder_ras' | 'vader_ras' | 'vermoedelijk_ras') {
     setV((s) => {
       const netjes = netjesRas(s[k]) ?? '';
       return netjes === s[k] ? s : { ...s, [k]: netjes };
@@ -326,6 +331,24 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
           <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
             Een rasnaam zoals Maine Coon gebruik je alleen met een stamboom. Zonder stamboom kies je “Huiskat” of “Kruising”.
           </p>
+          {stamboom !== true && (
+            <label className="veld">
+              <span>Lijkt op <small className="opt">optioneel</small></span>
+              <input
+                list="rassen"
+                value={v.vermoedelijk_ras}
+                onChange={zet('vermoedelijk_ras')}
+                onBlur={() => netjesRasVeld('vermoedelijk_ras')}
+                maxLength={60}
+                placeholder="Bijv. Maine Coon"
+              />
+              <p className="hint">
+                Voor als je kitten eruitziet als een bepaald ras, maar je geen stamboom hebt. We tonen dit aan kopers
+                als “{v.vermoedelijk_ras.trim() || 'Maine Coon'}-type”, duidelijk anders dan een bevestigde rasnaam. Het telt niet mee
+                voor het rasfilter en de vaste raspagina’s.
+              </p>
+            </label>
+          )}
           <label className="veld">
             <span>Gewicht in kg <small className="opt">optioneel</small></span>
             <input inputMode="decimal" value={v.moeder_gewicht} onChange={zet('moeder_gewicht')} placeholder="Bijv. 5,2" />
