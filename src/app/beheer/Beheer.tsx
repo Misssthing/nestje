@@ -186,7 +186,7 @@ export default function Beheer({
         <p>
           {aantalKittens(kittens.length)}, {vrij} {STATUS_LABEL.vrij.toLowerCase()}.
         </p>
-        <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} />
+        <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} enkelvoud={kittens.length === 1} />
       </section>
 
       <section className="linkkaart" aria-label="Je openbare pagina">

@@ -256,7 +256,7 @@ export default async function NestjesPagina({ params }: Props) {
               <p>
                 {aantalKittens(kittens.length)}, geboren {nest.geboortedatum_geschat ? 'rond' : 'op'} {datumNL(a.geboren)}
                 {nest.geboortedatum_geschat ? ' (geschat)' : ''}
-                {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. Ze zijn nu {nest.geboortedatum_geschat ? 'ongeveer ' : ''}{a.leeftijdWeken}{' '}
+                {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. {kittens.length === 1 ? 'Het is' : 'Ze zijn'} nu {nest.geboortedatum_geschat ? 'ongeveer ' : ''}{a.leeftijdWeken}{' '}
                 {a.leeftijdWeken === 1 ? 'week' : 'weken'} oud.
               </p>
             )}
@@ -287,7 +287,7 @@ export default async function NestjesPagina({ params }: Props) {
                 )}
               </p>
             )}
-            <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} />
+            <Aftelling geboortedatum={nest.geboortedatum} weken={nest.verhuisleeftijd_weken} geschat={nest.geboortedatum_geschat} enkelvoud={kittens.length === 1} />
             {nest.bijzonderheden?.trim() && (
               <p className="bijzonderheden" role="note">
                 {nest.bijzonderheden.trim()}

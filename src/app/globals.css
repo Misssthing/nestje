@@ -55,6 +55,8 @@ img { max-width: 100%; display: block; }
 .countdown { margin: 26px 0 8px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .countdown .big { font-size: clamp(64px, 18vw, 104px); font-weight: 800; line-height: .9; color: var(--ginger); letter-spacing: -.04em; }
 .countdown .txt { font-size: 19px; max-width: 20ch; line-height: 1.25; }
+.countdown.voltooid { margin: 14px 0 8px; }
+.countdown.voltooid .txt { font-size: 22px; font-weight: 700; max-width: none; color: var(--free); }
 .track { position: relative; height: 10px; background: var(--line); border-radius: 5px; margin: 18px 0 6px; overflow: hidden; }
 .track span { position: absolute; inset: 0 auto 0 0; background: var(--ginger); border-radius: 5px; }
 .trackmeta { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--muted); }

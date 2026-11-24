@@ -4,10 +4,12 @@ export default function Aftelling({
   geboortedatum,
   weken,
   geschat = false,
+  enkelvoud = false,
 }: {
   geboortedatum: string;
   weken: number;
   geschat?: boolean;
+  enkelvoud?: boolean;
 }) {
   const a = aftelling(geboortedatum, weken);
 
@@ -31,17 +33,23 @@ export default function Aftelling({
 
   return (
     <>
-      <div className="countdown">
-        {a.wekenTeGaan > 0 && <div className="big">{a.wekenTeGaan}</div>}
-        <div className="txt">
-          {a.wekenTeGaan > 0
-            ? `${a.wekenTeGaan === 1 ? 'week' : 'weken'} tot ze mogen verhuizen`
-            : 'Ze mogen verhuizen'}
+      <div className={`countdown${a.wekenTeGaan > 0 ? '' : ' voltooid'}`}>
+        {a.wekenTeGaan > 0 ? (
+          <>
+            <div className="big">{a.wekenTeGaan}</div>
+            <div className="txt">
+              {a.wekenTeGaan === 1 ? 'week' : 'weken'} tot {enkelvoud ? 'het mag' : 'ze mogen'} verhuizen
+            </div>
+          </>
+        ) : (
+          <div className="txt">✓ {enkelvoud ? 'Kan' : 'Kunnen'} direct verhuizen</div>
+        )}
+      </div>
+      {a.wekenTeGaan > 0 && (
+        <div className="track" aria-hidden="true">
+          <span style={{ width: `${a.voortgang}%` }} />
         </div>
-      </div>
-      <div className="track" aria-hidden="true">
-        <span style={{ width: `${a.voortgang}%` }} />
-      </div>
+      )}
       <div className="trackmeta">
         <span>{geschat ? `Geboren rond ${datumNL(a.geboren)}` : `Geboren ${datumNL(a.geboren)}`}</span>
         <span>Verhuizen vanaf {datumNL(a.verhuis)}</span>
