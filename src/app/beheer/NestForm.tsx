@@ -341,6 +341,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
                 <select value={v.moeder_ras} onChange={zet('moeder_ras')}>
                   <option value="">Kies…</option>
                   {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r}>{r}</option>)}
+                  {v.moeder_ras && !RASSEN_ALGEMEEN.some((r) => r.toLowerCase() === v.moeder_ras.toLowerCase()) && (
+                    <option value={v.moeder_ras}>{v.moeder_ras} (vereist stamboom)</option>
+                  )}
                 </select>
               )}
             </label>
@@ -499,6 +502,9 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
                 <select value={v.vader_ras} onChange={zet('vader_ras')}>
                   <option value="">Kies…</option>
                   {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r}>{r}</option>)}
+                  {v.vader_ras && !RASSEN_ALGEMEEN.some((r) => r.toLowerCase() === v.vader_ras.toLowerCase()) && (
+                    <option value={v.vader_ras}>{v.vader_ras} (vereist stamboom)</option>
+                  )}
                 </select>
               )}
             </label>
