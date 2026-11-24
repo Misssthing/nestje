@@ -7,13 +7,26 @@ import { createClient } from '@/lib/supabase/server';
 import type { Nest, Profiel } from '@/lib/types';
 import { adminClient } from '@/lib/wachtlijst/server';
 import AppIcoonTip from '@/components/AppIcoonTip';
+import SlimmeFoto from '@/components/SlimmeFoto';
+import { fotoThumbUrl } from '@/lib/config';
 import NieuwNestje from './NieuwNestje';
 import ProfielPaneel from './ProfielPaneel';
 
 export const metadata: Metadata = { title: 'Je nestjes', robots: { index: false } };
 export const dynamic = 'force-dynamic';
 
-type NestRij = Nest & { aangemaakt_op: string; afgerond: boolean; kittens: { status: string }[] };
+type NestRij = Nest & {
+  aangemaakt_op: string;
+  afgerond: boolean;
+  kittens: { status: string }[];
+  nest_photos: { storage_path: string; volgorde: number }[];
+};
+
+/** Eerste nestfoto (laagste volgorde), voor het duimnageltje in het overzicht. */
+function coverFoto(n: NestRij): string | null {
+  if (!n.nest_photos.length) return null;
+  return [...n.nest_photos].sort((a, b) => a.volgorde - b.volgorde)[0].storage_path;
+}
 
 /** Korte stand voor het overzicht, zodat de verkoper ziet wat er met zijn nestje aan de hand is. */
 function overzichtLabel(n: NestRij) {
@@ -43,7 +56,7 @@ export default async function Overzicht() {
 
   const { data } = await supabase
     .from('nests')
-    .select('*, kittens(status)')
+    .select('*, kittens(status), nest_photos(storage_path, volgorde)')
     .order('afgerond')
     .order('aangemaakt_op', { ascending: false })
     .returns<NestRij[]>();
@@ -125,20 +138,28 @@ export default async function Overzicht() {
           const a = aftelling(n.geboortedatum, n.verhuisleeftijd_weken);
           const vrij = n.kittens.filter((k) => k.status === 'vrij').length;
           const label = overzichtLabel(n);
+          const foto = coverFoto(n);
           return (
             <Link key={n.id} href={`/beheer/${n.id}`} className={`nestkaart${n.afgerond ? ' is-afgerond' : ''}`}>
-              <div>
-                <strong>Het nestje van {n.moeder_naam}</strong>
-                <span>
-                  {a.verwacht
-                    ? `Verwacht rond ${datumNL(a.geboren)}`
-                    : `${aantalKittens(n.kittens.length)}, geboren ${datumNL(a.geboren)}${n.afgerond ? '' : `, ${vrij} vrij`}`}
-                </span>
-                {!n.afgerond && (
-                  <span className={`overzichtlabel${label.aan ? ' aan' : ''}`}>{label.tekst}</span>
+              <div className="nestkaart-info">
+                {foto ? (
+                  <SlimmeFoto className="nestkaart-foto" src={fotoThumbUrl(foto)} alt="" />
+                ) : (
+                  <div className="nestkaart-foto placeholder" aria-hidden="true">{n.moeder_naam.charAt(0).toUpperCase()}</div>
                 )}
-                <span>👁 {n.weergaven ? `${n.weergaven} keer bekeken` : 'Nog niet bekeken'}</span>
-                <span className="aanpassen-label" aria-hidden="true">✎ Aanpassen ›</span>
+                <div>
+                  <strong>Het nestje van {n.moeder_naam}</strong>
+                  <span>
+                    {a.verwacht
+                      ? `Verwacht rond ${datumNL(a.geboren)}`
+                      : `${aantalKittens(n.kittens.length)}, geboren ${datumNL(a.geboren)}${n.afgerond ? '' : `, ${vrij} vrij`}`}
+                  </span>
+                  {!n.afgerond && (
+                    <span className={`overzichtlabel${label.aan ? ' aan' : ''}`}>{label.tekst}</span>
+                  )}
+                  <span>👁 {n.weergaven ? `${n.weergaven} keer bekeken` : 'Nog niet bekeken'}</span>
+                  <span className="aanpassen-label" aria-hidden="true">✎ Aanpassen ›</span>
+                </div>
               </div>
               <span className={`chip ${n.afgerond ? 'verhuisd' : 'vrij'}`}>
                 {n.afgerond
@@ -155,7 +176,7 @@ export default async function Overzicht() {
       </div>
 
       <div className="actions">
-        <Link className="btn primary" href="/beheer/nieuw">Nieuw nestje</Link>
+        <Link className="btn primary" href="/beheer/nieuw">+ Nieuw nestje</Link>
       </div>
 
       <div style={{ marginTop: 22 }}>
