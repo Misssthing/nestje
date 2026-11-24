@@ -248,12 +248,12 @@ export default async function NestjesPagina({ params }: Props) {
               </p>
             )}
             {a.verwacht ? (
-              <p>
+              <p className="hero-feiten">
                 De kittens van {nest.moeder_naam} worden verwacht rond {datumNL(a.geboren)}
                 {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}.
               </p>
             ) : (
-              <p>
+              <p className="hero-feiten">
                 {aantalKittens(kittens.length)}, geboren {nest.geboortedatum_geschat ? 'rond' : 'op'} {datumNL(a.geboren)}
                 {nest.geboortedatum_geschat ? ' (geschat)' : ''}
                 {nest.woonplaats ? ` in ${nest.woonplaats}` : ''}. {kittens.length === 1 ? 'Het is' : 'Ze zijn'} nu {nest.geboortedatum_geschat ? 'ongeveer ' : ''}{a.leeftijdWeken}{' '}
