@@ -16,6 +16,8 @@ type Props = {
   tekst: string | null;
   /** Standaard aan. Zet op false als de Fokker/Particulier-badge al elders op de pagina staat. */
   toonChip?: boolean;
+  /** Al opgemaakt, bv. "jan. 2024". Komt van nest.lid_sinds. */
+  lidSinds?: string | null;
 };
 
 /** Compacte infokaart naast een nestje: wie het aanbiedt, hoeveel er nog vrij zijn, en delen. */
@@ -31,6 +33,7 @@ export default function NestjeZijbalk({
   foto,
   tekst,
   toonChip = true,
+  lidSinds,
 }: Props) {
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${whatsappDeelTekst} ${paginaUrl}`)}`;
   // Alleen een "Welkom namens ..." met foto tonen als de verkoper echt een eigen naam heeft ingevuld.
@@ -58,6 +61,7 @@ export default function NestjeZijbalk({
       {toonChip && <span className="chip verkoper">{chipTekst}</span>}
       {gepersonaliseerd && tekst && <p className="nzijbalk-bio">{tekst}</p>}
       {sindsJaar && <p className="nzijbalk-feit">Fokt sinds {sindsJaar}</p>}
+      {lidSinds && <p className="nzijbalk-feit">Lid sinds {lidSinds}</p>}
 
       <div className="nzijbalk-stand">
         {totaalKittens > 0 ? (

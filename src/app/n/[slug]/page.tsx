@@ -217,6 +217,7 @@ export default async function NestjesPagina({ params }: Props) {
             whatsappDeelTekst={`Kijk eens naar het nestje van ${nest.moeder_naam} op Nestje:`}
             foto={zijbalkFoto}
             tekst={zijbalkTekst}
+            lidSinds={nest.lid_sinds ? maandJaarNL(nest.lid_sinds) : null}
           />
         </aside>
         <div className="overzicht-lijst">
@@ -244,7 +245,6 @@ export default async function NestjesPagina({ params }: Props) {
                     {organisatie && organisatie !== 'Anders' ? `, aangesloten bij ${organisatie}` : ''}
                   </span>
                 )}
-                {nest.lid_sinds && <span>Lid sinds {maandJaarNL(nest.lid_sinds)}</span>}
               </p>
             )}
             {a.verwacht ? (
@@ -324,6 +324,7 @@ export default async function NestjesPagina({ params }: Props) {
               foto={zijbalkFoto}
               tekst={zijbalkTekst}
               toonChip={false}
+              lidSinds={nest.lid_sinds ? maandJaarNL(nest.lid_sinds) : null}
             />
           </div>
 
