@@ -278,9 +278,6 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
         <datalist id="rassen">
           {RASSEN.map((r) => <option key={r} value={r} />)}
         </datalist>
-        <datalist id="rassen-basis">
-          {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r} />)}
-        </datalist>
         <datalist id="rassen-pedigree">
           {RASSEN_STAMBOOM.map((r) => <option key={r} value={r} />)}
         </datalist>
@@ -331,20 +328,27 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             </label>
             <label className="veld">
               <span>Ras <small className="opt">optioneel</small></span>
-              <input
-                list={stamboom === true ? 'rassen' : 'rassen-basis'}
-                value={v.moeder_ras}
-                onChange={zet('moeder_ras')}
-                onBlur={() => netjesRasVeld('moeder_ras')}
-                maxLength={60}
-                placeholder="Bijv. Huiskat"
-              />
+              {stamboom === true ? (
+                <input
+                  list="rassen"
+                  value={v.moeder_ras}
+                  onChange={zet('moeder_ras')}
+                  onBlur={() => netjesRasVeld('moeder_ras')}
+                  maxLength={60}
+                  placeholder="Bijv. Huiskat"
+                />
+              ) : (
+                <select value={v.moeder_ras} onChange={zet('moeder_ras')}>
+                  <option value="">Kies…</option>
+                  {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              )}
             </label>
           </div>
           <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
             {stamboom === true
               ? 'Een rasnaam zoals Maine Coon gebruik je alleen met een stamboom.'
-              : 'Hier kies je uit “Huiskat”, “Kruising” of “Europese korthaar”. Heb je een stamboom? Zet Stamboom hieronder op Ja, dan kun je hier een rasnaam kiezen. Lijkt je kitten op een ras maar heb je geen stamboom, vul dat dan hieronder in bij “Lijkt op”.'}
+              : 'Heb je een stamboom? Zet Stamboom hieronder op Ja, dan kun je hier een rasnaam kiezen. Lijkt je kitten op een ras maar heb je geen stamboom, vul dat dan hieronder in bij “Lijkt op”.'}
           </p>
           {stamboom !== true && (
             <label className="veld">
@@ -483,13 +487,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             </label>
             <label className="veld">
               <span>Ras</span>
-              <input
-                list={stamboom === true ? 'rassen' : 'rassen-basis'}
-                value={v.vader_ras}
-                onChange={zet('vader_ras')}
-                onBlur={() => netjesRasVeld('vader_ras')}
-                maxLength={60}
-              />
+              {stamboom === true ? (
+                <input
+                  list="rassen"
+                  value={v.vader_ras}
+                  onChange={zet('vader_ras')}
+                  onBlur={() => netjesRasVeld('vader_ras')}
+                  maxLength={60}
+                />
+              ) : (
+                <select value={v.vader_ras} onChange={zet('vader_ras')}>
+                  <option value="">Kies…</option>
+                  {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              )}
             </label>
           </div>
           <label className="veld">
