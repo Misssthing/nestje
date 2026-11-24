@@ -6,6 +6,7 @@ import { useToast } from '@/components/Toast';
 import { CONFIG } from '@/lib/config';
 import { schoonLink } from '@/lib/nest';
 import SocialIcoon from '@/components/SocialIcoon';
+import ProfielFoto from '@/components/ProfielFoto';
 import { createClient } from '@/lib/supabase/browser';
 import type { Profiel } from '@/lib/types';
 
@@ -118,7 +119,7 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
         },
         { onConflict: 'owner_id' },
       )
-      .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram, sinds_jaar, rassen, vereniging')
+      .select('owner_id, slug, naam, foto, intro, zichtbaar, website, facebook, instagram, sinds_jaar, rassen, vereniging')
       .single<Profiel>();
     setBezig(false);
 
@@ -163,6 +164,19 @@ export default function ProfielPaneel({ profiel }: { profiel: Profiel | null }) 
             }}
           />
         </label>
+        {opgeslagen && (
+          <ProfielFoto
+            supabase={supabase}
+            ownerId={opgeslagen.owner_id}
+            foto={opgeslagen.foto}
+            onWijzig={(foto) => setOpgeslagen((o) => (o ? { ...o, foto } : o))}
+          />
+        )}
+        {!opgeslagen && (
+          <p className="hint" style={{ marginTop: -8 }}>
+            Sla eerst je naam op, dan kun je hier ook een foto van jezelf toevoegen.
+          </p>
+        )}
         <label className="veld">
           <span>Je link op Nestje</span>
           <input

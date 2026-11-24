@@ -33,8 +33,6 @@ export interface Nest {
   cattery: string | null;
   /** Voornaam van de verkoper, alleen getoond op de eigen nestjespagina (nooit op de overzichtskaart) */
   verkoper_naam: string | null;
-  /** Eigen foto van de verkoper, opgeslagen als <nest_id>/verkoper/<uuid>.jpg; rond getoond naast "Welkom namens ..." */
-  verkoper_foto: string | null;
   /** Kort welkomstzinnetje van de verkoper zelf, getoond onder de chip in het infoblokje */
   verkoper_tekst: string | null;
   /** Vrije tekst voor wat niet in de standaardvinkjes past, opvallend getoond bovenaan de nestjespagina (uitbreiding 38) */
@@ -122,6 +120,9 @@ export interface Profiel {
   owner_id: string;
   slug: string;
   naam: string;
+  /** Eigen foto van de verkoper, opgeslagen als profiel/<owner_id>/<uuid>.jpg; verschijnt op de
+   *  profielpagina en (zodra die aan staat) automatisch bij elk nestje in het zijbalkje. */
+  foto: string | null;
   intro: string | null;
   zichtbaar: boolean;
   website: string | null;

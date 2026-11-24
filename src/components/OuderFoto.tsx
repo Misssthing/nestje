@@ -10,18 +10,13 @@ import type { Nest } from '@/lib/types';
 type Props = {
   supabase: SupabaseClient;
   nest: Nest;
-  kolom: 'moeder_foto' | 'vader_foto' | 'verkoper_foto';
+  kolom: 'moeder_foto' | 'vader_foto';
   label: string;
   onWijzig: (patch: Partial<Nest>) => void;
-  /** Submap in de opslag en, voor de verkoperfoto, een ronde weergave i.p.v. de rechthoekige ouderfoto. */
-  map?: string;
-  rond?: boolean;
-  /** Kleiner formaat voor een pasfoto/avatar; ouderfoto's blijven op de standaard 1600px. */
-  maxPx?: number;
 };
 
-/** Eén foto voor de moeder, de vader of de verkoper zelf, opgeslagen als <nest_id>/<map>/<uuid>.jpg */
-export default function OuderFoto({ supabase, nest, kolom, label, onWijzig, map = 'ouders', rond, maxPx }: Props) {
+/** Eén foto voor de moeder of de vader, opgeslagen als <nest_id>/ouders/<uuid>.jpg */
+export default function OuderFoto({ supabase, nest, kolom, label, onWijzig }: Props) {
   const toast = useToast();
   const [bezig, setBezig] = useState(false);
   const huidig = nest[kolom];
@@ -31,8 +26,8 @@ export default function OuderFoto({ supabase, nest, kolom, label, onWijzig, map 
     if (!bestand) return;
     setBezig(true);
     try {
-      const blob = await verkleinFoto(bestand, maxPx);
-      const pad = `${nest.id}/${map}/${crypto.randomUUID()}.jpg`;
+      const blob = await verkleinFoto(bestand);
+      const pad = `${nest.id}/ouders/${crypto.randomUUID()}.jpg`;
       const { error: upErr } = await supabase.storage
         .from(CONFIG.fotoBucket)
         .upload(pad, blob, { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
@@ -61,7 +56,7 @@ export default function OuderFoto({ supabase, nest, kolom, label, onWijzig, map 
   }
 
   return (
-    <div className={rond ? 'vak rond' : 'vak'}>
+    <div className="vak">
       <span>{label}</span>
       {bezig ? (
         <div className="thumb bezig">Bezig…</div>

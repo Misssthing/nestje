@@ -7,7 +7,6 @@ import {
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
-import OuderFoto from '@/components/OuderFoto';
 import { veiligeLink, type TestMetBewijs } from '@/lib/testen';
 import type { Nest } from '@/lib/types';
 import { CONFIG } from '@/lib/config';
@@ -414,28 +413,20 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             </p>
           </label>
           {v.verkoper_naam.trim() && (
-            <>
-              <OuderFoto
-                supabase={supabase}
-                nest={nest}
-                kolom="verkoper_foto"
-                label="Jouw foto"
-                map="verkoper"
-                maxPx={480}
-                rond
-                onWijzig={(p) => onOpgeslagenRef.current({ ...nestRef.current, ...p })}
+            <label className="veld">
+              <span>Kort welkomstzinnetje <small className="opt">optioneel</small></span>
+              <textarea
+                value={v.verkoper_tekst}
+                maxLength={MAX_VERKOPER_TEKST}
+                placeholder="Bijv. Al jaren gek op Maine Coons. Kom gerust een kijkje nemen!"
+                onChange={zet('verkoper_tekst')}
               />
-              <label className="veld">
-                <span>Kort welkomstzinnetje <small className="opt">optioneel</small></span>
-                <textarea
-                  value={v.verkoper_tekst}
-                  maxLength={MAX_VERKOPER_TEKST}
-                  placeholder="Bijv. Al jaren gek op Maine Coons. Kom gerust een kijkje nemen!"
-                  onChange={zet('verkoper_tekst')}
-                />
-                <p className="hint teller">{v.verkoper_tekst.length}/{MAX_VERKOPER_TEKST}</p>
-              </label>
-            </>
+              <p className="hint teller">{v.verkoper_tekst.length}/{MAX_VERKOPER_TEKST}</p>
+              <p className="hint">
+                Een foto van jezelf zet je bij “Over jou en je profielpagina” op “Je nestjes” — die verschijnt dan automatisch
+                bij al je nestjes.
+              </p>
+            </label>
           )}
           <p className="hint" style={{ marginTop: -4, marginBottom: 0 }}>
             Je nummer staat nergens als tekst op de pagina. Kopers tikken op “Vraag naar …” en komen dan in WhatsApp bij jou uit.

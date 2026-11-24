@@ -19,11 +19,12 @@ const haalProfiel = cache(async (slug: string) => {
   const supabase = createPublicClient();
   const { data: profiel } = await supabase
     .from('openbare_profielen')
-    .select('slug, naam, intro, website, facebook, instagram')
+    .select('slug, naam, foto, intro, website, facebook, instagram')
     .eq('slug', slug)
     .maybeSingle<{
       slug: string;
       naam: string;
+      foto: string | null;
       intro: string | null;
       website: string | null;
       facebook: string | null;
@@ -110,7 +111,13 @@ export default async function ProfielPagina({ params }: Props) {
       </div>
 
       <section className="hero">
-        <h1>{profiel.naam}</h1>
+        <div className="profiel-kop">
+          {profiel.foto && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="profiel-foto" src={fotoUrl(profiel.foto)} alt="" />
+          )}
+          <h1>{profiel.naam}</h1>
+        </div>
         {cattery && (
           <div className="cattery-kaart">
             <span className="chip verkoper">Fokker · met stamboom</span>

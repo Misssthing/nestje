@@ -23,7 +23,15 @@ import { GEZONDHEID_NEST, VERTROUWEN_NEST, type VertrouwenVeld } from '@/lib/ver
 type Extra = Partial<Record<VertrouwenVeld, boolean>> & {
   stamboomnrs_bekend?: boolean;
   cattery_gecontroleerd?: boolean;
-  verkoper?: { naam: string; slug: string; intro: string | null; sinds_jaar: number | null; rassen: string | null; vereniging: string | null } | null;
+  verkoper?: {
+    naam: string;
+    slug: string;
+    foto: string | null;
+    intro: string | null;
+    sinds_jaar: number | null;
+    rassen: string | null;
+    vereniging: string | null;
+  } | null;
 };
 
 /**
@@ -35,10 +43,10 @@ async function haalExtra(nest: Extra, profielSlug: string | null): Promise<Extra
   if (!profielSlug) return nest;
   const db = createPublicClient();
   const [p, x] = await Promise.all([
-    db.from('openbare_profielen').select('slug, naam, intro').eq('slug', profielSlug).maybeSingle(),
+    db.from('openbare_profielen').select('slug, naam, foto, intro').eq('slug', profielSlug).maybeSingle(),
     db.from('openbare_profiel_extra').select('sinds_jaar, rassen, vereniging').eq('slug', profielSlug).maybeSingle(),
   ]);
-  const prof = p.data as { slug: string; naam: string; intro: string | null } | null;
+  const prof = p.data as { slug: string; naam: string; foto: string | null; intro: string | null } | null;
   const ext = x.data as { sinds_jaar: number | null; rassen: string | null; vereniging: string | null } | null;
   return {
     ...nest,
@@ -169,8 +177,9 @@ export default async function NestjesPagina({ params }: Props) {
   // profiel (als er een openbare profielpagina is), en anders gewoon "Fokker"/"Particulier".
   const zijbalkNaam =
     nest.verkoper_naam || (nest.stamboom === true && nest.cattery ? `Cattery ${nest.cattery}` : extra?.verkoper?.naam) || verkoperLabel;
-  // Foto en welkomstzin horen alleen bij de eigen naam van de verkoper, niet bij de catterynaam of het profiel.
-  const zijbalkFoto = nest.verkoper_naam ? nest.verkoper_foto : null;
+  // De foto komt altijd van het profiel (één foto per account); het welkomstzinnetje hoort juist
+  // bij dit ene nestje, dus alleen tonen als de verkoper zelf hier een naam heeft ingevuld.
+  const zijbalkFoto = extra?.verkoper?.foto ?? null;
   const zijbalkTekst = nest.verkoper_naam ? nest.verkoper_tekst : null;
 
   return (

@@ -50,7 +50,7 @@ export default async function Overzicht() {
   const nesten = data ?? [];
   const { data: profiel } = await supabase
     .from('profielen')
-    .select('owner_id, slug, naam, intro, zichtbaar, website, facebook, instagram, sinds_jaar, rassen, vereniging')
+    .select('owner_id, slug, naam, foto, intro, zichtbaar, website, facebook, instagram, sinds_jaar, rassen, vereniging')
     .maybeSingle<Profiel>();
 
   // Alleen voor de beheerder: hoeveel nestjes wachten op controle
