@@ -40,9 +40,13 @@ function zoekLinks(cattery: string, organisatie: string | null) {
   ];
   const o = (organisatie ?? '').toLowerCase();
   if (o.includes('tica')) links.push(['TICA', `https://www.google.com/search?q=${q}+site%3Atica.org`]);
-  if (o.includes('fife') || o.includes('felikat')) {
+  if (o.includes('fife') || o.includes('felikat') || o.includes('mundikat')) {
     links.push(['FIFe-register', 'https://fifeweb.org/cats/cattery-names/']);
-    links.push(['Felikat', `https://www.google.com/search?q=${q}+felikat`]);
+    if (o.includes('mundikat')) {
+      links.push(['Mundikat', `https://www.google.com/search?q=${q}+mundikat`]);
+    } else {
+      links.push(['Felikat', `https://www.google.com/search?q=${q}+felikat`]);
+    }
   }
   if (o.includes('wcf')) links.push(['WCF', `https://www.google.com/search?q=${q}+WCF+cattery`]);
   links.push(['PawPeds', `https://www.google.com/search?q=${q}+site%3Apawpeds.com`]);
