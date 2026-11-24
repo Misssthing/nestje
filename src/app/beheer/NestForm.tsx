@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, RASSEN_STAMBOOM, toonNummer,
+  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, RASSEN_ALGEMEEN, RASSEN_STAMBOOM, toonNummer,
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
@@ -278,6 +278,12 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
         <datalist id="rassen">
           {RASSEN.map((r) => <option key={r} value={r} />)}
         </datalist>
+        <datalist id="rassen-basis">
+          {RASSEN_ALGEMEEN.map((r) => <option key={r} value={r} />)}
+        </datalist>
+        <datalist id="rassen-pedigree">
+          {RASSEN_STAMBOOM.map((r) => <option key={r} value={r} />)}
+        </datalist>
 
         <fieldset className="formblok">
           <legend>Soort nestje</legend>
@@ -325,17 +331,26 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             </label>
             <label className="veld">
               <span>Ras <small className="opt">optioneel</small></span>
-              <input list="rassen" value={v.moeder_ras} onChange={zet('moeder_ras')} onBlur={() => netjesRasVeld('moeder_ras')} maxLength={60} placeholder="Bijv. Huiskat" />
+              <input
+                list={stamboom === true ? 'rassen' : 'rassen-basis'}
+                value={v.moeder_ras}
+                onChange={zet('moeder_ras')}
+                onBlur={() => netjesRasVeld('moeder_ras')}
+                maxLength={60}
+                placeholder="Bijv. Huiskat"
+              />
             </label>
           </div>
           <p className="hint" style={{ marginTop: -4, marginBottom: 10 }}>
-            Een rasnaam zoals Maine Coon gebruik je alleen met een stamboom. Zonder stamboom kies je “Huiskat” of “Kruising”.
+            {stamboom === true
+              ? 'Een rasnaam zoals Maine Coon gebruik je alleen met een stamboom.'
+              : 'Hier kies je uit “Huiskat”, “Kruising” of “Europese korthaar”. Heb je een stamboom? Zet Stamboom hieronder op Ja, dan kun je hier een rasnaam kiezen. Lijkt je kitten op een ras maar heb je geen stamboom, vul dat dan hieronder in bij “Lijkt op”.'}
           </p>
           {stamboom !== true && (
             <label className="veld">
               <span>Lijkt op <small className="opt">optioneel</small></span>
               <input
-                list="rassen"
+                list="rassen-pedigree"
                 value={v.vermoedelijk_ras}
                 onChange={zet('vermoedelijk_ras')}
                 onBlur={() => netjesRasVeld('vermoedelijk_ras')}
@@ -343,9 +358,10 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
                 placeholder="Bijv. Maine Coon"
               />
               <p className="hint">
-                Voor als je kitten eruitziet als een bepaald ras, maar je geen stamboom hebt. We tonen dit aan kopers
-                als “{v.vermoedelijk_ras.trim() || 'Maine Coon'}-type”, duidelijk anders dan een bevestigde rasnaam. Het telt niet mee
-                voor het rasfilter en de vaste raspagina’s.
+                Voor als je kitten eruitziet als een bepaald ras, maar je geen stamboom hebt. Dit is een ander veld dan
+                “Ras” hierboven, dat is alléén voor kittens mét stamboom. We tonen dit aan kopers als
+                “{v.vermoedelijk_ras.trim() || 'Maine Coon'}-type”, duidelijk anders dan een bevestigde rasnaam. Het telt
+                niet mee voor het rasfilter en de vaste raspagina’s.
               </p>
             </label>
           )}
@@ -467,7 +483,13 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
             </label>
             <label className="veld">
               <span>Ras</span>
-              <input list="rassen" value={v.vader_ras} onChange={zet('vader_ras')} onBlur={() => netjesRasVeld('vader_ras')} maxLength={60} />
+              <input
+                list={stamboom === true ? 'rassen' : 'rassen-basis'}
+                value={v.vader_ras}
+                onChange={zet('vader_ras')}
+                onBlur={() => netjesRasVeld('vader_ras')}
+                maxLength={60}
+              />
             </label>
           </div>
           <label className="veld">
