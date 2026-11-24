@@ -52,7 +52,7 @@ img { max-width: 100%; display: block; }
 /* Hero en aftelling */
 .hero h1 { font-size: clamp(34px, 8vw, 52px); line-height: 1.02; font-weight: 800; letter-spacing: -.02em; margin: 0 0 10px; }
 .hero p { margin: 0; color: var(--muted); max-width: 52ch; }
-.hero p.hero-feiten { font-size: 15px; margin: 18px 0 0; }
+.hero p.hero-feiten { font-size: 15px; margin: 18px 0 0; max-width: none; }
 .countdown { margin: 26px 0 8px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .countdown .big { font-size: clamp(64px, 18vw, 104px); font-weight: 800; line-height: .9; color: var(--ginger); letter-spacing: -.04em; }
 .countdown .txt { font-size: 19px; max-width: 20ch; line-height: 1.25; }
