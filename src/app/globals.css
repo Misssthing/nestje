@@ -315,7 +315,7 @@ details.panel[open] summary { margin-bottom: 12px; }
 /* Verwacht nestje */
 .interesse { margin-top: 18px; }
 .interesse .btn { width: 100%; }
-.interesse .hint { text-align: center; margin-top: 8px; }
+.interesse .hint { margin-top: 8px; }
 
 .vink { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; color: var(--muted); cursor: pointer; }
 .vink input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; padding: 0; margin: 0; accent-color: var(--free); }
