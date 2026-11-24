@@ -14,6 +14,8 @@ type Props = {
   whatsappDeelTekst: string;
   foto: string | null;
   tekst: string | null;
+  /** Standaard aan. Zet op false als de Fokker/Particulier-badge al elders op de pagina staat. */
+  toonChip?: boolean;
 };
 
 /** Compacte infokaart naast een nestje: wie het aanbiedt, hoeveel er nog vrij zijn, en delen. */
@@ -28,6 +30,7 @@ export default function NestjeZijbalk({
   whatsappDeelTekst,
   foto,
   tekst,
+  toonChip = true,
 }: Props) {
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${whatsappDeelTekst} ${paginaUrl}`)}`;
   // Alleen een "Welkom namens ..." met foto tonen als de verkoper echt een eigen naam heeft ingevuld.
@@ -52,7 +55,7 @@ export default function NestjeZijbalk({
       ) : (
         <p className="nzijbalk-naam">{profielSlug ? <Link href={`/van/${profielSlug}`}>{naam}</Link> : naam}</p>
       )}
-      <span className="chip verkoper">{chipTekst}</span>
+      {toonChip && <span className="chip verkoper">{chipTekst}</span>}
       {gepersonaliseerd && tekst && <p className="nzijbalk-bio">{tekst}</p>}
       {sindsJaar && <p className="nzijbalk-feit">Fokt sinds {sindsJaar}</p>}
 

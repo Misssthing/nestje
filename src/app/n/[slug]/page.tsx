@@ -311,6 +311,22 @@ export default async function NestjesPagina({ params }: Props) {
             )}
           </section>
 
+          <div className="alleen-mobiel">
+            <NestjeZijbalk
+              naam={zijbalkNaam}
+              profielSlug={extra?.verkoper?.slug ?? profiel?.profiel_slug ?? null}
+              chipTekst={verkoperLabel}
+              sindsJaar={extra?.verkoper?.sinds_jaar ?? null}
+              vrijeKittens={vrijeKittens}
+              totaalKittens={kittens.length}
+              paginaUrl={paginaUrl}
+              whatsappDeelTekst={`Kijk eens naar het nestje van ${nest.moeder_naam} op Nestje:`}
+              foto={zijbalkFoto}
+              tekst={zijbalkTekst}
+              toonChip={false}
+            />
+          </div>
+
           {(nest.afgerond || (!a.verwacht && !wachtlijstOpen && kittens.length > 0)) && (
             <div className="afgerond-melding">
               <p style={{ margin: 0 }}>Alle kittens van dit nestje hebben een thuis gevonden.</p>
