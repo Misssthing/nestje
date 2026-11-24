@@ -293,6 +293,16 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
           )}
         </fieldset>
 
+        {soort === 'eigen' && (
+          <fieldset className="formblok">
+            <legend>Stamboom</legend>
+            <JaNee label="Hebben de kittens een stamboom?" waarde={stamboom} onChange={setStamboom} />
+            {stamboom !== true && (
+              <p className="hint">Fok je met stamboom, als cattery? Kies Ja: dan krijg je het label “Fokker”. Anders sta je als “Particulier”. Dit bepaalt ook hoe de rasvelden hieronder werken.</p>
+            )}
+          </fieldset>
+        )}
+
         <fieldset className="formblok">
           <legend>Over dit nestje <small className="opt">optioneel</small></legend>
           <label className="veld">
@@ -522,11 +532,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
 
         {soort === 'eigen' && (
           <fieldset className="formblok">
-            <legend>Stamboom en testen</legend>
-            <JaNee label="Hebben de kittens een stamboom?" waarde={stamboom} onChange={setStamboom} />
-            {stamboom !== true && (
-              <p className="hint">Fok je met stamboom, als cattery? Kies Ja: dan krijg je het label “Fokker”. Anders sta je als “Particulier”.</p>
-            )}
+            <legend>Stamboomgegevens en testen</legend>
             {stamboom === true && (
               <div className="stamboomblok">
                 <div className="labelcheck" role="status">
