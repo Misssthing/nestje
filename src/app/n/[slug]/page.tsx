@@ -270,7 +270,15 @@ export default async function NestjesPagina({ params }: Props) {
                     </span>
                   );
                 })}
-                {nest.stamboom === true && <span className="tag">Met stamboom</span>}
+                {nest.stamboom === true && (
+                  <span className="tag stamboom">
+                    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3l7 3v5c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6l7-3z" />
+                      <path d="M9 12l2 2 4-4" />
+                    </svg>
+                    Met stamboom
+                  </span>
+                )}
                 {nest.stamboom === false && <span className="tag">Zonder stamboom</span>}
                 {nest.vermoedelijk_ras && nest.stamboom !== true && (
                   <span className="tag vermoeden" title="Inschatting van de verkoper, niet bevestigd met stamboom">
