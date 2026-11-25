@@ -138,7 +138,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     // "Waarom vragen we dit" bij het veld): zonder chip valt de controle terug op de naam, en die
     // typ je zo net iets anders. Bij het allereerste nestje is er nog niets om te verwarren.
     if (soort === 'eigen' && !eersteNestje && !v.moeder_chip.trim())
-      return stop('Vul het chipnummer van de moeder in. Dat vinden we terug op haar paspoort of bij de dierenarts.');
+      return stop('Je hebt al een ander nestje bij Nestje staan, dus vragen we vanaf nu het chipnummer van de moeder: zo kunnen we moeders betrouwbaar uit elkaar houden, een naam typ je zo net iets anders. Je vindt het nummer op haar paspoort of bij de dierenarts.');
     // Registerlink, uitslag en de controle door Nestje blijven bewaard (de database bewaakt wie wat mag zetten)
     const schoon = (t: TestMetBewijs[]) =>
       t.filter((x) => x.test.trim()).map((x) => {
