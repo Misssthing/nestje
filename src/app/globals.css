@@ -136,7 +136,7 @@ img { max-width: 100%; display: block; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 12px; padding: 11px 14px; font-weight: 600; cursor: pointer; text-decoration: none; width: 100%; min-height: 44px; }
 .btn.primary { background: var(--ink); color: var(--bg); }
 .btn.accent { background: var(--ginger); color: var(--ginger-ink); }
-.btn.whatsapp { background: #25D366; color: #06210F; }
+.btn.whatsapp { background: #3F7A55; color: #fff; }
 .btn.ghost { background: transparent; border: 1px solid var(--line); color: var(--ink); }
 .btn.danger { background: transparent; border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent); color: var(--danger); }
 .btn.klein { width: auto; min-height: 36px; padding: 6px 12px; font-size: 15px; }
