@@ -213,7 +213,8 @@ export function mailVerwijderdVanWachtlijst(o: { naam: string; moeder: string })
       `Even een update voor je`,
       [
         `Hoi ${esc(o.naam)},`,
-        `De verkoper heeft de wachtlijst voor het nestje van ${esc(o.moeder)} gesloten. Dat betekent dat je er niet meer op staat, jammer genoeg kon het dit keer niet rond komen.`,
+        `Eerst nog bedankt voor je interesse in het nestje van ${esc(o.moeder)}!`,
+        `De verkoper heeft de wachtlijst inmiddels gesloten. Dat betekent dat je er niet meer op staat, jammer genoeg kon het dit keer niet rond komen.`,
         'Gelukkig komen er regelmatig nieuwe nestjes bij. In het overzicht vind je andere kittens die nog op zoek zijn naar een thuis.',
       ],
       { tekst: 'Bekijk andere nestjes', href: url('/kittens') },
