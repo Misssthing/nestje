@@ -418,20 +418,22 @@ details.panel[open] summary { margin-bottom: 12px; }
 .filterknoppen .btn { width: auto; }
 .wisfilters { font-size: 14px; color: var(--muted); }
 .overzicht-lijst .aantal { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
-/* Op mobiel eerst de nestjes laten zien, filters en ras-uitleg daaronder (desktop: sidebar, ongewijzigd).
+/* Op mobiel, alleen op de vaste ras-/provinciepagina's (.is-landing, bijv. /kittens/ragdoll): eerst de
+   nestjes laten zien, filters en ras-uitleg daaronder. Op de gewone /kittens-pagina (zelf zoeken/filteren)
+   blijft het filterformulier gewoon bovenaan staan. Desktop blijft in beide gevallen ongewijzigd (sidebar).
    Alleen een visuele herschikking (flex order): de volgorde in de broncode blijft voor Google ongemoeid. */
 @media (max-width: 1023.98px) {
-  .overzicht-grid > .filterbalk { order: 2; }
-  .overzicht-grid > .overzicht-lijst { order: 1; }
-  .overzicht-lijst { display: flex; flex-direction: column; }
-  .overzicht-lijst > .overzicht-kop { order: 1; }
-  .overzicht-lijst > .kaart-grid, .overzicht-lijst > .hint { order: 2; }
-  .overzicht-lijst > .ras-uitleg { order: 3; }
-  .overzicht-lijst > .wl-raspaneel,
-  .overzicht-lijst > .rastekst,
-  .overzicht-lijst > .zoeklinks,
-  .overzicht-lijst > .artikelen,
-  .overzicht-lijst > .panel { order: 4; }
+  .is-landing .overzicht-grid > .filterbalk { order: 2; }
+  .is-landing .overzicht-grid > .overzicht-lijst { order: 1; }
+  .is-landing .overzicht-lijst { display: flex; flex-direction: column; }
+  .is-landing .overzicht-lijst > .overzicht-kop { order: 1; }
+  .is-landing .overzicht-lijst > .kaart-grid, .is-landing .overzicht-lijst > .hint { order: 2; }
+  .is-landing .overzicht-lijst > .ras-uitleg { order: 3; }
+  .is-landing .overzicht-lijst > .wl-raspaneel,
+  .is-landing .overzicht-lijst > .rastekst,
+  .is-landing .overzicht-lijst > .zoeklinks,
+  .is-landing .overzicht-lijst > .artikelen,
+  .is-landing .overzicht-lijst > .panel { order: 4; }
 }
 @media (min-width: 1024px) {
   .wrap.breed { max-width: 1180px; }

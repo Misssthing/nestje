@@ -120,7 +120,7 @@ export default async function OverzichtPagina({ sp, landing }: { sp: Zoek; landi
     : null;
 
   return (
-    <main className="wrap breed">
+    <main className={`wrap breed${landing ? ' is-landing' : ''}`}>
       <Suspense fallback={null}>
         <OnthoudOverzicht />
       </Suspense>
