@@ -423,6 +423,15 @@ export default async function NestjesPagina({ params }: Props) {
             </section>
           )}
 
+          <details className="panel vertrouwen-uitleg">
+            <summary>Wat is gecontroleerd?</summary>
+            <ul>
+              <li><strong>Door Nestje:</strong> voordat een nestje hier verschijnt, bekijkt Nestje de gegevens kort. Dat is geen bezoek aan de verkoper en geen medische keuring van de kat.</li>
+              <li><strong>Nummers gecontroleerd:</strong> bij sommige catteries heeft Nestje de verkoper zelf nagekeken en zijn de stamboomnummers van moeder en vader ingevuld. Dat zie je dan verderop als label bij de fokker.</li>
+              <li><strong>Door de verkoper ingevuld:</strong> gegevens over gezondheid, vaccinaties, chip en afspraken zijn door de verkoper zelf ingevuld. Vraag er gerust naar, bijvoorbeeld naar het dierenpaspoort.</li>
+            </ul>
+          </details>
+
           <section className="mother">
             <h2 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {heeftVader ? 'De ouders' : `Over ${nest.moeder_naam}`}
