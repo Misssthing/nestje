@@ -72,9 +72,8 @@ const VRAGEN: { v: string; a: React.ReactNode }[] = [
     a: (
       <p>
         We bekijken elk nieuw nestje met de hand voordat het in het <Link href="/kittens">overzicht</Link> verschijnt,
-        en checken onder andere of de huisregels zijn gevolgd. Geeft een verkoper stamboomnummers van beide ouders op,
-        dan controleren we die ook op het juiste format en op dubbel gebruik bij andere verkopers — dat zie je terug
-        als het label "Nummers gecontroleerd".
+        en checken onder andere of de huisregels zijn gevolgd. Bij een cattery kijken we de verkoper zelf na, en vult
+        die ook de stamboomnummers van beide ouders in, dan zie je dat terug als het label "Nummers gecontroleerd".
       </p>
     ),
   },

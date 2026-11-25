@@ -99,7 +99,7 @@ export default function NestKaart({ n, klein = false }: { n: NestKaartData; klei
               </span>
             )}
             {n.catteryGecontroleerd && (
-              <span className="nkaart-badge gekeurd" title="De stamboomnummers zijn gecontroleerd op het juiste format en op dubbel gebruik bij andere verkopers">
+              <span className="nkaart-badge gekeurd" title="Nestje heeft deze verkoper nagekeken en de stamboomnummers van beide ouders zijn ingevuld">
                 <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="9" />
                   <path d="M8.5 12.2l2.3 2.3 4.7-4.9" />

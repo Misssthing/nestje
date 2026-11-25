@@ -548,7 +548,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
                     <p>Zonder deze drie staat je nestje er gewoon, maar als “Particulier” en zonder stamboomlabel.</p>
                   )}
                   <p className="labelcheck-extra">
-                    <strong>Tip: vul ook de stamboomnummers in.</strong> Dan controleren we ze op format en dubbel gebruik en krijgt je nestje het label
+                    <strong>Tip: vul ook de stamboomnummers in.</strong> Zodra wij je als cattery hebben nagekeken, krijgt je nestje dan het label
                     “Nummers gecontroleerd”, plus een plek bovenaan bij Catteries. De nummers zijn alleen zichtbaar voor Nestje, nooit voor kopers.
                   </p>
                 </div>

@@ -76,8 +76,9 @@ export default async function Catteries({ searchParams }: Props) {
         <section className="hero">
           <h1>Catteries</h1>
           <p>
-            Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Nummers gecontroleerd” hebben we de stamboomnummers
-            gecheckt op format en dubbel gebruik bij andere verkopers; bij de andere staan alleen de gegevens die de fokker zelf opgaf.
+            Fokkers met stamboom op Nestje, aangesloten bij een vereniging. Bij “Nummers gecontroleerd” heeft Nestje de
+            verkoper zelf nagekeken en zijn de stamboomnummers van beide ouders ingevuld; bij de andere staan alleen de
+            gegevens die de fokker zelf opgaf.
             Kom altijd eerst kijken, bij de kittens én hun moeder, en vraag naar de stamboompapieren.
           </p>
         </section>
