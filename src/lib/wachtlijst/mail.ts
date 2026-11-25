@@ -206,6 +206,21 @@ export function mailNestVol(o: {
   };
 }
 
+export function mailVerwijderdVanWachtlijst(o: { naam: string; moeder: string }) {
+  return {
+    onderwerp: `Een update over de wachtlijst van het nestje van ${o.moeder}`,
+    html: opmaak(
+      `Even een update voor je`,
+      [
+        `Hoi ${esc(o.naam)},`,
+        `De verkoper heeft de wachtlijst voor het nestje van ${esc(o.moeder)} gesloten. Dat betekent dat je er niet meer op staat, jammer genoeg kon het dit keer niet rond komen.`,
+        'Gelukkig komen er regelmatig nieuwe nestjes bij. In het overzicht vind je andere kittens die nog op zoek zijn naar een thuis.',
+      ],
+      { tekst: 'Bekijk andere nestjes', href: url('/kittens') },
+    ),
+  };
+}
+
 // ─── Mails aan kopers: raslijst ────────────────────────────────
 
 export function mailRasBevestigen(o: { naam: string; rassen: string[]; token: string; nieuwsbrief?: boolean }) {
