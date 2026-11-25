@@ -373,7 +373,7 @@ export default async function NestjesPagina({ params }: Props) {
                   <div className="cta">
                     {(k.status === 'vrij' || k.status === 'optie') && nest.heeft_whatsapp ? (
                       <a
-                        className="btn primary"
+                        className="btn whatsapp"
                         href={`/n/${nest.slug}/vraag/${k.id}`}
                         target="_blank"
                         rel="noopener nofollow"
