@@ -109,6 +109,7 @@ export default function NestKaart({ n, klein = false }: { n: NestKaartData; klei
             )}
           </div>
         )}
+        <span className="nkaart-bekijk" aria-hidden="true">Bekijk →</span>
       </div>
 
       <Link href={href} className="nkaart-tekst">

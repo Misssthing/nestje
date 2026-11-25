@@ -605,7 +605,21 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .nkaart-slide:active img, .nkaart-tekst:active { opacity: .6; }
 .nkaart-media > .nkaart-slide.leeg { position: absolute; inset: 0; }
 .nkaart-slide.leeg { background: linear-gradient(135deg, var(--free-bg), var(--opt-bg)); }
-.nkaart-slide img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.nkaart-slide img { display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; transition: transform .35s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .nkaart-media:hover .nkaart-slide img { transform: scale(1.05); }
+}
+.nkaart-bekijk {
+  position: absolute; right: 10px; bottom: 10px;
+  background: rgb(255 255 255 / .92); color: #1F2A24;
+  font-size: 13px; font-weight: 700; padding: 6px 13px; border-radius: 999px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / .18);
+  opacity: 0; transform: translateY(4px); transition: opacity .18s, transform .18s;
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nkaart-media:hover .nkaart-bekijk { opacity: 1; transform: translateY(0); }
+}
 .nkaart-pijl { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgb(255 255 255 / .92); color: #1F2A24; font-size: 24px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 8px rgb(0 0 0 / .18); opacity: 0; transition: opacity .15s; }
 .nkaart-pijl.links { left: 10px; }
 .nkaart-pijl.rechts { right: 10px; }
@@ -664,7 +678,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .artikel-tekst strong { font-size: 17px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
 .artikel-intro { font-size: 14.5px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .artikel-meta { font-size: 13px; color: var(--muted); margin-top: auto; padding-top: 4px; }
-@media (prefers-reduced-motion: reduce) { .nkaart, .artikel, .nkaart-stippen span { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .nkaart, .artikel, .nkaart-stippen span, .nkaart-slide img, .nkaart-bekijk { transition: none; } }
 @media (max-width: 520px) {
   .artikel-grid { gap: 12px; }
   .artikel { flex-direction: row; }
