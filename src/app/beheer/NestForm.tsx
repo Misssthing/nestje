@@ -639,7 +639,7 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
 }
 
 function JaNee({ label, waarde, onChange }: { label: string; waarde: boolean | null; onChange: (w: boolean | null) => void }) {
-  const opties: [boolean | null, string][] = [[true, 'Ja'], [false, 'Nee'], [null, 'Niet vermelden']];
+  const opties: [boolean | null, string][] = [[true, 'Ja'], [false, 'Nee'], [null, 'Nog niet gekozen']];
   return (
     <div className="veld">
       <span>{label}</span>
