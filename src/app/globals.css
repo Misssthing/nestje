@@ -756,7 +756,7 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .mini-stappen { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; counter-reset: m; }
 .mini-stappen li { counter-increment: m; font-size: 14px; padding: 4px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
 .mini-stappen li::before { content: counter(m) ". "; font-weight: 700; }
-.mini-stappen li.nu { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.mini-stappen li.nu { background: #3F7A55; color: #fff; border-color: #3F7A55; }
 
 /* Checklist in het beheer */
 .checklist { display: flex; flex-direction: column; gap: 14px; }
