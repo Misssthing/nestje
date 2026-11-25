@@ -71,7 +71,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
       </div>
       <section className="hero">
         <h1>{eerste ? 'Je nestje aanmaken' : 'Nieuw nestje'}</h1>
-                               <p>
+        <p>
           Vul drie gegevens in en je nestjespagina bestaat, met een eigen link — maar is nog niet compleet. Daarna vul
           je de rest aan, zoals foto&apos;s, gezondheidsgegevens en je WhatsApp-nummer, zodat 'm ook echt klaar is om te
           delen. Pas als dat compleet is en wij je nestje hebben bekeken, verschijnt het ook in het openbare overzicht.
@@ -130,7 +130,7 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
           de verhuizing, en verhuizen op zijn vroegst na 12 weken.
         </p>
         {fout && <p className="fout">{fout}</p>}
-        <button className="btn primary" disabled={bezig}>
+        <button className="btn groen" disabled={bezig}>
           {bezig ? 'Bezig…' : 'Nestje aanmaken'}
         </button>
       </form>
