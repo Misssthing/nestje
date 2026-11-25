@@ -71,10 +71,10 @@ export default function NieuwNestje({ eerste = false }: { eerste?: boolean }) {
       </div>
       <section className="hero">
         <h1>{eerste ? 'Je nestje aanmaken' : 'Nieuw nestje'}</h1>
-                       <p>
-          Vul drie gegevens in en je eigen nestjespagina staat klaar, met een link die je meteen kunt bekijken en delen.
-          Daarna loop je een checklist langs met wat er nog bij kan, zoals foto&apos;s, gezondheidsgegevens en je WhatsApp-nummer. Pas als dat
-          compleet is en wij je nestje hebben bekeken, verschijnt het ook in het openbare overzicht.
+                               <p>
+          Vul drie gegevens in en je nestjespagina bestaat, met een eigen link — maar is nog niet compleet. Daarna vul
+          je de rest aan, zoals foto&apos;s, gezondheidsgegevens en je WhatsApp-nummer, zodat 'm ook echt klaar is om te
+          delen. Pas als dat compleet is en wij je nestje hebben bekeken, verschijnt het ook in het openbare overzicht.
         </p>
         <ol className="mini-stappen" aria-label="Zo gaat het verder">
           <li className="nu">Nestje aanmaken</li>
