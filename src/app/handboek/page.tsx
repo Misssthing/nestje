@@ -123,8 +123,10 @@ export default function Handboek() {
       <p>
         <strong>Nestje stuurt automatisch mails</strong> bij elke stap: bevestiging van de aanmelding, een mail zodra
         jij een kitten aanbiedt, een mail bij ja of nee, en een herinnering als je zelf een tijdje niets hebt gedaan.
-        Is je nestje vol of rond je het af, dan krijgen de mensen die nog wachten automatisch een mail met een paar
-        andere nestjes van hetzelfde ras, van jou of van andere verkopers.
+        Is je nestje vol, of rond je het af? Dan krijgen de mensen die nog op de wachtlijst staan automatisch een
+        mail met een paar andere nestjes van hetzelfde ras — van jou, of van een andere verkoper. Hun status
+        verandert dan naar "Gesloten": ze blijven zichtbaar op je lijst (grijs), zodat je kunt terugzien wie er
+        stond, maar ze tellen niet meer mee als wachtend en krijgen verder geen mails meer over dit nestje.
       </p>
       <p>
         <strong>Belangrijk: Nestje stuurt zelf nooit een bericht namens jou, en heeft geen chatfunctie.</strong> De
@@ -133,7 +135,7 @@ export default function Handboek() {
         naar die koper — niet naar Nestje.
       </p>
       <p>
-        Hoorde iemand erbij via een ander kanaal, bijvoorbeeld WhatsApp, Marktplaats of gewoon mondeling? Voeg diegene
+        Kreeg iemand interesse via een ander kanaal, zoals WhatsApp, Marktplaats of gewoon mondeling? Voeg diegene
         dan zelf toe via “+ Zelf iemand toevoegen” onder je wachtlijst. Zo staat iedereen op dezelfde lijst, en kun je
         voor zo iemand later zelf direct een kitten reserveren. Zo'n handmatig toegevoegde persoon krijgt nooit mail
         van Nestje; het contact loopt dan helemaal via jou.
