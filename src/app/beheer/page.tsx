@@ -88,6 +88,7 @@ export default async function Overzicht() {
         <span className="brand">Nestje</span>
         <div style={{ display: 'flex', gap: 8 }}>
           <Link className="btn ghost klein" href="/kittens">Alle kittens</Link>
+          <a className="btn ghost klein" href="/handboek">Handboek</a>
           <a className="btn ghost klein" href="/hulp">Hulp</a>
           <form action="/auth/uitloggen" method="post">
             <button className="btn ghost klein">Uitloggen</button>

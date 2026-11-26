@@ -125,7 +125,10 @@ export default function Hulp() {
         <Link href="/" className="brand">Nestje</Link>
       </div>
       <h1>Hulp</h1>
-      <p>Antwoorden op de vragen die we het vaakst krijgen.</p>
+      <p>
+        Antwoorden op de vragen die we het vaakst krijgen. Wil je het hele proces rustig doorlopen, van inloggen tot
+        je eerste kitten die verhuist? Bekijk dan het <Link href="/handboek">handboek voor verkopers</Link>.
+      </p>
 
       <div className="lijst" style={{ marginTop: 22 }}>
         {VRAGEN.map(({ v, a }) => (
