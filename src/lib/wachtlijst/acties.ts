@@ -4,7 +4,7 @@ import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
   mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding,
   mailVerkoperOnafgemaakteNestje,
-  mailVerkoperReactie, mailVerkoperWachtlijstHerinnering, stuurMail,
+  mailVerkoperReactie, mailVerkoperWachtlijstHerinnering, mailVerwijderdVanWachtlijst, stuurMail,
 } from './mail';
 import { AANBOD_UREN, adminClient, ALLE_RASSEN, type Aanmelding, verkoperEmail } from './server';
 
@@ -17,9 +17,9 @@ type NestRij = {
 };
 type KittenRij = { id: string; nest_id: string; naam: string; geslacht: 'kater' | 'poes'; vacht: string | null; status: string; notitie?: string | null };
 export type WachtRij = {
-  id: string; nest_id: string; naam: string; email: string; woonplaats: string;
+  id: string; nest_id: string; naam: string; email: string | null; woonplaats: string;
   voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null;
-  motivatie: string | null;
+  motivatie: string | null; telefoon: string | null; notitie: string | null; handmatig: boolean;
   aangemeld_op: string; status: 'wachtend' | 'aangeboden' | 'geaccepteerd' | 'afgemeld' | 'gesloten';
   kitten_id: string | null; aanbod_verloopt_op: string | null; geweigerd_aantal: number; token: string;
   geboren_mail_op: string | null;
@@ -112,6 +112,37 @@ async function rijVanEigenaar(rijId: string, ownerId: string) {
   return { rij, nest };
 }
 
+/**
+ * Verkoper voegt zelf iemand toe die via een ander kanaal (WhatsApp, Marktplaats, mondeling)
+ * interesse toonde. Zo iemand heeft nooit zelf iets bij Nestje ingevuld: geen e-mailadres, dus
+ * ook nooit automatische mail van Nestje. De verkoper regelt het contact zelf.
+ */
+export async function toevoegenHandmatig(
+  nestId: string,
+  ownerId: string,
+  g: { naam: string; woonplaats: string; telefoon: string | null; notitie: string | null },
+) {
+  const nest = await haalNest(nestId);
+  if (!nest || nest.owner_id !== ownerId) return { fout: 'Dit nestje hoort niet bij jou.' };
+  if (!g.naam.trim()) return { fout: 'Vul een naam in.' };
+
+  const { error } = await db().from('wachtlijst').insert({
+    nest_id: nest.id,
+    naam: g.naam.trim(),
+    woonplaats: g.woonplaats.trim(),
+    telefoon: g.telefoon?.trim() || null,
+    notitie: g.notitie?.trim() || null,
+    email: null,
+    voorkeur_geslacht: 'geen',
+    handmatig: true,
+  });
+  if (error) {
+    console.error(error);
+    return { fout: 'Toevoegen lukte niet. Probeer het opnieuw.' };
+  }
+  return { ok: true };
+}
+
 export async function aanbieden(rijId: string, kittenId: string, ownerId: string) {
   const r = await rijVanEigenaar(rijId, ownerId);
   if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
@@ -132,12 +163,40 @@ export async function aanbieden(rijId: string, kittenId: string, ownerId: string
     await db().from('kittens').update({ status: 'vrij' }).eq('id', kitten.id).eq('status', 'optie');
     return { fout: 'Aanbieden lukte niet. Probeer het opnieuw.' };
   }
-  const m = mailAanbod({
-    naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kitten.naam,
-    omschrijving: kittenOmschrijving(kitten), token: r.rij.token, verlooptOp,
-    slug: r.nest.slug, kittenId: kitten.id, foto: await eersteFoto(kitten.id),
-  });
-  await stuurMail(r.rij.email, m.onderwerp, m.html);
+  if (r.rij.email) {
+    const m = mailAanbod({
+      naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kitten.naam,
+      omschrijving: kittenOmschrijving(kitten), token: r.rij.token, verlooptOp,
+      slug: r.nest.slug, kittenId: kitten.id, foto: await eersteFoto(kitten.id),
+    });
+    await stuurMail(r.rij.email, m.onderwerp, m.html);
+  }
+  return { ok: true };
+}
+
+/**
+ * Alleen voor zelf toegevoegde (handmatig) aanmeldingen: de verkoper regelt het contact al zelf,
+ * dus geen 72-uur-aanbod-met-mail, maar direct een kitten aan haar/hem geven.
+ */
+export async function reserverenHandmatig(rijId: string, kittenId: string, ownerId: string) {
+  const r = await rijVanEigenaar(rijId, ownerId);
+  if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
+  if (!r.rij.handmatig) return { fout: 'Deze actie is alleen voor zelf toegevoegde aanmeldingen.' };
+  if (r.rij.status !== 'wachtend') return { fout: 'Je kunt alleen iemand een kitten geven die nog wacht.' };
+
+  const { data: kitten } = await db()
+    .from('kittens').update({ status: 'gereserveerd' })
+    .eq('id', kittenId).eq('nest_id', r.nest.id).eq('status', 'vrij')
+    .select('id, naam').maybeSingle<{ id: string; naam: string }>();
+  if (!kitten) return { fout: 'Dit kitten is niet meer vrij. Ververs de pagina.' };
+
+  const { error } = await db()
+    .from('wachtlijst').update({ status: 'geaccepteerd', kitten_id: kitten.id, aanbod_verloopt_op: null })
+    .eq('id', r.rij.id).eq('status', 'wachtend');
+  if (error) {
+    await db().from('kittens').update({ status: 'vrij' }).eq('id', kitten.id).eq('status', 'gereserveerd');
+    return { fout: 'Reserveren lukte niet. Probeer het opnieuw.' };
+  }
   return { ok: true };
 }
 
@@ -169,19 +228,23 @@ export async function doorschuiven(rijId: string, naarNestId: string, ownerId: s
   if (!naar || naar.owner_id !== ownerId || naar.id === r.nest.id) return { fout: 'Kies een ander nestje van jezelf.' };
   if (!(await nestIsOpen(naar))) return { fout: 'Dat nestje neemt geen aanmeldingen meer aan.' };
 
-  const { count } = await db()
-    .from('wachtlijst').select('id', { count: 'exact', head: true })
-    .eq('nest_id', naar.id).eq('email', r.rij.email).in('status', ['wachtend', 'aangeboden', 'geaccepteerd']);
-  if (count) return { fout: `${r.rij.naam} staat al op de wachtlijst van dat nestje.` };
+  if (r.rij.email) {
+    const { count } = await db()
+      .from('wachtlijst').select('id', { count: 'exact', head: true })
+      .eq('nest_id', naar.id).eq('email', r.rij.email).in('status', ['wachtend', 'aangeboden', 'geaccepteerd']);
+    if (count) return { fout: `${r.rij.naam} staat al op de wachtlijst van dat nestje.` };
+  }
 
   // nest_id verandert, aangemeld_op blijft: de plek gaat mee.
   const { error } = await db()
     .from('wachtlijst').update({ nest_id: naar.id, geboren_mail_op: null }).eq('id', r.rij.id).eq('status', 'wachtend');
   if (error) return { fout: 'Doorschuiven lukte niet. Probeer het opnieuw.' };
-  const m = mailDoorgeschoven({
-    naam: r.rij.naam, vanMoeder: r.nest.moeder_naam, naarMoeder: naar.moeder_naam, naarSlug: naar.slug, token: r.rij.token,
-  });
-  await stuurMail(r.rij.email, m.onderwerp, m.html);
+  if (r.rij.email) {
+    const m = mailDoorgeschoven({
+      naam: r.rij.naam, vanMoeder: r.nest.moeder_naam, naarMoeder: naar.moeder_naam, naarSlug: naar.slug, token: r.rij.token,
+    });
+    await stuurMail(r.rij.email, m.onderwerp, m.html);
+  }
   return { ok: true };
 }
 
@@ -190,6 +253,10 @@ export async function verwijderen(rijId: string, ownerId: string) {
   if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
   if (r.rij.status === 'aangeboden') await aanbodTerug(r.rij, false);
   await db().from('wachtlijst').update({ status: 'afgemeld', gesloten_op: new Date().toISOString() }).eq('id', r.rij.id);
+  if (r.rij.email) {
+    const m = mailVerwijderdVanWachtlijst({ naam: r.rij.naam, moeder: r.nest.moeder_naam });
+    await stuurMail(r.rij.email, m.onderwerp, m.html);
+  }
   return { ok: true };
 }
 
@@ -217,10 +284,12 @@ export async function reserveringAnnuleren(rijId: string, ownerId: string, terug
     )
     .eq('id', r.rij.id);
 
-  const m = mailReserveringGeannuleerd({
-    naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kittenNaam, slug: r.nest.slug, token: r.rij.token, terugOpLijst,
-  });
-  await stuurMail(r.rij.email, m.onderwerp, m.html);
+  if (r.rij.email) {
+    const m = mailReserveringGeannuleerd({
+      naam: r.rij.naam, moeder: r.nest.moeder_naam, kitten: kittenNaam, slug: r.nest.slug, token: r.rij.token, terugOpLijst,
+    });
+    await stuurMail(r.rij.email, m.onderwerp, m.html);
+  }
   return { ok: true };
 }
 
@@ -253,11 +322,13 @@ export async function reageerOpAanbod(token: string, ja: boolean) {
       const notitie = `Via wachtlijst: ${rij.naam}, ${rij.woonplaats}, ${rij.email}`;
       await db().from('kittens').update({ notitie }).eq('id', kitten.id);
     }
-    const mk = mailGeaccepteerdKoper({ naam: rij.naam, moeder: nest.moeder_naam, kitten: kitten.naam, slug: nest.slug, verkoperEmail: ve });
-    await stuurMail(rij.email, mk.onderwerp, mk.html, ve ?? undefined);
+    if (rij.email) {
+      const mk = mailGeaccepteerdKoper({ naam: rij.naam, moeder: nest.moeder_naam, kitten: kitten.naam, slug: nest.slug, verkoperEmail: ve });
+      await stuurMail(rij.email, mk.onderwerp, mk.html, ve ?? undefined);
+    }
     if (ve) {
       const mv = mailVerkoperReactie({ nestId: nest.id, moeder: nest.moeder_naam, naam: rij.naam, kitten: kitten.naam, soort: 'ja' });
-      await stuurMail(ve, mv.onderwerp, mv.html, rij.email);
+      await stuurMail(ve, mv.onderwerp, mv.html, rij.email ?? undefined);
     }
     return { ok: true, kitten: kitten.naam };
   }
@@ -313,7 +384,7 @@ export async function geborenMails() {
     const { nest, aantal } = nesten.get(rij.nest_id)!;
     if (!nest || nest.geboortedatum > vandaag || aantal === 0) continue;
     // Alleen wie zich vóór de geboortedatum aanmeldde; anderen markeren we zonder mail.
-    if (rij.aangemeld_op.slice(0, 10) < nest.geboortedatum) {
+    if (rij.aangemeld_op.slice(0, 10) < nest.geboortedatum && rij.email) {
       const m = mailGeboren({ naam: rij.naam, moeder: nest.moeder_naam, slug: nest.slug, token: rij.token, aantal });
       await stuurMail(rij.email, m.onderwerp, m.html);
       n++;
@@ -364,8 +435,10 @@ export async function volMails() {
 
     const { data: rijen } = await db().from('wachtlijst').select('*').eq('nest_id', id).eq('status', 'wachtend').returns<WachtRij[]>();
     for (const rij of rijen ?? []) {
-      const m = mailNestVol({ naam: rij.naam, moeder: nest.moeder_naam, ras, alternatieven });
-      await stuurMail(rij.email, m.onderwerp, m.html);
+      if (rij.email) {
+        const m = mailNestVol({ naam: rij.naam, moeder: nest.moeder_naam, ras, alternatieven });
+        await stuurMail(rij.email, m.onderwerp, m.html);
+      }
       await db().from('wachtlijst').update({ status: 'gesloten', gesloten_op: new Date().toISOString() }).eq('id', rij.id);
       n++;
     }

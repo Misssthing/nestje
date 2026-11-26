@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
 type Rij = {
-  id: string; naam: string; email: string; woonplaats: string;
+  id: string; naam: string; email: string | null; woonplaats: string;
   voorkeur_geslacht: 'kater' | 'poes' | 'geen'; voorkeur_vacht: string | null;
-  motivatie: string | null;
+  motivatie: string | null; telefoon: string | null; notitie: string | null; handmatig: boolean;
   aangemeld_op: string; status: 'wachtend' | 'aangeboden' | 'geaccepteerd' | 'gesloten';
   kitten_id: string | null; aanbod_verloopt_op: string | null; geweigerd_aantal: number; via_ras_id: string | null;
 };
@@ -38,6 +38,12 @@ export default function WachtlijstBeheer({ nestId }: Props) {
   const [doorKeuze, setDoorKeuze] = useState<Record<string, string>>({});
   const [weg, setWeg] = useState<string | null>(null);
   const [annuleer, setAnnuleer] = useState<string | null>(null);
+  const [toevoegenOpen, setToevoegenOpen] = useState(false);
+  const [bezigToevoegen, setBezigToevoegen] = useState(false);
+  const [naamNieuw, setNaamNieuw] = useState('');
+  const [woonplaatsNieuw, setWoonplaatsNieuw] = useState('');
+  const [telefoonNieuw, setTelefoonNieuw] = useState('');
+  const [notitieNieuw, setNotitieNieuw] = useState('');
   // Via de link in een mail (#wachtlijst): blok openklappen en ernaartoe scrollen zodra het geladen is.
   const [viaLink, setViaLink] = useState(false);
   useEffect(() => {
@@ -81,7 +87,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) setFout(data.fout ?? 'Dat lukte niet. Probeer het opnieuw.');
-    else if (actie === 'aanbieden' || actie === 'intrekken' || actie === 'annuleren') {
+    else if (actie === 'aanbieden' || actie === 'reserveren_handmatig' || actie === 'intrekken' || actie === 'annuleren') {
       // De kittenkaarten bovenaan moeten de nieuwe status (Optie of Vrij) laten zien: pagina opnieuw laden.
       sessionStorage.setItem('wl-melding', gelukt);
       window.location.hash = 'wachtlijst';
@@ -92,6 +98,36 @@ export default function WachtlijstBeheer({ nestId }: Props) {
     setAnnuleer(null);
     await ophalen();
     setBezig(null);
+  }
+
+  async function voegToe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!naamNieuw.trim()) {
+      setFout('Vul een naam in.');
+      return;
+    }
+    setBezigToevoegen(true);
+    setFout('');
+    setMelding('');
+    const res = await fetch('/api/wachtlijst/beheer', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        actie: 'toevoegen', nestId, naam: naamNieuw, woonplaats: woonplaatsNieuw, telefoon: telefoonNieuw, notitie: notitieNieuw,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) setFout(data.fout ?? 'Toevoegen lukte niet. Probeer het opnieuw.');
+    else {
+      setMelding(`${naamNieuw} staat op de wachtlijst.`);
+      setNaamNieuw('');
+      setWoonplaatsNieuw('');
+      setTelefoonNieuw('');
+      setNotitieNieuw('');
+      setToevoegenOpen(false);
+      await ophalen();
+    }
+    setBezigToevoegen(false);
   }
 
   const vrij = kittens.filter((k) => k.status === 'vrij');
@@ -106,11 +142,50 @@ export default function WachtlijstBeheer({ nestId }: Props) {
       </summary>
       <p className="hint" style={{ marginTop: 0 }}>
         Kopers melden zich aan via de knop op je nestjespagina. Jij kiest wie een kitten krijgt aangeboden. De koper heeft
-        dan 72 uur om ja of nee te zeggen en krijgt alle mails automatisch.
+        dan 72 uur om ja of nee te zeggen en krijgt alle mails automatisch. Hoort iemand er via een ander kanaal bij
+        (WhatsApp, Marktplaats, mondeling)? Voeg diegene dan hieronder zelf toe, dan staat iedereen op dezelfde lijst.
       </p>
 
       {fout && <p className="fout" role="alert">{fout}</p>}
       {melding && <p className="toast-melding" role="status">{melding}</p>}
+
+      {toevoegenOpen ? (
+        <form className="wl-toevoegen" onSubmit={voegToe}>
+          <div className="row stapel">
+            <label className="veld">
+              <span>Naam</span>
+              <input value={naamNieuw} onChange={(e) => setNaamNieuw(e.target.value)} maxLength={60} required />
+            </label>
+            <label className="veld">
+              <span>Woonplaats</span>
+              <input value={woonplaatsNieuw} onChange={(e) => setWoonplaatsNieuw(e.target.value)} maxLength={80} />
+            </label>
+          </div>
+          <div className="row stapel">
+            <label className="veld">
+              <span>Telefoonnummer (optioneel)</span>
+              <input value={telefoonNieuw} onChange={(e) => setTelefoonNieuw(e.target.value)} maxLength={30} />
+            </label>
+            <label className="veld">
+              <span>Aantekening (optioneel, alleen voor jou)</span>
+              <input value={notitieNieuw} onChange={(e) => setNotitieNieuw(e.target.value)} maxLength={500} />
+            </label>
+          </div>
+          <p className="hint">
+            Deze persoon krijgt geen mail van Nestje: jij regelt het contact zelf en reserveert later rechtstreeks een
+            kitten voor hem of haar.
+          </p>
+          <div className="actions">
+            <button className="btn primary klein" disabled={bezigToevoegen}>
+              {bezigToevoegen ? 'Bezig…' : 'Toevoegen'}
+            </button>
+            <button type="button" className="btn ghost klein" onClick={() => setToevoegenOpen(false)}>Annuleren</button>
+          </div>
+        </form>
+      ) : (
+        <button className="linkknop" onClick={() => setToevoegenOpen(true)}>+ Zelf iemand toevoegen</button>
+      )}
+
       {laden && <p className="hint">Laden…</p>}
       {!laden && rijen.length === 0 && <p className="hint">Nog niemand op de wachtlijst.</p>}
 
@@ -126,16 +201,19 @@ export default function WachtlijstBeheer({ nestId }: Props) {
                   <strong>{r.naam}</strong>
                   <span>{r.woonplaats} · aangemeld {datum(r.aangemeld_op)}</span>
                 </div>
+                {r.handmatig && <span className="chip verkoper">Zelf toegevoegd</span>}
                 <span className={`chip ${kleur}`}>{label}</span>
               </div>
 
               <div className="wl-info">
-                <a href={`mailto:${r.email}`}>{r.email}</a>
+                {r.email && <a href={`mailto:${r.email}`}>{r.email}</a>}
+                {r.telefoon && <a href={`tel:${r.telefoon}`}>{r.telefoon}</a>}
                 {voorkeur && <span>Voorkeur: {voorkeur}</span>}
                 {r.via_ras_id && <span>Via de raslijst</span>}
                 {r.geweigerd_aantal > 0 && <span>{r.geweigerd_aantal}× nee gezegd</span>}
               </div>
               {r.motivatie && <p className="wl-motivatie">{r.motivatie}</p>}
+              {r.notitie && <p className="wl-motivatie">Aantekening: {r.notitie}</p>}
 
               {r.status === 'aangeboden' && (
                 <div className="wl-acties">
@@ -196,16 +274,26 @@ export default function WachtlijstBeheer({ nestId }: Props) {
                           <option key={k.id} value={k.id}>{k.naam} ({k.geslacht})</option>
                         ))}
                       </select>
-                      <button
-                        className="btn primary klein"
-                        disabled={!keuze[r.id] || bezig === r.id}
-                        onClick={() => doe(r, 'aanbieden', { kittenId: keuze[r.id] }, `${r.naam} krijgt een mail met het aanbod.`)}
-                      >
-                        Bied aan
-                      </button>
+                      {r.handmatig ? (
+                        <button
+                          className="btn primary klein"
+                          disabled={!keuze[r.id] || bezig === r.id}
+                          onClick={() => doe(r, 'reserveren_handmatig', { kittenId: keuze[r.id] }, `${r.naam} heeft ${kittenNaam(keuze[r.id])} gekregen.`)}
+                        >
+                          Geef dit kitten
+                        </button>
+                      ) : (
+                        <button
+                          className="btn primary klein"
+                          disabled={!keuze[r.id] || bezig === r.id}
+                          onClick={() => doe(r, 'aanbieden', { kittenId: keuze[r.id] }, `${r.naam} krijgt een mail met het aanbod.`)}
+                        >
+                          Bied aan
+                        </button>
+                      )}
                     </span>
                   ) : (
-                    <span className="hint">Geen kittens vrij om aan te bieden.</span>
+                    <span className="hint">Geen kittens vrij om {r.handmatig ? 'te geven' : 'aan te bieden'}.</span>
                   )}
 
                   {anderen.length > 0 && (

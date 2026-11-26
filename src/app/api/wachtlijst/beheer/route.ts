@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { aanbieden, doorschuiven, reserveringAnnuleren, haalNest, intrekken, nestIsOpen, verlopenAanbiedingen, verwijderen, type WachtRij } from '@/lib/wachtlijst/acties';
+import {
+  aanbieden, doorschuiven, reserveringAnnuleren, reserverenHandmatig, haalNest, intrekken, nestIsOpen,
+  toevoegenHandmatig, verlopenAanbiedingen, verwijderen, type WachtRij,
+} from '@/lib/wachtlijst/acties';
 import { createClient } from '@/lib/supabase/server';
 import { adminClient, isUuid } from '@/lib/wachtlijst/server';
 
@@ -27,7 +30,7 @@ export async function GET(req: Request) {
   const db = adminClient();
   const [{ data: rijen }, { data: kittens }, { data: nesten }] = await Promise.all([
     db.from('wachtlijst')
-      .select('id, naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, motivatie, aangemeld_op, status, kitten_id, aanbod_verloopt_op, geweigerd_aantal, via_ras_id')
+      .select('id, naam, email, woonplaats, voorkeur_geslacht, voorkeur_vacht, motivatie, telefoon, notitie, handmatig, aangemeld_op, status, kitten_id, aanbod_verloopt_op, geweigerd_aantal, via_ras_id')
       .eq('nest_id', nest.id).neq('status', 'afgemeld').order('aangemeld_op'),
     db.from('kittens').select('id, naam, geslacht, status').eq('nest_id', nest.id).order('volgorde'),
     db.from('nests').select('id, slug, moeder_naam, geboortedatum, verhuisleeftijd_weken, afgerond, verborgen, owner_id, moeder_ras, vader_ras, stamboom, whatsapp_nummer')
@@ -38,16 +41,28 @@ export async function GET(req: Request) {
   return NextResponse.json({ rijen: (rijen ?? []) as Partial<WachtRij>[], kittens: kittens ?? [], anderen });
 }
 
-/** Acties van de verkoper: aanbieden, intrekken, doorschuiven, verwijderen, reservering annuleren. */
+/**
+ * Acties van de verkoper: aanbieden, intrekken, doorschuiven, verwijderen, reservering annuleren,
+ * zelf iemand toevoegen en (voor zo iemand) direct een kitten reserveren.
+ */
 export async function POST(req: Request) {
   const user = await verkoper();
   if (!user) return nee('Log opnieuw in.', 401);
   const body = await req.json().catch(() => ({}));
-  const { actie, rijId, kittenId, naarNestId, terug } = body as Record<string, string>;
-  if (!isUuid(rijId ?? '')) return nee('Onbekende aanmelding.');
+  const { actie, rijId, kittenId, naarNestId, terug, nestId, naam, woonplaats, telefoon, notitie } = body as Record<string, string>;
 
   let r: { ok?: boolean; fout?: string };
+  if (actie === 'toevoegen') {
+    if (!isUuid(nestId ?? '')) return nee('Onbekend nestje.');
+    r = await toevoegenHandmatig(nestId, user.id, {
+      naam: naam ?? '', woonplaats: woonplaats ?? '', telefoon: telefoon || null, notitie: notitie || null,
+    });
+    return r.fout ? nee(r.fout) : NextResponse.json({ ok: true });
+  }
+
+  if (!isUuid(rijId ?? '')) return nee('Onbekende aanmelding.');
   if (actie === 'aanbieden' && isUuid(kittenId ?? '')) r = await aanbieden(rijId, kittenId, user.id);
+  else if (actie === 'reserveren_handmatig' && isUuid(kittenId ?? '')) r = await reserverenHandmatig(rijId, kittenId, user.id);
   else if (actie === 'intrekken') r = await intrekken(rijId, user.id);
   else if (actie === 'doorschuiven' && isUuid(naarNestId ?? '')) r = await doorschuiven(rijId, naarNestId, user.id);
   else if (actie === 'verwijderen') r = await verwijderen(rijId, user.id);
