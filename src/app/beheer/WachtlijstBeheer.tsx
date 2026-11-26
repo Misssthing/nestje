@@ -145,6 +145,8 @@ export default function WachtlijstBeheer({ nestId }: Props) {
         Kopers melden zich aan via de knop op je nestjespagina. Jij kiest wie een kitten krijgt aangeboden. De koper heeft
         dan 72 uur om ja of nee te zeggen en krijgt alle mails automatisch. Hoort iemand er via een ander kanaal bij
         (WhatsApp, Marktplaats, mondeling)? Voeg diegene dan hieronder zelf toe, dan staat iedereen op dezelfde lijst.
+        De mail- en WhatsApp-linkjes bij elke naam openen steeds je eigen mailprogramma of WhatsApp: Nestje zelf stuurt
+        daar niets, dat doe jij zelf.
       </p>
 
       {fout && <p className="fout" role="alert">{fout}</p>}
@@ -331,7 +333,9 @@ export default function WachtlijstBeheer({ nestId }: Props) {
 
                   {weg === r.id ? (
                     <span className="wl-groep">
-                      <span>{r.naam} van de lijst halen?</span>
+                      <span>
+                        {r.naam} van de lijst halen?{r.handmatig ? '' : ` ${r.naam} krijgt hier automatisch een mail van.`}
+                      </span>
                       <button className="btn ghost klein" disabled={bezig === r.id} onClick={() => doe(r, 'verwijderen', {}, `${r.naam} staat niet meer op je wachtlijst.`)}>
                         Ja, verwijderen
                       </button>
