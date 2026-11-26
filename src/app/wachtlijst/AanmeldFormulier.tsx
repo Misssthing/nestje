@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useActionState } from 'react';
 import type { FormStaat } from './acties';
+import { voorstelEmail } from '@/lib/email-typo';
 import { NIEUWSBRIEF_VINKTEKST } from '@/lib/nieuwsbrief-tekst';
 import { ALLE_RASSEN } from '@/lib/wachtlijst/rassen';
 
@@ -36,6 +37,8 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
     : undefined;
   const w = { ...waarden, ...(staat.waarden ?? {}), rassen: foutRassen ?? waarden.rassen };
   const [alleRassen, setAlleRassen] = useState((w.rassen ?? []).includes(ALLE_RASSEN));
+  const [email, setEmail] = useState(w.email ?? '');
+  const [emailSuggestie, setEmailSuggestie] = useState<string | null>(null);
 
   if (staat.klaar) {
     return (
@@ -95,9 +98,30 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
         <span>E-mailadres</span>
         <input
           id="wl-email" name="email" type="email" inputMode="email" autoComplete="email"
-          defaultValue={w.email ?? ''} maxLength={200} required readOnly={emailVast}
+          value={email} maxLength={200} required readOnly={emailVast}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setEmailSuggestie(null);
+          }}
+          onBlur={() => setEmailSuggestie(voorstelEmail(email))}
         />
         {emailVast && <p className="hint">Ander e-mailadres? Meld je af en meld je opnieuw aan.</p>}
+        {emailSuggestie && (
+          <p className="hint">
+            Bedoel je{' '}
+            <button
+              type="button"
+              className="linkknop"
+              onClick={() => {
+                setEmail(emailSuggestie);
+                setEmailSuggestie(null);
+              }}
+            >
+              {emailSuggestie}
+            </button>
+            ?
+          </p>
+        )}
       </label>
 
       {telefoon && (
