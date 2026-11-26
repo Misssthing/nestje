@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import {
-  aanbieden, doorschuiven, reserveringAnnuleren, reserverenHandmatig, haalNest, intrekken, nestIsOpen,
+  aanbieden, doorschuiven, notitieWijzigen, reserveringAnnuleren, reserverenHandmatig, haalNest, intrekken, nestIsOpen,
   toevoegenHandmatig, verlopenAanbiedingen, verwijderen, type WachtRij,
 } from '@/lib/wachtlijst/acties';
 import { createClient } from '@/lib/supabase/server';
@@ -67,6 +67,7 @@ export async function POST(req: Request) {
   else if (actie === 'doorschuiven' && isUuid(naarNestId ?? '')) r = await doorschuiven(rijId, naarNestId, user.id);
   else if (actie === 'verwijderen') r = await verwijderen(rijId, user.id);
   else if (actie === 'annuleren') r = await reserveringAnnuleren(rijId, user.id, terug === 'ja');
+  else if (actie === 'notitie_wijzigen') r = await notitieWijzigen(rijId, user.id, notitie ?? null);
   else return nee('Onbekende actie.');
 
   return r.fout ? nee(r.fout) : NextResponse.json({ ok: true });

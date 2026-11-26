@@ -251,6 +251,14 @@ export async function doorschuiven(rijId: string, naarNestId: string, ownerId: s
   return { ok: true };
 }
 
+/** Verkoper schrijft of wijzigt zijn eigen aantekening bij iemand op de wachtlijst. Alleen voor de verkoper zichtbaar. */
+export async function notitieWijzigen(rijId: string, ownerId: string, notitie: string | null) {
+  const r = await rijVanEigenaar(rijId, ownerId);
+  if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };
+  await db().from('wachtlijst').update({ notitie: notitie?.trim() || null }).eq('id', r.rij.id);
+  return { ok: true };
+}
+
 export async function verwijderen(rijId: string, ownerId: string) {
   const r = await rijVanEigenaar(rijId, ownerId);
   if (!r) return { fout: 'Deze aanmelding hoort niet bij jouw nestjes.' };

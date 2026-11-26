@@ -588,11 +588,12 @@ summary.aanpassen small { display: block; font-weight: 400; font-size: 13px; col
 .wl-whatsapp { color: var(--free); font-weight: 600; }
 .wl-motivatie { margin: 0; padding-left: 38px; font-size: 15px; white-space: pre-line; }
 .wl-acties { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-left: 38px; font-size: 15px; }
+.wl-rij .veld.notitie { padding-left: 38px; }
 .wl-groep { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .wl-groep select { max-width: 100%; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
 .linkknop { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; cursor: pointer; font-size: 14px; }
 @media (max-width: 480px) {
-  .wl-info, .wl-motivatie, .wl-acties { padding-left: 0; }
+  .wl-info, .wl-motivatie, .wl-acties, .wl-rij .veld.notitie { padding-left: 0; }
 }
 
 /* ─── Fotokaarten, andere nestjes en artikelen (uitbreiding 20) ─── */

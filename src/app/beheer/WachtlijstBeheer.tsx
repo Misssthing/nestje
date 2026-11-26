@@ -37,6 +37,7 @@ export default function WachtlijstBeheer({ nestId }: Props) {
   const [melding, setMelding] = useState('');
   const [keuze, setKeuze] = useState<Record<string, string>>({});
   const [doorKeuze, setDoorKeuze] = useState<Record<string, string>>({});
+  const [notitieWaarden, setNotitieWaarden] = useState<Record<string, string>>({});
   const [weg, setWeg] = useState<string | null>(null);
   const [annuleer, setAnnuleer] = useState<string | null>(null);
   const [toevoegenOpen, setToevoegenOpen] = useState(false);
@@ -62,6 +63,12 @@ export default function WachtlijstBeheer({ nestId }: Props) {
       setRijen(data.rijen);
       setKittens(data.kittens);
       setAnderen(data.anderen);
+      // Alleen nieuwe rijen toevoegen: een aantekening die iemand nog aan het typen is niet overschrijven.
+      setNotitieWaarden((huidig) => {
+        const nieuw = { ...huidig };
+        for (const rij of (data.rijen ?? []) as Rij[]) if (!(rij.id in nieuw)) nieuw[rij.id] = rij.notitie ?? '';
+        return nieuw;
+      });
     }
     setLaden(false);
   }, [nestId]);
@@ -99,6 +106,22 @@ export default function WachtlijstBeheer({ nestId }: Props) {
     setAnnuleer(null);
     await ophalen();
     setBezig(null);
+  }
+
+  async function bewaarNotitie(rij: Rij) {
+    const n = (notitieWaarden[rij.id] ?? '').trim();
+    if (n === (rij.notitie ?? '')) return;
+    const res = await fetch('/api/wachtlijst/beheer', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ actie: 'notitie_wijzigen', rijId: rij.id, notitie: n }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setFout(data.fout ?? 'Aantekening opslaan lukte niet.');
+      return;
+    }
+    setRijen((s) => s.map((r) => (r.id === rij.id ? { ...r, notitie: n || null } : r)));
   }
 
   async function voegToe(e: React.FormEvent) {
@@ -225,7 +248,17 @@ export default function WachtlijstBeheer({ nestId }: Props) {
                 {r.geweigerd_aantal > 0 && <span>{r.geweigerd_aantal}× nee gezegd</span>}
               </div>
               {r.motivatie && <p className="wl-motivatie">{r.motivatie}</p>}
-              {r.notitie && <p className="wl-motivatie">Aantekening: {r.notitie}</p>}
+              <label className="veld notitie" style={{ margin: 0 }}>
+                <span>Aantekening, alleen jij ziet dit</span>
+                <textarea
+                  value={notitieWaarden[r.id] ?? ''}
+                  maxLength={500}
+                  rows={2}
+                  placeholder="Bijv. gebeld op 3 nov, wil liever wachten op een kater"
+                  onChange={(e) => setNotitieWaarden((s) => ({ ...s, [r.id]: e.target.value }))}
+                  onBlur={() => bewaarNotitie(r)}
+                />
+              </label>
 
               {r.status === 'aangeboden' && (
                 <div className="wl-acties">
