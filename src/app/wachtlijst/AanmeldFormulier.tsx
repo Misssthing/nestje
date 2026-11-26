@@ -9,7 +9,7 @@ import { ALLE_RASSEN } from '@/lib/wachtlijst/rassen';
 type Waarden = {
   naam?: string; email?: string; woonplaats?: string;
   voorkeur_geslacht?: string; voorkeur_vacht?: string | null;
-  motivatie?: string | null; rassen?: string[];
+  motivatie?: string | null; telefoon?: string | null; rassen?: string[];
 };
 
 type Props = {
@@ -25,9 +25,11 @@ type Props = {
   uitleg?: string;
   /** Toon het vinkje voor de nieuwsbrief (alleen bij een nieuwe aanmelding) */
   nieuwsbrief?: boolean;
+  /** Toon een optioneel telefoonnummerveld (alleen bij de wachtlijst van één nestje, niet de raslijst) */
+  telefoon?: boolean;
 };
 
-export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, waarden = {}, emailVast, uitleg, nieuwsbrief }: Props) {
+export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, waarden = {}, emailVast, uitleg, nieuwsbrief, telefoon }: Props) {
   const [staat, verstuur, bezig] = useActionState(actie, {});
   const foutRassen = staat.waarden?.rassen !== undefined
     ? staat.waarden.rassen.split(',').filter(Boolean)
@@ -97,6 +99,17 @@ export default function AanmeldFormulier({ actie, verborgen = {}, knop, rassen, 
         />
         {emailVast && <p className="hint">Ander e-mailadres? Meld je af en meld je opnieuw aan.</p>}
       </label>
+
+      {telefoon && (
+        <label className="veld">
+          <span>Telefoonnummer <small className="opt">optioneel</small></span>
+          <input
+            id="wl-telefoon" name="telefoon" type="tel" inputMode="tel" autoComplete="tel"
+            defaultValue={w.telefoon ?? ''} maxLength={30} placeholder="06 12345678"
+          />
+          <p className="hint">Zodat de verkoper je ook via WhatsApp kan bereiken, naast e-mail.</p>
+        </label>
+      )}
 
       <fieldset className="veld wl-voorkeur">
         <legend>Voorkeur</legend>

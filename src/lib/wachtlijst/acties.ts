@@ -1,5 +1,5 @@
 import { fotoUrl } from '@/lib/config';
-import { aftelling, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
+import { aftelling, normaliseerNummer, prijsNL, rasDelen, vandaagISO } from '@/lib/nest';
 import {
   mailAanbod, mailAanmeldingOntvangen, mailDoorgeschoven, mailGeaccepteerdKoper, mailGeboren, mailNestVol,
   mailNieuwNestRas, mailRasHerinnering, mailReserveringGeannuleerd, mailVerkoperNieuweAanmelding,
@@ -71,7 +71,7 @@ export async function eersteFoto(kittenId: string) {
 
 // ─── Koper meldt zich aan voor een nestje ───────────────────────
 
-export async function aanmeldenVoorNest(nest: NestRij, g: Aanmelding, viaRasId?: string) {
+export async function aanmeldenVoorNest(nest: NestRij, g: Aanmelding, viaRasId?: string, telefoon?: string | null) {
   if (!(await nestIsOpen(nest))) return { fout: 'Dit nestje neemt geen aanmeldingen meer aan. Alle kittens hebben al een plek.' };
 
   const { data: bestaand } = await db()
@@ -81,7 +81,7 @@ export async function aanmeldenVoorNest(nest: NestRij, g: Aanmelding, viaRasId?:
   if (bestaand) return { token: bestaand.token, alBekend: true };
 
   const { data, error } = await db()
-    .from('wachtlijst').insert({ nest_id: nest.id, ...g, via_ras_id: viaRasId ?? null })
+    .from('wachtlijst').insert({ nest_id: nest.id, ...g, telefoon: telefoon ?? null, via_ras_id: viaRasId ?? null })
     .select('token').single<{ token: string }>();
   if (error || !data) {
     console.error(error);
@@ -125,12 +125,15 @@ export async function toevoegenHandmatig(
   const nest = await haalNest(nestId);
   if (!nest || nest.owner_id !== ownerId) return { fout: 'Dit nestje hoort niet bij jou.' };
   if (!g.naam.trim()) return { fout: 'Vul een naam in.' };
+  const telRuw = g.telefoon?.trim() ?? '';
+  const telefoon = telRuw ? normaliseerNummer(telRuw) : null;
+  if (telRuw && !telefoon) return { fout: 'Dit telefoonnummer klopt niet. Gebruik bijvoorbeeld 06 12345678.' };
 
   const { error } = await db().from('wachtlijst').insert({
     nest_id: nest.id,
     naam: g.naam.trim(),
     woonplaats: g.woonplaats.trim(),
-    telefoon: g.telefoon?.trim() || null,
+    telefoon,
     notitie: g.notitie?.trim() || null,
     email: null,
     voorkeur_geslacht: 'geen',

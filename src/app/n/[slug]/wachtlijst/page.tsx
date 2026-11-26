@@ -60,6 +60,7 @@ export default async function WachtlijstNest({ params }: Props) {
             verborgen={{ slug: nest.slug }}
             knop="Aanmelden"
             nieuwsbrief
+            telefoon
             uitleg="De verkoper ziet je naam, e-mailadres, woonplaats en wat je hierboven invult, maar niet of je de nieuwsbrief wilt. Lees ook onze privacyverklaring."
           />
           <p className="hint">

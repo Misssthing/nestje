@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { toonNummer } from '@/lib/nest';
 
 type Rij = {
   id: string; naam: string; email: string | null; woonplaats: string;
@@ -207,7 +208,16 @@ export default function WachtlijstBeheer({ nestId }: Props) {
 
               <div className="wl-info">
                 {r.email && <a href={`mailto:${r.email}`}>{r.email}</a>}
-                {r.telefoon && <a href={`tel:${r.telefoon}`}>{r.telefoon}</a>}
+                {r.telefoon && (
+                  <a
+                    className="wl-whatsapp"
+                    href={`https://wa.me/${r.telefoon}?text=${encodeURIComponent(`Hoi ${r.naam.split(' ')[0]}, `)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp · {toonNummer(r.telefoon)}
+                  </a>
+                )}
                 {voorkeur && <span>Voorkeur: {voorkeur}</span>}
                 {r.via_ras_id && <span>Via de raslijst</span>}
                 {r.geweigerd_aantal > 0 && <span>{r.geweigerd_aantal}× nee gezegd</span>}

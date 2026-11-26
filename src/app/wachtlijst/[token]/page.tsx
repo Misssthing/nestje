@@ -116,6 +116,7 @@ export default async function MijnAanmelding({ params, searchParams }: Props) {
               verborgen={{ token }}
               knop="Opslaan"
               emailVast
+              telefoon
               waarden={{ ...rij, email: rij.email ?? '' }}
             />
           </details>

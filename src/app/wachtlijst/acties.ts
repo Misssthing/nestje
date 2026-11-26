@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { normaliseerNummer } from '@/lib/nest';
 import { aanmeldenVoorNest, haalNestOpSlug, reageerOpAanbod, type WachtRij } from '@/lib/wachtlijst/acties';
 import { mailRasBevestigen, stuurMail } from '@/lib/wachtlijst/mail';
 import { ALLE_RASSEN, adminClient, isBot, isUuid, leesAanmelding, rassenOpsomming, RASLIJST_RASSEN } from '@/lib/wachtlijst/server';
@@ -24,12 +25,21 @@ const terug = (f: FormData, fout: string): FormStaat => ({
   fout,
   waarden: {
     ...Object.fromEntries(
-      ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'nieuwsbrief']
+      ['naam', 'email', 'woonplaats', 'voorkeur_geslacht', 'voorkeur_vacht', 'motivatie', 'telefoon', 'nieuwsbrief']
         .map((k) => [k, String(f.get(k) ?? '')]),
     ),
     rassen: f.getAll('rassen').map(String).join(','),
   },
 });
+
+/** Telefoonnummer uit het formulier: optioneel, maar als het is ingevuld moet het wel kloppen. */
+function leesTelefoon(f: FormData): { telefoon?: string | null; fout?: string } {
+  const ruw = String(f.get('telefoon') ?? '').trim();
+  if (!ruw) return { telefoon: null };
+  const telefoon = normaliseerNummer(ruw);
+  if (!telefoon) return { fout: 'Dit telefoonnummer klopt niet. Gebruik bijvoorbeeld 06 12345678.' };
+  return { telefoon };
+}
 
 // ─── Nestlijst ──────────────────────────────────────────────────
 
@@ -37,9 +47,11 @@ export async function meldAanVoorNest(_: FormStaat, f: FormData): Promise<FormSt
   if (isBot(f)) return { klaar: 'Bedankt voor je aanmelding.' };
   const { gegevens, fout } = leesAanmelding(f);
   if (!gegevens) return terug(f, fout!);
+  const { telefoon, fout: telefoonFout } = leesTelefoon(f);
+  if (telefoonFout) return terug(f, telefoonFout);
   const nest = await haalNestOpSlug(String(f.get('slug') ?? ''));
   if (!nest) return terug(f, 'Dit nestje bestaat niet meer.');
-  const r = await aanmeldenVoorNest(nest, gegevens);
+  const r = await aanmeldenVoorNest(nest, gegevens, undefined, telefoon);
   if (r.fout) return terug(f, r.fout);
   // Nieuwsbrief: alleen met het vinkje aan. De koper krijgt een aparte mail om dit te bevestigen.
   if (f.get('nieuwsbrief') === 'ja') {
@@ -54,9 +66,11 @@ export async function wijzigNestAanmelding(_: FormStaat, f: FormData): Promise<F
   if (!isUuid(token)) return { fout: 'Deze link klopt niet.' };
   const { gegevens, fout } = leesAanmelding(f);
   if (!gegevens) return terug(f, fout!);
+  const { telefoon, fout: telefoonFout } = leesTelefoon(f);
+  if (telefoonFout) return terug(f, telefoonFout);
   const rest = zonderEmail(gegevens); // e-mail blijft gelijk
   const { error } = await adminClient()
-    .from('wachtlijst').update(rest).eq('token', token).in('status', ['wachtend', 'aangeboden', 'geaccepteerd']);
+    .from('wachtlijst').update({ ...rest, telefoon }).eq('token', token).in('status', ['wachtend', 'aangeboden', 'geaccepteerd']);
   if (error) return terug(f, 'Opslaan lukte niet. Probeer het opnieuw.');
   return { klaar: 'Je gegevens zijn opgeslagen.' };
 }
