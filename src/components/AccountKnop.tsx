@@ -25,7 +25,7 @@ export default function AccountKnop({ metNieuw = false }: { metNieuw?: boolean }
   }
   return (
     <span className="accountknoppen">
-      <Link href="/login" className="inloglink">
+      <Link href="/login?terug=1" className="inloglink">
         Inloggen
       </Link>
       {metNieuw && (

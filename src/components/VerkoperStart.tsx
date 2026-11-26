@@ -5,7 +5,9 @@ import LoginForm from '@/app/login/LoginForm';
  * Startpagina voor verkopers: aanmelden of inloggen, plus uitleg over hoe Nestje werkt.
  * Staat op /login (inloggen) en /verkopen (uitleg voor nieuwe verkopers).
  */
-export default function VerkoperStart({ ingelogd = false, fout = false }: { ingelogd?: boolean; fout?: boolean }) {
+export default function VerkoperStart({
+  ingelogd = false, fout = false, terugkerend = false,
+}: { ingelogd?: boolean; fout?: boolean; terugkerend?: boolean }) {
   return (
     <main className="wrap breed">
       <div className="bar">
@@ -15,11 +17,23 @@ export default function VerkoperStart({ ingelogd = false, fout = false }: { inge
 
       <div className="start-grid">
         <section className="start-form" aria-labelledby="start-kop">
-          <h1 id="start-kop">Maak gratis je nestjespagina</h1>
-          <p className="start-intro">
-            Eén mooie pagina voor al je kittens, die je deelt via WhatsApp en Facebook. Kopers zien meteen welke kittens nog
-            vrij zijn en wanneer ze mogen verhuizen.
-          </p>
+          {terugkerend ? (
+            <>
+              <h1 id="start-kop">Log in bij je nestjes</h1>
+              <p className="start-intro">
+                Vul hieronder je e-mailadres in. Je krijgt een mail met een inloglink — geen wachtwoord nodig, en je hoeft
+                nergens apart een account voor aan te maken.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 id="start-kop">Maak gratis je nestjespagina</h1>
+              <p className="start-intro">
+                Eén mooie pagina voor al je kittens, die je deelt via WhatsApp en Facebook. Kopers zien meteen welke kittens nog
+                vrij zijn en wanneer ze mogen verhuizen.
+              </p>
+            </>
+          )}
           {ingelogd ? (
             <div className="panel">
               <p style={{ marginTop: 0 }}>Je bent al ingelogd.</p>
@@ -27,10 +41,12 @@ export default function VerkoperStart({ ingelogd = false, fout = false }: { inge
             </div>
           ) : (
             <>
-              <p className="start-sub">
-                <strong>Nieuw of al een account?</strong> Vul je e-mailadres in. Je krijgt een mail met een inloglink, geen
-                wachtwoord nodig.
-              </p>
+              {!terugkerend && (
+                <p className="start-sub">
+                  <strong>Nieuw of al een account?</strong> Vul je e-mailadres in. Je krijgt een mail met een inloglink, geen
+                  wachtwoord nodig.
+                </p>
+              )}
               {fout && <p className="fout">De inloglink is verlopen of al gebruikt. Vraag hieronder een nieuwe aan.</p>}
               <LoginForm />
             </>
