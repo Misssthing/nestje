@@ -142,8 +142,8 @@ export function vraagtStamboom(ras: string) {
   return rasDelen(ras).some((r) => !RASSEN_ZONDER_STAMBOOM.includes(r.toLowerCase()));
 }
 
-/** Fokverbod in Nederland: naaktkatten en katten met vouworen. */
-export const VERBODEN_RAS = /(sphynx|naakt|fold|levkoy|bambino|donskoy|peterbald|\bdwelf\b|\belf\b)/i;
+/** Fokverbod in Nederland: naaktkatten en katten met vouworen (ook de rechteorige varianten die het gen dragen). */
+export const VERBODEN_RAS = /(sphynx|naakt|fold|straight|levkoy|bambino|donskoy|peterbald|\bdwelf\b|\belf\b)/i;
 
 export const ORGANISATIES = ['Felikat (FIFe)', 'Mundikat (FIFe)', 'WCF', 'TICA', 'Anders'];
 
