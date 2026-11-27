@@ -303,7 +303,7 @@ export function mailVerkoperOnafgemaakteNestje(o: { nestId: string; moeder: stri
       'Je bent er bijna',
       [
         `Je begon een nestjespagina voor ${esc(o.moeder)}, maar die staat nog niet in het overzicht — er ontbreken nog kittens of foto's.`,
-        'Reken op zo\'n 10 minuten om de rest in te vullen, en dat hoeft niet in één keer. Heb je hulp nodig, of lukt het niet meer? Laat het gerust weten via nestje@kattenverzorging.com.',
+        'Vul de rest rustig aan, in je eigen tempo — dat hoeft niet in één keer. Heb je hulp nodig, of lukt het niet meer? Laat het gerust weten via nestje@kattenverzorging.com.',
       ],
       { tekst: 'Nestje afmaken', href: url(`/beheer/${o.nestId}`) },
     ),
