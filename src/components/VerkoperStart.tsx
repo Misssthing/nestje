@@ -79,7 +79,9 @@ export default function VerkoperStart({
               <li>
                 <strong>Delen, en eventueel in het overzicht</strong>
                 <span>
-                  Je link werkt meteen. Wil je ook gevonden worden op Nestje? Dan bekijken we je nestje eerst, meestal binnen 24 uur.
+                  Je link werkt meteen vanaf je tweede nestje. Is dit je allereerste nestje? Dan bekijken we de pagina eerst,
+                  meestal binnen 24 uur. Wil je ook gevonden worden op Nestje via het overzicht? Dan bekijken we dat altijd,
+                  ook meestal binnen 24 uur.
                 </span>
               </li>
               <li>
