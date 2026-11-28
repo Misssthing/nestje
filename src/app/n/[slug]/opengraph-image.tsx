@@ -24,7 +24,9 @@ async function laadLettertype(gewicht: number, tekst: string): Promise<ArrayBuff
 
 export default async function OgAfbeelding({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const data = await haalNestje(slug);
+  const ruw = await haalNestje(slug);
+  // Zolang het allereerste nestje van een verkoper nog niet is goedgekeurd, geen voorproefje in de deelafbeelding.
+  const data = ruw?.nest.vrijgegeven ? ruw : null;
 
   const titel = data ? `Het nestje van ${data.nest.moeder_naam}` : 'Nestje';
   const a = data ? aftelling(data.nest.geboortedatum, data.nest.verhuisleeftijd_weken) : null;

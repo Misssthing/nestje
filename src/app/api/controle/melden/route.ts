@@ -29,8 +29,14 @@ export async function POST(req: Request) {
     .maybeSingle();
   if (!n || n.owner_id !== auth.user.id) return NextResponse.json({ gemeld: false }, { status: 403 });
 
+  // Het allereerste nestje van een account (nog geen ander nestje op die naam) moet altijd langs de
+  // echte controle, ook als de verkoper niet voor het overzicht kiest: anders zou de pagina (die
+  // zonder overzicht-keuze meteen live gaat) nooit door Nestje bekeken worden.
+  const { count: andereNestjes } = await db.from('nests').select('id', { count: 'exact', head: true }).eq('owner_id', n.owner_id).neq('id', n.id);
+  const eersteNestje = (andereNestjes ?? 0) === 0;
+
   const basisKlaar = !n.afgerond && (n.soort === 'vondeling' || n.moeder_foto);
-  const klaar = n.controle_status === 'wacht' && n.in_overzicht && n.provincie && basisKlaar;
+  const klaar = n.controle_status === 'wacht' && basisKlaar && (eersteNestje || (n.in_overzicht && n.provincie));
   const alGemeld = n.controle_gemeld_op && (!n.ter_controle_op || n.controle_gemeld_op >= n.ter_controle_op);
   const nu = new Date().toISOString();
 
@@ -50,14 +56,17 @@ export async function POST(req: Request) {
       foto: n.moeder_foto ? fotoUrl(n.moeder_foto) : null,
       verkoper: (await verkoperEmail(n.owner_id)) ?? auth.user.email ?? 'onbekend',
       opnieuw: Boolean(n.controle_gemeld_op),
+      eersteNestje,
     });
     await stuurMail(ADMIN_EMAIL, m.onderwerp, m.html);
     return NextResponse.json({ gemeld: true });
   }
 
-  // Nestje gekozen als alleen een deelbare link (niet in het overzicht): komt nooit in de echte controle,
-  // de pagina staat al online. Puur ter info, één keer per nestje, geen actie nodig.
-  if (!n.in_overzicht && basisKlaar && !n.nieuw_gemeld_op) {
+  // Nestje gekozen als alleen een deelbare link (niet in het overzicht): komt normaal nooit in de echte
+  // controle, de pagina staat al online. Puur ter info, één keer per nestje, geen actie nodig. (Bij het
+  // allereerste nestje van een account is dit niet van toepassing: dat loopt altijd via de echte controle
+  // hierboven, want de pagina staat dan juist nog niet online.)
+  if (!eersteNestje && !n.in_overzicht && basisKlaar && !n.nieuw_gemeld_op) {
     const { data: vast2 } = await db.from('nests').update({ nieuw_gemeld_op: nu }).eq('id', n.id).is('nieuw_gemeld_op', null).select('id');
     if (!vast2?.length) return NextResponse.json({ gemeld: false });
 

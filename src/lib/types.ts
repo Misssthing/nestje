@@ -78,6 +78,9 @@ export type OpenbaarNest = Omit<Nest, 'whatsapp_nummer' | 'moeder_stamboomnr' | 
   cattery_gecontroleerd?: boolean;
   /** Of de stamboomnummers van beide ouders bekend zijn bij Nestje (berekende kolom op de view) */
   stamboomnrs_bekend?: boolean;
+  /** Of de pagina al openbaar getoond mag worden (berekende kolom op de view). Bij het allereerste
+   *  nestje van een verkoper pas true na goedkeuring; bij elk volgend nestje altijd true. */
+  vrijgegeven: boolean;
 };
 
 /** Gemeenschappelijke vorm van kitten- en nestfoto's */

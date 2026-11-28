@@ -19,7 +19,7 @@ type Rij = {
   moeder_ras: string | null; vader_ras: string | null; vader_naam: string | null; stamboom: boolean | null;
   stamboom_organisatie: string | null; cattery: string | null; moeder_stamboomnr: string | null; vader_stamboomnr: string | null;
   moeder_chip: string | null; controle_status: string; controle_reden: string | null; ter_controle_op: string | null;
-  aangemaakt_op: string; prijs: number | null;
+  aangemaakt_op: string; prijs: number | null; in_overzicht: boolean;
 };
 
 const SNELLE_REDENEN = [
@@ -81,12 +81,27 @@ export default async function Controle() {
   const { data } = await db
     .from('nests')
     .select('*')
-    .eq('in_overzicht', true)
     .eq('afgerond', false)
     .in('controle_status', ['wacht', 'aanpassen'])
     .order('ter_controle_op', { ascending: true })
     .returns<Rij[]>();
-  const rijen = data ?? [];
+  const kandidaten = data ?? [];
+
+  // Normaal gesproken alleen nestjes die voor het overzicht kiezen. Een nestje dat alleen een
+  // deelbare link is (niet in het overzicht) hoeft normaal geen controle — behalve als het het
+  // allereerste nestje van die verkoper is: dan staat de pagina zelf pas online na goedkeuring.
+  const linkEigenaren = [...new Set(kandidaten.filter((r) => !r.in_overzicht).map((r) => r.owner_id))];
+  const eersteNestjeEigenaren = new Set(
+    (
+      await Promise.all(
+        linkEigenaren.map(async (owner_id) => {
+          const { count } = await db.from('nests').select('id', { count: 'exact', head: true }).eq('owner_id', owner_id);
+          return count === 1 ? owner_id : null;
+        }),
+      )
+    ).filter((x): x is string => Boolean(x)),
+  );
+  const rijen = kandidaten.filter((r) => r.in_overzicht || eersteNestjeEigenaren.has(r.owner_id));
   const wachtend = rijen.filter((r) => r.controle_status === 'wacht');
   const afgekeurd = rijen.filter((r) => r.controle_status === 'aanpassen');
 
@@ -160,7 +175,8 @@ export default async function Controle() {
       <section className="hero">
         <h1>Controle</h1>
         <p>
-          Nestjes die in het overzicht willen. Keur goed of vraag om een aanpassing; de verkoper krijgt in beide gevallen een mail.
+          Nestjes die in het overzicht willen, plus het allereerste nestje van elk account (die pagina staat pas online na
+          goedkeuring). Keur goed of vraag om een aanpassing; de verkoper krijgt in beide gevallen een mail.
         </p>
       </section>
 
@@ -277,6 +293,7 @@ function Kaart({ r, i, gc: gcNaam, d }: {
       ? `Fokker · met stamboom${gc ? ' · cattery gecontroleerd' : ' (opgegeven door verkoper)'}`
       : `Particulier, zonder stamboomlabel${rasZonderStamboom ? (r.stamboom ? ', zonder rasnaam' : ', ras getoond als Huiskat') : ''}`;
   const signalen = [
+    !r.in_overzicht ? 'Verkoper koos niet voor het overzicht — staat hier omdat dit het eerste nestje van dit account is (de pagina zelf wacht op goedkeuring)' : '',
     rasZonderStamboom
       ? `Rasnaam zonder volledige stamboom: kopers zien ${r.stamboom ? 'geen ras' : '“Huiskat”'} tot de stamboomgegevens compleet zijn`
       : '',

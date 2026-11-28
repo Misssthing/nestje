@@ -394,7 +394,7 @@ export function mailAdminControle(o: { aantal: number }) {
 
 export function mailAdminNieuwNestje(o: {
   moeder: string; slug: string; plaats: string; ras: string; vondeling: boolean;
-  foto: string | null; verkoper: string; opnieuw: boolean;
+  foto: string | null; verkoper: string; opnieuw: boolean; eersteNestje?: boolean;
 }) {
   const foto = o.foto
     ? `<img src="${o.foto}" alt="" width="240" style="display:block;width:240px;max-width:100%;height:auto;border-radius:12px" />`
@@ -405,9 +405,12 @@ export function mailAdminNieuwNestje(o: {
       o.opnieuw ? 'Opnieuw ter controle' : 'Nieuw nestje ter controle',
       [
         `<strong>Het nestje van ${esc(o.moeder)}</strong>${o.vondeling ? ' (vondelingen)' : ''}<br>${esc(o.ras)}<br>${esc(o.plaats)}<br>Verkoper: ${esc(o.verkoper)}`,
+        o.eersteNestje
+          ? '<strong>Eerste nestje van deze verkoper.</strong> De pagina staat nog niet live (ook niet via een gedeelde link) totdat je deze hier goedkeurt.'
+          : '',
         foto,
         `<a href="${url(`/n/${o.slug}`)}" style="color:#1F2A24;font-weight:600">Bekijk de pagina →</a>`,
-      ],
+      ].filter(Boolean),
       { tekst: 'Naar de controle', href: url('/beheer/controle') },
     ),
   };

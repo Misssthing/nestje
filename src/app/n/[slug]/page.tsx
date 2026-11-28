@@ -68,6 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return { title: 'Nestje niet gevonden', robots: { index: false } };
 
   const { nest, kittens } = data;
+  if (!nest.vrijgegeven) return { title: 'Deze pagina komt zo online', robots: { index: false, follow: false } };
   const vrij = kittens.filter((k) => k.status === 'vrij').length;
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const titel = `Het nestje van ${nest.moeder_naam}`;
@@ -111,6 +112,29 @@ export default async function NestjesPagina({ params }: Props) {
   if (!data) notFound();
 
   const { nest, kittens, nestFotos, profiel, inOverzicht } = data;
+
+  // Het allereerste nestje van een verkoper (dus nog geen ander nestje op de naam) gaat pas online
+  // nadat Nestje het heeft bekeken, ook als de verkoper 'm alleen als deelbare link gebruikt. Vanaf
+  // het tweede nestje van dezelfde verkoper geldt dat niet meer: die pagina's zijn meteen zichtbaar.
+  if (!nest.vrijgegeven) {
+    return (
+      <main className="wrap tekst">
+        <div className="bar">
+          <Link href="/kittens" className="brand">Nestje</Link>
+        </div>
+        <EigenaarBalk slug={slug} />
+        <section className="hero">
+          <h1>Deze pagina komt zo online</h1>
+          <p>
+            Dit is het eerste nestje op dit account, en zo&apos;n nestje bekijkt Nestje altijd eerst even voordat de
+            pagina open gaat. Dat duurt meestal niet lang.
+          </p>
+        </section>
+        <Voet />
+      </main>
+    );
+  }
+
   const a = aftelling(nest.geboortedatum, nest.verhuisleeftijd_weken);
   const heeftVader = Boolean(
     nest.vader_naam?.trim() || nest.over_vader?.trim() || nest.vader_ras?.trim() || nest.vader_gewicht || nest.vader_foto,
