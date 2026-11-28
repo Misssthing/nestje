@@ -84,7 +84,7 @@ export const RASSEN_ALGEMEEN = ['Huiskat', 'Kruising', 'Europese korthaar'];
 
 /** Rassen met stamboom, op alfabet. Naaktkatten en katten met vouworen staan er bewust niet in (fokverbod). */
 export const RASSEN_STAMBOOM = [
-  'Abessijn', 'Amerikaanse korthaar', 'Asian', 'Australian Mist', 'Balinees', 'Bengaal', 'Bombay',
+  'Abessijn', 'American Curl', 'Amerikaanse korthaar', 'Asian', 'Australian Mist', 'Balinees', 'Bengaal', 'Bombay',
   'Brits korthaar', 'Brits langhaar', 'Burmees', 'Burmilla', 'Chartreux', 'Cornish rex', 'Devon rex',
   'Egyptische mau', 'Exotic', 'Havana', 'Heilige Birmaan', 'Japanse bobtail', 'Khao Manee', 'Korat',
   'Kurilen bobtail', 'LaPerm', 'Maine Coon', 'Nebelung', 'Neva Masquerade', 'Noorse boskat', 'Ocicat',
@@ -110,6 +110,7 @@ export const RAS_ALIASSEN: Record<string, string> = {
   'russian blue': 'Russisch blauw', 'turkish angora': 'Turkse angora', 'turkish van': 'Turkse van', burmese: 'Burmees',
   'egyptian mau': 'Egyptische mau', 'american shorthair': 'Amerikaanse korthaar', 'neva masquarade': 'Neva Masquerade',
   'huis kat': 'Huiskat', 'gewone huiskat': 'Huiskat', 'russisch blauwe': 'Russisch blauw', okh: 'Oosterse korthaar',
+  'amerikaanse curl': 'American Curl', americancurl: 'American Curl', 'american curl shorthair': 'American Curl', 'american curl longhair': 'American Curl',
 };
 
 /** Scheidingstekens tussen twee rassen in één veld, zoals “BKH x BLH” of “Ragdoll/Maine Coon”. */
