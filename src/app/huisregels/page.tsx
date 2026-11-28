@@ -44,6 +44,11 @@ export default function Huisregels() {
           Alle foto's op je nestjespagina zijn echte, onbewerkte foto's van je eigen kittens en hun moeder. AI-gegenereerde foto's
           zijn niet toegestaan. Waarom? Een koper moet precies kunnen zien hoe de kittens en hun moeder er nu echt uitzien.
         </p>
+        <p>
+          Heb je raskittens met stamboom? Zet er dan ook een foto van de vader bij als je die hebt — dat geeft kopers een
+          completer beeld. Woont de dekkater bij een andere fokker, dan snappen we dat dit niet altijd lukt; verplicht is het
+          daarom niet.
+        </p>
 
         <h2>4. Een rasnaam alleen met stamboom</h2>
         <p>
