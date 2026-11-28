@@ -29,4 +29,10 @@ export const KENNISCENTRUM_ARTIKELEN: KennisArtikel[] = [
     href: '/eerste-dagen',
     afbeelding: '/kenniscentrum/eerste-dagen.jpg',
   },
+  {
+    titel: 'Kitten niet voor de fok? Dit betekent het',
+    intro: 'Waarom "niet voor de fok" niets te maken heeft met wel of geen stamboom, en wat het voor jou betekent.',
+    href: '/niet-voor-de-fok',
+    afbeelding: '/kenniscentrum/niet-voor-de-fok.jpg',
+  },
 ];
