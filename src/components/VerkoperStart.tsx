@@ -120,7 +120,11 @@ export default function VerkoperStart({
               <dt>Ziet iedereen mijn telefoonnummer?</dt>
               <dd>Nee. Kopers tikken op een knop en WhatsApp opent; je nummer staat nergens als tekst.</dd>
               <dt>Moet mijn kat een stamboom hebben?</dt>
-              <dd>Nee. Ook huiskatten en kruisingen zijn welkom. Een rasnaam zoals Maine Coon gebruik je alleen met stamboom.</dd>
+              <dd>
+                Nee. Ook huiskatten en kruisingen zijn welkom. Een rasnaam zoals Maine Coon gebruik je wel alleen als je ook
+                de stamboomorganisatie, je catterynaam en de naam van de vader invult — anders toont je pagina de kittens
+                als huiskat.
+              </dd>
               <dt>Kan ik Nestje als app-icoon op mijn telefoon zetten?</dt>
               <dd>
                 Ja. Open nestje.kattenverzorging.com en kies in je browser &ldquo;Zet op beginscherm&rdquo; of &ldquo;App
