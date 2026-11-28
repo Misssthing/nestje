@@ -61,6 +61,7 @@ export interface Nest {
   gesocialiseerd?: boolean;
   ouders_te_zien?: boolean;
   bezoek_mogelijk?: boolean;
+  niet_voor_fok?: boolean;
   /** Controle voor het openbare overzicht (uitbreiding 26) */
   controle_status?: 'wacht' | 'goedgekeurd' | 'aanpassen';
   controle_reden?: string | null;

@@ -2,7 +2,7 @@ import type { Nest } from '@/lib/types';
 
 export type VertrouwenVeld =
   | 'dierenarts' | 'enting1' | 'enting2' | 'ontwormd' | 'ontvlooid' | 'gechipt' | 'paspoort' | 'gecastreerd'
-  | 'stamboom_papieren' | 'koopovereenkomst' | 'gesocialiseerd' | 'ouders_te_zien' | 'bezoek_mogelijk';
+  | 'stamboom_papieren' | 'koopovereenkomst' | 'gesocialiseerd' | 'ouders_te_zien' | 'bezoek_mogelijk' | 'niet_voor_fok';
 
 /** Gezondheid: hangt af van "al gedaan" of "bij verhuizing" */
 export const GEZONDHEID_NEST: [VertrouwenVeld, string][] = [
@@ -23,6 +23,7 @@ export const VERTROUWEN_NEST: [VertrouwenVeld, string][] = [
   ['gesocialiseerd', 'Opgegroeid in huis, gewend aan mensen'],
   ['koopovereenkomst', 'Met koopovereenkomst'],
   ['stamboom_papieren', 'Stamboompapieren gaan mee'],
+  ['niet_voor_fok', 'Niet bestemd voor de fok'],
 ];
 
 export const ALLE_VELDEN = [...GEZONDHEID_NEST, ...VERTROUWEN_NEST].map(([v]) => v);
