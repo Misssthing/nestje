@@ -3,7 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES, RASSEN, RASSEN_ALGEMEEN, RASSEN_STAMBOOM, toonNummer,
+  MAX_DAGEN_VOORUIT, nestjeMelding, rasDelen, netjesRas, normaliseerNummer, ORGANISATIES_BEKEND, RASSEN, RASSEN_ALGEMEEN, RASSEN_STAMBOOM, toonNummer,
   stamboomnrProbleem, VERBODEN_RAS, vraagtStamboom,
 } from '@/lib/nest';
 import TestenLijst from './TestenLijst';
@@ -50,6 +50,13 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
     verkoper_tekst: nest.verkoper_tekst ?? '',
   });
   const [stamboom, setStamboom] = useState<boolean | null>(nest.stamboom);
+  // Organisatie-select toont een bekende naam of "Anders"; bij "Anders" vult de verkoper de naam
+  // zelf in (die naam zelf is wat uiteindelijk wordt opgeslagen in v.stamboom_organisatie).
+  const [organisatieKeuze, setOrganisatieKeuze] = useState<string>(() => {
+    const huidig = nest.stamboom_organisatie ?? '';
+    if (!huidig) return '';
+    return ORGANISATIES_BEKEND.includes(huidig) ? huidig : 'Anders';
+  });
   const [getest] = useState<boolean | null>(nest.ouders_getest);
   const [geschat, setGeschat] = useState<boolean>(nest.geboortedatum_geschat ?? false);
   const [soort, setSoort] = useState<'eigen' | 'vondeling'>(nest.soort ?? 'eigen');
@@ -555,10 +562,29 @@ export default function NestForm({ nest, supabase, onOpgeslagen, openStandaard, 
                 <div className="row stapel">
                   <label className="veld">
                     <span>Organisatie</span>
-                    <select value={v.stamboom_organisatie} onChange={zet('stamboom_organisatie')}>
+                    <select
+                      value={organisatieKeuze}
+                      onChange={(e) => {
+                        const keuze = e.target.value;
+                        setOrganisatieKeuze(keuze);
+                        // Bij een bekende organisatie is de keuze meteen de opgeslagen waarde; bij
+                        // "Anders" (of nog niets gekozen) wacht het op de naam uit het tekstveld.
+                        setV((s) => ({ ...s, stamboom_organisatie: keuze === 'Anders' || keuze === '' ? '' : keuze }));
+                      }}
+                    >
                       <option value="">Kies…</option>
-                      {ORGANISATIES.map((o) => <option key={o} value={o}>{o}</option>)}
+                      {ORGANISATIES_BEKEND.map((o) => <option key={o} value={o}>{o}</option>)}
+                      <option value="Anders">Anders</option>
                     </select>
+                    {organisatieKeuze === 'Anders' && (
+                      <input
+                        value={v.stamboom_organisatie}
+                        onChange={zet('stamboom_organisatie')}
+                        placeholder="Naam van de vereniging"
+                        maxLength={80}
+                        style={{ marginTop: 6 }}
+                      />
+                    )}
                   </label>
                   <label className="veld">
                     <span>Catterynaam</span>

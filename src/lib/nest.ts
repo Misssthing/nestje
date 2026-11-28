@@ -145,7 +145,8 @@ export function vraagtStamboom(ras: string) {
 /** Fokverbod in Nederland: naaktkatten en katten met vouworen (ook de rechteorige varianten die het gen dragen). */
 export const VERBODEN_RAS = /(sphynx|naakt|fold|straight|levkoy|bambino|donskoy|peterbald|\bdwelf\b|\belf\b)/i;
 
-export const ORGANISATIES = ['Felikat (FIFe)', 'Mundikat (FIFe)', 'WCF', 'TICA', 'Anders'];
+export const ORGANISATIES_BEKEND = ['Felikat (FIFe)', 'Mundikat (FIFe)', 'WCF', 'TICA'];
+export const ORGANISATIES = [...ORGANISATIES_BEKEND, 'Anders'];
 
 /** Gebruikelijke testen per ras, als suggestie. De verkoper kiest zelf wat er gedaan is. */
 export const TESTEN_ALGEMEEN = ['FIV/FeLV', 'Hartecho (HCM)'];
